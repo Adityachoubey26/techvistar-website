@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { CONTACT_INFO, CONTACT_SIDEBAR, SECTION_CONTACT } from '@/lib/constants';
+import { CONTACT_INFO, CONTACT_SIDEBAR, SECTION_CONTACT, CONTACT_FORM } from '@/data/contact';
 
 interface FormData {
   name: string;
@@ -42,7 +42,7 @@ export const ContactSection = () => {
       params.append('message', formData.message);
 
       const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbyVFalUML0Mnb-S2RuoCA68d5422p5MvMWF_id4Uw-MIQyiH5PxiglxPGdHDV47QJ22/exec',
+        CONTACT_FORM.actionUrl,
         {
           method: 'POST',
           headers: {
@@ -54,8 +54,8 @@ export const ContactSection = () => {
 
       if (response.ok) {
         toast({
-          title: 'Inquiry received',
-          description: 'We will respond within one business day where possible.',
+          title: CONTACT_FORM.toasts.success.title,
+          description: CONTACT_FORM.toasts.success.description,
         });
         setFormData(initialFormData);
       } else {
@@ -63,8 +63,8 @@ export const ContactSection = () => {
       }
     } catch {
       toast({
-        title: 'Unable to send',
-        description: 'Please try again or email us directly.',
+        title: CONTACT_FORM.toasts.error.title,
+        description: CONTACT_FORM.toasts.error.description,
         variant: 'destructive',
       });
     } finally {
@@ -143,14 +143,14 @@ export const ContactSection = () => {
               <div className="grid sm:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                    Full name
+                    {CONTACT_FORM.fields.name.label}
                   </label>
                   <Input
                     id="name"
                     name="name"
                     type="text"
                     autoComplete="name"
-                    placeholder="Name as per business records"
+                    placeholder={CONTACT_FORM.fields.name.placeholder}
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -159,14 +159,14 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                    Work email
+                    {CONTACT_FORM.fields.email.label}
                   </label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="name@organization.com"
+                    placeholder={CONTACT_FORM.fields.email.placeholder}
                     value={formData.email}
                     onChange={handleChange}
                     required
@@ -177,13 +177,13 @@ export const ContactSection = () => {
 
               <div className="mb-6">
                 <label htmlFor="subject" className="block text-sm font-medium text-slate-700 mb-2">
-                  Subject / reference
+                  {CONTACT_FORM.fields.subject.label}
                 </label>
                 <Input
                   id="subject"
                   name="subject"
                   type="text"
-                  placeholder="e.g. RFP — mobile app Q3"
+                  placeholder={CONTACT_FORM.fields.subject.placeholder}
                   value={formData.subject}
                   onChange={handleChange}
                   required
@@ -193,12 +193,12 @@ export const ContactSection = () => {
 
               <div className="mb-6">
                 <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-2">
-                  Requirements summary
+                  {CONTACT_FORM.fields.message.label}
                 </label>
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Goals, timeline, budget band, integrations, compliance constraints, and success criteria."
+                  placeholder={CONTACT_FORM.fields.message.placeholder}
                   value={formData.message}
                   onChange={handleChange}
                   required
@@ -208,7 +208,7 @@ export const ContactSection = () => {
               </div>
 
               <Button variant="hero" size="lg" type="submit" className="w-full group" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting…' : 'Submit inquiry'}
+                {isSubmitting ? CONTACT_FORM.submittingText : CONTACT_FORM.submitButton}
                 <Send className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </form>

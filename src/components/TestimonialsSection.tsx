@@ -12,7 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { SECTION_TESTIMONIALS, TESTIMONIAL_AGGREGATE, TESTIMONIALS } from '@/lib/constants';
+import { SECTION_TESTIMONIALS, TESTIMONIAL_AGGREGATE, TESTIMONIALS } from '@/data/testimonials';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -73,7 +73,7 @@ export const TestimonialsSection = () => {
           className="relative"
         >
           <p className="mb-6 text-center text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
-            {reduceMotion ? 'Client voices' : 'Client voices — continuously updated'}
+            {reduceMotion ? SECTION_TESTIMONIALS.clientVoicesLabel : SECTION_TESTIMONIALS.clientVoicesAnimatedLabel}
           </p>
 
           <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
@@ -177,7 +177,7 @@ export const TestimonialsSection = () => {
           className="mx-auto mt-14 max-w-5xl rounded-2xl border border-slate-200/90 bg-white px-4 py-8 shadow-[0_8px_32px_-20px_rgba(15,23,42,0.1)] sm:px-8 md:py-10"
         >
           <p className="mb-6 text-center text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-            Delivery indicators
+            {SECTION_TESTIMONIALS.deliveryIndicatorsLabel}
           </p>
           <div className="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:divide-slate-100">
             {TESTIMONIAL_AGGREGATE.map((stat) => (
@@ -197,7 +197,7 @@ export const TestimonialsSection = () => {
             ))}
           </div>
           <p className="mt-6 text-center text-[11px] leading-relaxed text-slate-400">
-            Metrics are compiled from internal delivery records and structured post-engagement surveys; they are not aggregated from public review marketplaces.
+            {SECTION_TESTIMONIALS.footnote}
           </p>
         </motion.div>
       </div>

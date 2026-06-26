@@ -10,7 +10,7 @@ import {
 } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { HERO_COPY } from '@/lib/constants';
+import { HERO_COPY } from '@/data/hero';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { FOOTER_DESCRIPTION, FOOTER_LINKS } from '@/lib/constants';
+import { FOOTER_DESCRIPTION, FOOTER_LINKS, FOOTER_NEWSLETTER, FOOTER_COPYRIGHT } from '@/data/footer';
 import logo from '../logo.webp';
 
 export const Footer = () => {
@@ -16,7 +16,7 @@ export const Footer = () => {
     if (!email) return;
     try {
       const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbxBjqGscTRlKH9XHiT022xxGJ4BKYRj9p3c0aiKP30mj_11ZVRExsQfL114Y7DOVwwE/exec',
+        FOOTER_NEWSLETTER.actionUrl,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -26,8 +26,8 @@ export const Footer = () => {
 
       if (response.ok) {
         toast({
-          title: 'Subscribed',
-          description: 'Thank you for subscribing.',
+          title: FOOTER_NEWSLETTER.toasts.success.title,
+          description: FOOTER_NEWSLETTER.toasts.success.description,
         });
         setEmail('');
       } else {
@@ -35,8 +35,8 @@ export const Footer = () => {
       }
     } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to subscribe. Please try again.',
+        title: FOOTER_NEWSLETTER.toasts.error.title,
+        description: FOOTER_NEWSLETTER.toasts.error.description,
         variant: 'destructive',
       });
     }
@@ -103,33 +103,36 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold font-display text-white mb-4 text-sm uppercase tracking-wider">Updates</h4>
-            <p className="text-sm mb-4">Occasional notes on product delivery and tech tips.</p>
+            <h4 className="font-semibold font-display text-white mb-4 text-sm uppercase tracking-wider">{FOOTER_NEWSLETTER.title}</h4>
+            <p className="text-sm mb-4">{FOOTER_NEWSLETTER.description}</p>
             <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2">
               <Input
                 type="email"
-                placeholder="Email address"
+                placeholder={FOOTER_NEWSLETTER.placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-emerald-950/50 border-emerald-800/80 text-white placeholder:text-emerald-200/40 text-sm"
                 required
               />
               <Button type="submit" size="default" className="shrink-0 bg-primary hover:bg-primary/90">
-                Subscribe
+                {FOOTER_NEWSLETTER.buttonText}
               </Button>
             </form>
           </div>
         </div>
 
         <div className="pt-8 border-t border-emerald-900/60 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-emerald-200/45">© {new Date().getFullYear()} TechVistar. All rights reserved.</p>
+          <p className="text-sm text-emerald-200/45">© {new Date().getFullYear()} {FOOTER_COPYRIGHT.text}</p>
           <div className="flex gap-8">
-            <a href="#" className="text-sm text-emerald-200/45 hover:text-white transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="text-sm text-emerald-200/45 hover:text-white transition-colors">
-              Terms
-            </a>
+            {FOOTER_COPYRIGHT.links.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm text-emerald-200/45 hover:text-white transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
       </div>
