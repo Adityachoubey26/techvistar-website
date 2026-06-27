@@ -3,7 +3,11 @@ import { Check } from 'lucide-react';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { PROCESS_PILLARS, PROCESS_STEPS, SECTION_PROCESS } from '@/lib/constants';
+import {
+  PROCESS_PILLARS,
+  PROCESS_STEPS,
+  SECTION_PROCESS,
+} from "@/data";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 

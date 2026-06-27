@@ -3,7 +3,7 @@ import { ArrowUpRight, Check } from 'lucide-react';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { SECTION_SERVICES, SERVICES } from '@/lib/constants';
+import { SECTION_SERVICES, SERVICES } from "@/data";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 

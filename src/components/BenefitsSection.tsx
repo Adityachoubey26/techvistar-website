@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { BENEFITS, SECTION_BENEFITS } from '@/lib/constants';
+import { BENEFITS, SECTION_BENEFITS } from '@/data';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 

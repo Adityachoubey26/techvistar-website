@@ -12,7 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { SECTION_TESTIMONIALS, TESTIMONIAL_AGGREGATE, TESTIMONIALS } from '@/lib/constants';
+import { SECTION_TESTIMONIALS, TESTIMONIAL_AGGREGATE, TESTIMONIALS } from '@/data';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 

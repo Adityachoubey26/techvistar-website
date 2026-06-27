@@ -16,7 +16,7 @@ import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { INTERNSHIP_PROGRAM } from '@/lib/constants';
+import { INTERNSHIP_PROGRAM } from '@/data';
 import { cn } from '@/lib/utils';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;

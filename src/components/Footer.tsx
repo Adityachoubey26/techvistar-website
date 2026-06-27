@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { FOOTER_DESCRIPTION, FOOTER_LINKS } from '@/lib/constants';
+import { FOOTER_DESCRIPTION, FOOTER_LINKS } from '@/data';
 import logo from '../logo.webp';
 
 export const Footer = () => {

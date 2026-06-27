@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
-import { CONTACT_INFO, CONTACT_SIDEBAR, SECTION_CONTACT } from '@/lib/constants';
+import { CONTACT_INFO, CONTACT_SIDEBAR, SECTION_CONTACT } from '@/data';
 
 interface FormData {
   name: string;

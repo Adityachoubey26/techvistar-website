@@ -1,4 +1,4 @@
-import { SITE, SERVICES } from '@/lib/constants';
+import { SITE, SERVICES } from '@/data';
 
 /**
  * Schema.org JSON-LD for Organization + ProfessionalService + service catalog.

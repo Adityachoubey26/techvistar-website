@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 import { useToast } from '@/hooks/use-toast';
-import { NAV_LINKS } from '@/lib/constants';
+import { NAV_LINKS } from '@/data';
 import logo from '../logo.webp';
 
 export const Navbar = () => {

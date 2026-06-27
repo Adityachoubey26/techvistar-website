@@ -10,7 +10,7 @@ import {
 } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { HERO_COPY } from '@/lib/constants';
+import { HERO_COPY } from '@/data';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
@@ -82,9 +82,9 @@ function TypingAccent({
       return;
     }
     setLen(0);
-    timeoutRef.current = window.setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       let i = 0;
-      intervalRef.current = window.setInterval(() => {
+      intervalRef.current = setInterval(() => {
         i += 1;
         setLen(Math.min(i, text.length));
         if (i >= text.length && intervalRef.current) {

@@ -1,6 +1,6 @@
 import { useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { INTERNSHIP_MARQUEE_SEGMENTS } from '@/lib/constants';
+import { INTERNSHIP_MARQUEE_SEGMENTS } from '@/data';
 
 type AnnouncementMarqueeProps = {
   variant: 'dark' | 'light';

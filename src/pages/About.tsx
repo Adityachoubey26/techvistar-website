@@ -17,7 +17,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ABOUT_COPY, ABOUT_PAGE } from '@/lib/constants';
+import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
