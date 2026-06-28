@@ -182,9 +182,13 @@ npm run build
 
 ---
 
-# 📄 License
+# 📌 Project Information
 
-This project is developed for **TechVistar** as part of a professional frontend development workflow.
+This project is being developed as part of the **Veenero Frontend Development Internship**.
+
+The website is built for **TechVistar** following modern frontend development practices, scalable architecture, and a production-ready workflow.
+
+This repository is intended for development purposes as part of the internship program.
 
 ---
 
