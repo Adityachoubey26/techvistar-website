@@ -184,7 +184,7 @@ npm run build
 
 # 📌 Project Information
 
-This project is being developed as part of the **Veenero Frontend Development Internship**.
+This project is being developed as part of the **Veenero Web developer Internship**.
 
 The website is built for **TechVistar** following modern frontend development practices, scalable architecture, and a production-ready workflow.
 
