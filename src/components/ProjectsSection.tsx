@@ -16,6 +16,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { PROJECTS, SECTION_PROJECTS } from '@/data/projects';
 
+import { Link } from 'react-router-dom';
+
 export const ProjectsSection = () => {
   const { ref, isInView } = useAnimatedSection();
   const reduceMotion = useReducedMotion();
@@ -70,13 +72,13 @@ export const ProjectsSection = () => {
                     className="h-full"
                   >
                     <Card className="group h-full flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-primary/25 transition-all duration-300">
-                      <div className="relative h-48 overflow-hidden bg-slate-100 border-b border-slate-200">
+                      <Link to={`/work/${project.slug}`} className="block relative h-48 overflow-hidden bg-slate-100 border-b border-slate-200">
                         <img
-                          src={project.image}
+                          src={project.thumbnail}
                           alt={project.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         />
-                      </div>
+                      </Link>
                       <CardHeader className="space-y-3 pb-2">
                         <Badge
                           variant="secondary"
@@ -84,8 +86,8 @@ export const ProjectsSection = () => {
                         >
                           {project.category}
                         </Badge>
-                        <CardTitle className="text-lg font-bold font-display text-slate-900 leading-snug">
-                          {project.title}
+                        <CardTitle className="text-lg font-bold font-display text-slate-900 leading-snug hover:text-primary transition-colors">
+                          <Link to={`/work/${project.slug}`}>{project.title}</Link>
                         </CardTitle>
                         <CardDescription className="text-slate-600 text-sm leading-relaxed line-clamp-[7] md:line-clamp-6">
                           {project.description}
