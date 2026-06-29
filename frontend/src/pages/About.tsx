@@ -135,7 +135,7 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-28 pb-12 md:pt-32 md:pb-14 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 mt-12 sm:mt-14 md:mt-16 lg:mt-[4.25rem] pt-10 pb-10 md:pt-12 md:pb-12 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -214,9 +214,9 @@ const About = () => {
             </motion.div>
 
             {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[180px] lg:h-[210px]">
+            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[150px] lg:h-[180px]">
               {/* Soft radial glow under the globe */}
-              <div className="absolute w-32 h-32 rounded-full bg-emerald-500/10 blur-[40px] pointer-events-none" />
+              <div className="absolute w-28 h-28 rounded-full bg-emerald-500/10 blur-[35px] pointer-events-none" />
 
               {/* Parallax Group (Globe + Orbits) */}
               <motion.div
@@ -224,7 +224,7 @@ const About = () => {
                   x: mousePosition.x * 12,
                   y: mousePosition.y * 12,
                 }}
-                className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
+                className="relative w-28 h-28 lg:w-34 lg:h-34 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
                 animate={{
                   boxShadow: [
                     '0 0 35px rgba(16,185,129,0.04)',
