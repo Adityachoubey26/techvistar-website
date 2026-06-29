@@ -36,24 +36,30 @@ const Work = () => {
         <Navbar />
 
         {/* Work Hero */}
-        <section className="pt-32 pb-16 bg-white border-b border-slate-200">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-display">
+        <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900">
+          {/* Ambient Glows */}
+          <div className="pointer-events-none absolute -left-12 top-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]" />
+          <div className="pointer-events-none absolute -right-12 bottom-0 h-96 w-96 rounded-full bg-teal-500/10 blur-[120px]" />
+          {/* Subtle Grid Pattern Overlay */}
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-40" />
+
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight mb-5 font-display leading-[1.1]">
               Our Work
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl">
+            <p className="text-base sm:text-lg text-zinc-300 max-w-2xl leading-relaxed mb-6">
               Explore our portfolio of production-ready systems spanning logistics routing, natural language processing, financial workspaces, and applied machine learning.
             </p>
-            <div className="mt-6 text-sm text-slate-500 font-semibold">
+            <div className="text-xs uppercase tracking-widest text-emerald-400/90 font-mono font-semibold">
               Showing {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
             </div>
           </div>
         </section>
 
         {/* Filters & Control Panel */}
-        <section className="py-8 bg-slate-50 border-b border-slate-200">
+        <section className="relative -mt-10 md:-mt-12 z-20 pb-8 bg-transparent">
           <div className="container mx-auto px-4 max-w-6xl">
-            <div className="flex flex-col gap-6">
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-6 shadow-[0_20px_50px_rgba(15,23,42,0.06)] flex flex-col gap-6">
               
               {/* Search Bar */}
               <div className="relative w-full max-w-md">
