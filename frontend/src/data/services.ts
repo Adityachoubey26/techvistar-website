@@ -19,9 +19,9 @@ import serviceMobileApp from '../assets/mobile_phone_devloper.png';
 import serviceUiUx from '../assets/ui_ux_designer.png';
 import serviceAiAutomation from '../assets/Ai_and_atomation.png';
 import serviceCloudDevops from '../assets/Claud_Devops.png';
-import serviceBranding from '../assets/branding_creative_design.png';
+import serviceBranding from '../assets/brand_and_creative_design.png';
 import serviceDigitalMarketing from '../assets/digital_marketing.png';
-import serviceCustomSoftware from '../assets/custom_software_development.png';
+import serviceCustomSoftware from '../assets/custom_software_devlopment.png';
 
 export interface Service {
   id: string;
