@@ -32,11 +32,62 @@ const fadeUp = {
 };
 
 const pillars = [
-  { icon: Target, label: ABOUT_COPY.mission.title, text: ABOUT_COPY.mission.text },
-  { icon: Eye, label: ABOUT_COPY.vision.title, text: ABOUT_COPY.vision.text },
+  {
+    icon: Target,
+    label: ABOUT_COPY.mission.title,
+    text: ABOUT_COPY.mission.text,
+    bg: 'bg-emerald-50/30 hover:bg-emerald-50/60',
+    border: 'border-emerald-100/80 hover:border-emerald-200',
+    iconBg: 'bg-emerald-100/60 text-emerald-700',
+  },
+  {
+    icon: Eye,
+    label: ABOUT_COPY.vision.title,
+    text: ABOUT_COPY.vision.text,
+    bg: 'bg-blue-50/30 hover:bg-blue-50/60',
+    border: 'border-blue-100/80 hover:border-blue-200',
+    iconBg: 'bg-blue-100/60 text-blue-700',
+  },
 ] as const;
 
-const focusIcons = [Smartphone, Globe, TrendingUp, GraduationCap] as const;
+const boxStyles = [
+  {
+    icon: Smartphone,
+    bg: 'bg-blue-50/40 hover:bg-blue-50/70',
+    border: 'border-blue-100/80 hover:border-blue-200',
+    iconBg: 'bg-blue-100/60 text-blue-600',
+  },
+  {
+    icon: TrendingUp,
+    bg: 'bg-emerald-50/40 hover:bg-emerald-50/70',
+    border: 'border-emerald-100/80 hover:border-emerald-200',
+    iconBg: 'bg-emerald-100/60 text-emerald-600',
+  },
+  {
+    icon: Globe,
+    bg: 'bg-violet-50/40 hover:bg-violet-50/70',
+    border: 'border-violet-100/80 hover:border-violet-200',
+    iconBg: 'bg-violet-100/60 text-violet-600',
+  },
+  {
+    icon: Zap,
+    bg: 'bg-amber-50/40 hover:bg-amber-50/70',
+    border: 'border-amber-100/80 hover:border-amber-200',
+    iconBg: 'bg-amber-100/60 text-amber-600',
+  },
+  {
+    icon: Sparkles,
+    bg: 'bg-cyan-50/40 hover:bg-cyan-50/70',
+    border: 'border-cyan-100/80 hover:border-cyan-200',
+    iconBg: 'bg-cyan-100/60 text-cyan-600',
+  },
+  {
+    icon: GraduationCap,
+    bg: 'bg-rose-50/40 hover:bg-rose-50/70',
+    border: 'border-rose-100/80 hover:border-rose-200',
+    iconBg: 'bg-rose-100/60 text-rose-600',
+  },
+] as const;
 
 const sectionPad = 'px-5 py-6 sm:px-6 sm:py-7 md:px-8';
 
@@ -85,14 +136,19 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 mt-12 sm:mt-14 md:mt-16 lg:mt-[4.25rem] pt-10 pb-10 md:pt-12 md:pb-12 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
         {/* Background Image */}
         <div 
-          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-85 pointer-events-none"
-          style={{ backgroundImage: `url(${aboutBg})` }}
+          className="absolute inset-0 opacity-85 pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${aboutBg})`,
+            backgroundSize: 'auto 100%',
+            backgroundPosition: 'right',
+            backgroundRepeat: 'no-repeat'
+          }}
         />
         {/* Gradient Overlay for Text Readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent z-0 pointer-events-none" />
@@ -140,28 +196,28 @@ const About = () => {
 
               <motion.h1 
                 variants={itemVariants}
-                className="mt-6 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
+                className="mt-4 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
               >
                 About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
               </motion.h1>
 
               <motion.div 
                 variants={lineVariants}
-                className="mt-6 h-0.5 bg-emerald-500"
+                className="mt-4 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
               />
 
               <motion.p 
                 variants={itemVariants}
-                className="mt-8 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
+                className="mt-4 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
               >
                 {ABOUT_PAGE.hero.lead}
               </motion.p>
             </motion.div>
 
             {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 relative flex items-center justify-center h-[350px] sm:h-[400px]">
+            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[150px] lg:h-[180px]">
               {/* Soft radial glow under the globe */}
-              <div className="absolute w-44 h-44 rounded-full bg-emerald-500/10 blur-[60px] pointer-events-none" />
+              <div className="absolute w-28 h-28 rounded-full bg-emerald-500/10 blur-[35px] pointer-events-none" />
 
               {/* Parallax Group (Globe + Orbits) */}
               <motion.div
@@ -169,7 +225,7 @@ const About = () => {
                   x: mousePosition.x * 12,
                   y: mousePosition.y * 12,
                 }}
-                className="relative w-72 h-72 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
+                className="relative w-28 h-28 lg:w-34 lg:h-34 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
                 animate={{
                   boxShadow: [
                     '0 0 35px rgba(16,185,129,0.04)',
@@ -231,13 +287,14 @@ const About = () => {
             </motion.div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
               {ABOUT_PAGE.focusAreas.map((area, i) => {
-                const Icon = focusIcons[i % focusIcons.length];
+                const styles = boxStyles[i % boxStyles.length];
+                const Icon = styles.icon;
                 return (
                   <div
                     key={area.title}
-                    className="rounded-xl border border-slate-200/90 bg-white p-4 shadow-sm"
+                    className={`rounded-xl border p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${styles.bg} ${styles.border}`}
                   >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary/12 to-primary/5 text-primary ring-1 ring-primary/12">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${styles.iconBg} ring-1 ring-black/5`}>
                       <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={1.75} aria-hidden />
                     </div>
                     <h3 className="mt-3 font-display text-[0.9375rem] font-semibold leading-snug text-slate-900">{area.title}</h3>
@@ -257,12 +314,12 @@ const About = () => {
               {pillars.map((pillar) => (
                 <div
                   key={pillar.label}
-                  className="overflow-hidden rounded-xl border border-slate-200/90 bg-white"
+                  className={`overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${pillar.bg} ${pillar.border}`}
                 >
                   <div className="h-0.5 w-full bg-gradient-to-r from-primary via-emerald-500 to-teal-600" aria-hidden />
                   <div className="p-4 sm:p-5">
                     <div className="flex gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/12 to-primary/5 text-primary ring-1 ring-primary/12">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ring-1 ring-black/5 ${pillar.iconBg}`}>
                         <pillar.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
                       </div>
                       <h3 className="min-w-0 flex-1 pt-0.5 font-display text-[0.9375rem] font-bold leading-snug text-slate-900">
