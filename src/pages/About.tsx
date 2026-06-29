@@ -18,6 +18,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
+import aboutBg from '../about-bg.png';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -46,32 +47,43 @@ const About = () => {
     <main className="min-h-screen bg-muted">
       <Navbar />
 
-      {/* Page title — compact */}
-      <header className="relative border-b border-border bg-muted pt-[4.75rem] pb-5 md:pt-[5.25rem] md:pb-6">
-        <div className="absolute inset-0 grid-pattern opacity-[0.2] pointer-events-none" />
-        <div className="container-custom relative z-10 max-w-4xl">
-          <nav aria-label="Breadcrumb" className="mb-3 text-xs text-slate-500 sm:text-sm">
-            <Link to="/" className="font-medium text-primary hover:underline underline-offset-4">
+      {/* Page Hero with Custom Background */}
+      <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-65 pointer-events-none"
+          style={{ backgroundImage: `url(${aboutBg})` }}
+        />
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/70 to-transparent z-0 pointer-events-none" />
+
+        <div className="container-custom relative z-10 max-w-6xl">
+          <nav aria-label="Breadcrumb" className="mb-4 text-xs font-semibold tracking-wider text-emerald-400 uppercase">
+            <Link to="/" className="hover:underline underline-offset-4">
               Home
             </Link>
-            <span className="mx-1.5 text-slate-300">/</span>
-            <span className="text-slate-700">About</span>
+            <span className="mx-2 text-zinc-600">/</span>
+            <span className="text-zinc-400">About</span>
           </nav>
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease }}
+            transition={{ duration: 0.5, ease }}
+            className="max-w-xl md:max-w-2xl text-left"
           >
-            <p className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-primary sm:text-xs">{ABOUT_PAGE.hero.eyebrow}</p>
-            <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-[2.125rem] md:leading-tight">
-              {ABOUT_PAGE.hero.title}
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+              {ABOUT_PAGE.hero.eyebrow}
+            </span>
+            <h1 className="mt-5 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
             </h1>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-[0.9375rem] md:text-base">
+            <div className="mt-4 h-1 w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
+            <p className="mt-6 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300">
               {ABOUT_PAGE.hero.lead}
             </p>
           </motion.div>
         </div>
-      </header>
+      </section>
 
       {/* Single structured document — tight vertical rhythm */}
       <div className="container-custom py-6 md:py-8">
