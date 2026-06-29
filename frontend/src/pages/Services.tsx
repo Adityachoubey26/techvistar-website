@@ -239,7 +239,7 @@ const Services = () => {
                           src={service.coverImage}
                           alt={service.title}
                           loading="lazy"
-                          className="w-full h-[180px] md:h-[220px] object-contain transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
+                          className="w-full h-[200px] md:h-[250px] object-cover transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
                         />
                       </div>
                       <CardHeader className="space-y-3 pb-2">
