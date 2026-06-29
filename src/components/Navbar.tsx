@@ -177,11 +177,10 @@ export const Navbar = () => {
           <div className="hidden items-center gap-5 lg:gap-7 xl:gap-8 md:flex">
             <Link
               to="/"
-              className={cn(linkClass, 'group flex items-center gap-1')}
+              className={cn(linkClass, 'group')}
               onClick={handleNavClick('/')}
-              aria-label="Home"
             >
-              <Home size={17} className="transition-transform group-hover:scale-105" />
+              Home
               <span className={underlineClass} />
             </Link>
             {NAV_LINKS.map((link) => (
