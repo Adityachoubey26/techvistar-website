@@ -60,9 +60,12 @@ const Services = () => {
         >
           {/* Animated Mesh Waves + Mouse Parallax */}
           <motion.div 
-            className="absolute inset-0 bg-cover bg-right md:bg-center opacity-85 pointer-events-none z-0"
+            className="absolute inset-0 opacity-85 pointer-events-none z-0"
             style={{ 
               backgroundImage: `url(${servicesBg})`,
+              backgroundSize: 'auto 100%',
+              backgroundPosition: 'right',
+              backgroundRepeat: 'no-repeat',
             }}
             animate={{
               x: [0, 8, 0],
@@ -75,9 +78,12 @@ const Services = () => {
             }}
           >
             <motion.div
-              className="absolute inset-0 bg-cover bg-right md:bg-center"
+              className="absolute inset-0"
               style={{ 
                 backgroundImage: `url(${servicesBg})`,
+                backgroundSize: 'auto 100%',
+                backgroundPosition: 'right',
+                backgroundRepeat: 'no-repeat',
               }}
               animate={{
                 x: mousePosition.x * 10,

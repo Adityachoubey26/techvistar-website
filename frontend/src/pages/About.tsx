@@ -141,8 +141,13 @@ const About = () => {
       >
         {/* Background Image */}
         <div 
-          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-85 pointer-events-none"
-          style={{ backgroundImage: `url(${aboutBg})` }}
+          className="absolute inset-0 opacity-85 pointer-events-none"
+          style={{ 
+            backgroundImage: `url(${aboutBg})`,
+            backgroundSize: 'auto 100%',
+            backgroundPosition: 'right',
+            backgroundRepeat: 'no-repeat'
+          }}
         />
         {/* Gradient Overlay for Text Readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent z-0 pointer-events-none" />
