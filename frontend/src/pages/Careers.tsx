@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ChevronDown, ChevronUp, Briefcase, MapPin, Calendar, Clock, GraduationCap } from 'lucide-react';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 
 const Careers = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -39,6 +40,8 @@ const Careers = () => {
             </p>
           </div>
         </section>
+
+        <Breadcrumb />
 
         {/* 2. Why Join Section */}
         <section className="py-16 bg-slate-50">

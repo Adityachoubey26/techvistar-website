@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 
 // Subcomponents
 import { ServiceHero } from '@/components/services/ServiceHero';
@@ -69,6 +70,8 @@ const ServiceDetails = () => {
         
         {/* Hero Section */}
         <ServiceHero service={service} />
+
+        <Breadcrumb />
 
         {/* Sticky Sub-Navbar */}
         <ServiceSectionNavigation />

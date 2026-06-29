@@ -5,6 +5,7 @@ import { ProjectsGrid } from '@/components/ProjectsGrid';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ProjectFilterToolbar } from '@/components/work/ProjectFilterToolbar';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 import workBg from '../assets/work-bg.png';
 
 const Work = () => {
@@ -128,6 +129,8 @@ const Work = () => {
             </p>
           </div>
         </section>
+
+        <Breadcrumb />
 
         {/* Filters & Control Panel */}
         <section className="relative -mt-10 md:-mt-12 z-20 pb-8 bg-transparent">

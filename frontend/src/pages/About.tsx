@@ -19,6 +19,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 import aboutBg from '../assets/about-bg.png';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
@@ -130,18 +131,6 @@ const About = () => {
               animate="visible"
               className="lg:col-span-7 text-left"
             >
-              <motion.nav 
-                variants={itemVariants}
-                aria-label="Breadcrumb" 
-                className="mb-6 text-xs font-semibold tracking-wider text-emerald-400 uppercase"
-              >
-                <Link to="/" className="hover:underline underline-offset-4">
-                  Home
-                </Link>
-                <span className="mx-2 text-zinc-600">/</span>
-                <span className="text-zinc-400">About</span>
-              </motion.nav>
-
               <motion.span 
                 variants={itemVariants}
                 className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20"
@@ -158,7 +147,7 @@ const About = () => {
 
               <motion.div 
                 variants={lineVariants}
-                className="mt-5 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
+                className="mt-6 h-0.5 bg-emerald-500"
               />
 
               <motion.p 
@@ -212,6 +201,8 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      <Breadcrumb />
 
       {/* Single structured document — tight vertical rhythm */}
       <div className="container-custom py-6 md:py-8">

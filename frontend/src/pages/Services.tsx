@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -44,6 +45,8 @@ const Services = () => {
             </p>
           </div>
         </section>
+
+        <Breadcrumb />
 
         {/* Category Filters */}
         <section className="py-8 bg-slate-50 border-b border-slate-200">
