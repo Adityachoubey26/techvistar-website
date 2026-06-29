@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 
 // Subcomponents
 import { ServiceHero } from '@/components/services/ServiceHero';
@@ -17,6 +18,7 @@ import { IndustriesSection } from '@/components/services/IndustriesSection';
 import { CaseStudiesSection } from '@/components/services/CaseStudiesSection';
 import { WhyChooseUsSection } from '@/components/services/WhyChooseUsSection';
 import { FAQSection } from '@/components/services/FAQSection';
+import { ServiceSidebar } from '@/components/services/ServiceSidebar';
 import { CTASection } from '@/components/services/CTASection';
 import { RelatedServicesSection } from '@/components/services/RelatedServicesSection';
 
@@ -69,6 +71,8 @@ const ServiceDetails = () => {
         {/* Hero Section */}
         <ServiceHero service={service} />
 
+        <Breadcrumb />
+
         {/* Sticky Sub-Navbar */}
         <ServiceSectionNavigation />
 
@@ -90,9 +94,14 @@ const ServiceDetails = () => {
 
             {/* Right Column Sidebar */}
             <div className="space-y-6">
-              <CTASection service={service} />
+              <ServiceSidebar />
             </div>
 
+          </div>
+
+          {/* Bottom Conversion Section */}
+          <div className="mt-16">
+            <CTASection service={service} />
           </div>
 
           {/* Related Services Section */}

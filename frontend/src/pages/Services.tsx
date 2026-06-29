@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
+import { Breadcrumb } from '@/components/common/Breadcrumb';
 import servicesBg from '../assets/services-bg.png';
 
 const Services = () => {
@@ -197,6 +198,8 @@ const Services = () => {
             </motion.p>
           </div>
         </motion.section>
+
+        <Breadcrumb />
 
         {/* Category Filters */}
         <section className="py-8 bg-slate-50 border-b border-slate-200">
