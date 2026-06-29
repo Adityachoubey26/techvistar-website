@@ -135,7 +135,7 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-14 pb-12 md:pt-16 md:pb-14 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 pt-28 pb-12 md:pt-32 md:pb-14 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
