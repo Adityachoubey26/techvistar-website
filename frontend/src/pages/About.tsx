@@ -135,7 +135,7 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-20 pb-12 md:pt-24 md:pb-16 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 pt-16 pb-16 md:pt-20 md:pb-20 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -184,7 +184,7 @@ const About = () => {
               <motion.nav 
                 variants={itemVariants}
                 aria-label="Breadcrumb" 
-                className="mb-6 text-xs font-semibold tracking-wider text-emerald-400 uppercase"
+                className="mb-4 text-xs font-semibold tracking-wider text-emerald-400 uppercase"
               >
                 <Link to="/" className="hover:underline underline-offset-4">
                   Home
@@ -202,28 +202,28 @@ const About = () => {
 
               <motion.h1 
                 variants={itemVariants}
-                className="mt-6 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
+                className="mt-4 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
               >
                 About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
               </motion.h1>
 
               <motion.div 
                 variants={lineVariants}
-                className="mt-5 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
+                className="mt-4 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
               />
 
               <motion.p 
                 variants={itemVariants}
-                className="mt-8 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
+                className="mt-4 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
               >
                 {ABOUT_PAGE.hero.lead}
               </motion.p>
             </motion.div>
 
             {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 relative flex items-center justify-center h-[260px] sm:h-[300px]">
+            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[200px] lg:h-[240px]">
               {/* Soft radial glow under the globe */}
-              <div className="absolute w-44 h-44 rounded-full bg-emerald-500/10 blur-[60px] pointer-events-none" />
+              <div className="absolute w-36 h-36 rounded-full bg-emerald-500/10 blur-[50px] pointer-events-none" />
 
               {/* Parallax Group (Globe + Orbits) */}
               <motion.div
@@ -231,7 +231,7 @@ const About = () => {
                   x: mousePosition.x * 12,
                   y: mousePosition.y * 12,
                 }}
-                className="relative w-72 h-72 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
+                className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
                 animate={{
                   boxShadow: [
                     '0 0 35px rgba(16,185,129,0.04)',
