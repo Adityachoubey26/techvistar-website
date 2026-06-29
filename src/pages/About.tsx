@@ -207,14 +207,6 @@ const About = () => {
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]" />
                 </motion.div>
 
-                {/* Rotating Globe Core */}
-                <motion.div
-                  className="absolute flex items-center justify-center"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 55, repeat: Infinity, ease: 'linear' }}
-                >
-                  <Globe className="w-24 h-24 text-emerald-400/40" strokeWidth={1} />
-                </motion.div>
               </motion.div>
             </div>
           </div>
