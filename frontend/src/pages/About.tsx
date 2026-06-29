@@ -258,8 +258,8 @@ const About = () => {
       </section>
 
       {/* Single structured document — tight vertical rhythm */}
-      <div className="container-custom py-6 md:py-8">
-        <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_24px_-12px_rgba(15,23,42,0.1)]">
+      <div className="px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_24px_-12px_rgba(15,23,42,0.1)]">
           {/* Overview */}
           <motion.section {...fadeUp} className={`${sectionPad} border-b border-slate-100`} aria-labelledby="overview-heading">
             <h2 id="overview-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
