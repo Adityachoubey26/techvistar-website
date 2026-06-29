@@ -90,11 +90,11 @@ const About = () => {
       >
         {/* Background Image */}
         <div 
-          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-30 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-85 pointer-events-none"
           style={{ backgroundImage: `url(${aboutBg})` }}
         />
         {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/75 to-transparent z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent z-0 pointer-events-none" />
 
         {/* Tiny Floating Background Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
