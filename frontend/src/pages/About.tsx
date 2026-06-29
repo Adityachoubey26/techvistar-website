@@ -135,7 +135,7 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-16 pb-16 md:pt-20 md:pb-20 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 pt-14 pb-12 md:pt-16 md:pb-14 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -186,18 +186,6 @@ const About = () => {
               animate="visible"
               className="lg:col-span-7 text-left"
             >
-              <motion.nav 
-                variants={itemVariants}
-                aria-label="Breadcrumb" 
-                className="mb-4 text-xs font-semibold tracking-wider text-emerald-400 uppercase"
-              >
-                <Link to="/" className="hover:underline underline-offset-4">
-                  Home
-                </Link>
-                <span className="mx-2 text-zinc-600">/</span>
-                <span className="text-zinc-400">About</span>
-              </motion.nav>
-
               <motion.span 
                 variants={itemVariants}
                 className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20"
@@ -226,9 +214,9 @@ const About = () => {
             </motion.div>
 
             {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[200px] lg:h-[240px]">
+            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[180px] lg:h-[210px]">
               {/* Soft radial glow under the globe */}
-              <div className="absolute w-36 h-36 rounded-full bg-emerald-500/10 blur-[50px] pointer-events-none" />
+              <div className="absolute w-32 h-32 rounded-full bg-emerald-500/10 blur-[40px] pointer-events-none" />
 
               {/* Parallax Group (Globe + Orbits) */}
               <motion.div
@@ -236,7 +224,7 @@ const About = () => {
                   x: mousePosition.x * 12,
                   y: mousePosition.y * 12,
                 }}
-                className="relative w-36 h-36 lg:w-44 lg:h-44 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
+                className="relative w-32 h-32 lg:w-40 lg:h-40 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
                 animate={{
                   boxShadow: [
                     '0 0 35px rgba(16,185,129,0.04)',
