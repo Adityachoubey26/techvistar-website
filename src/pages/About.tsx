@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +13,7 @@ import {
   Sparkles,
   Target,
   TrendingUp,
+  Zap,
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -43,45 +44,280 @@ const About = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const { clientX, clientY, currentTarget } = e;
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    const x = (clientX - left) / width - 0.5;
+    const y = (clientY - top) / height - 0.5;
+    setMousePosition({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
+  };
+
+  // Text Animation Variants
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.12,
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease } }
+  };
+
+  const lineVariants = {
+    hidden: { width: 0 },
+    visible: { width: 64, transition: { duration: 0.6, ease, delay: 0.4 } }
+  };
+
   return (
     <main className="min-h-screen bg-muted">
       <Navbar />
 
-      {/* Page Hero with Custom Background */}
-      <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900">
+      {/* Page Hero with Custom Background & Animations */}
+      <section 
+        className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Background Image */}
         <div 
-          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-65 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-right md:bg-center opacity-30 pointer-events-none"
           style={{ backgroundImage: `url(${aboutBg})` }}
         />
         {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/70 to-transparent z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/75 to-transparent z-0 pointer-events-none" />
+
+        {/* Tiny Floating Background Particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1.5 h-1.5 bg-emerald-400/80 rounded-full blur-[0.5px]"
+              style={{
+                left: `${(i * 14) % 100}%`,
+                top: `${(i * 23) % 100}%`,
+              }}
+              animate={{
+                y: [0, -35, 0],
+                x: [0, 8, 0],
+                opacity: [0.1, 0.6, 0.1],
+              }}
+              transition={{
+                duration: 10 + (i % 3) * 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.7,
+              }}
+            />
+          ))}
+        </div>
 
         <div className="container-custom relative z-10 max-w-6xl">
-          <nav aria-label="Breadcrumb" className="mb-4 text-xs font-semibold tracking-wider text-emerald-400 uppercase">
-            <Link to="/" className="hover:underline underline-offset-4">
-              Home
-            </Link>
-            <span className="mx-2 text-zinc-600">/</span>
-            <span className="text-zinc-400">About</span>
-          </nav>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease }}
-            className="max-w-xl md:max-w-2xl text-left"
-          >
-            <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
-              {ABOUT_PAGE.hero.eyebrow}
-            </span>
-            <h1 className="mt-5 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
-              About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
-            </h1>
-            <div className="mt-4 h-1 w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
-            <p className="mt-6 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300">
-              {ABOUT_PAGE.hero.lead}
-            </p>
-          </motion.div>
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Left Side: Content */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-7 text-left"
+            >
+              <motion.nav 
+                variants={itemVariants}
+                aria-label="Breadcrumb" 
+                className="mb-4 text-xs font-semibold tracking-wider text-emerald-400 uppercase"
+              >
+                <Link to="/" className="hover:underline underline-offset-4">
+                  Home
+                </Link>
+                <span className="mx-2 text-zinc-600">/</span>
+                <span className="text-zinc-400">About</span>
+              </motion.nav>
+
+              <motion.span 
+                variants={itemVariants}
+                className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20"
+              >
+                {ABOUT_PAGE.hero.eyebrow}
+              </motion.span>
+
+              <motion.h1 
+                variants={itemVariants}
+                className="mt-5 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
+              >
+                About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
+              </motion.h1>
+
+              <motion.div 
+                variants={lineVariants}
+                className="mt-4 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
+              />
+
+              <motion.p 
+                variants={itemVariants}
+                className="mt-6 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
+              >
+                {ABOUT_PAGE.hero.lead}
+              </motion.p>
+            </motion.div>
+
+            {/* Right Side: Interactive Animated Globe & Floating Cards */}
+            <div className="lg:col-span-5 relative flex items-center justify-center h-[350px] sm:h-[400px]">
+              {/* Energy Platform expanding glowing rings */}
+              <div className="absolute bottom-[20%] flex items-center justify-center pointer-events-none">
+                <div className="relative w-48 h-10 flex items-center justify-center">
+                  <motion.div
+                    className="absolute w-full h-full border border-emerald-500/30 rounded-full"
+                    initial={{ scale: 0.8, opacity: 0.8 }}
+                    animate={{ scale: 1.4, opacity: 0 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeOut' }}
+                  />
+                  <motion.div
+                    className="absolute w-full h-full border border-emerald-500/15 rounded-full"
+                    initial={{ scale: 0.8, opacity: 0.8 }}
+                    animate={{ scale: 1.4, opacity: 0 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeOut', delay: 1.5 }}
+                  />
+                  <div className="absolute w-44 h-8 bg-emerald-950/20 border border-emerald-500/10 rounded-full blur-[1px] shadow-[0_0_15px_rgba(16,185,129,0.05)]" />
+                </div>
+              </div>
+
+              {/* Parallax Group (Globe + Orbits) */}
+              <motion.div
+                style={{
+                  x: mousePosition.x * 12,
+                  y: mousePosition.y * 12,
+                }}
+                className="relative w-72 h-72 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none"
+                animate={{
+                  boxShadow: [
+                    '0 0 35px rgba(16,185,129,0.04)',
+                    '0 0 55px rgba(16,185,129,0.08)',
+                    '0 0 35px rgba(16,185,129,0.04)'
+                  ]
+                }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                {/* Orbital lines & particles */}
+                <motion.div 
+                  className="absolute inset-2 rounded-full border border-teal-500/10"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+                >
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-teal-400 rounded-full shadow-[0_0_8px_#14b8a6]" />
+                </motion.div>
+
+                <motion.div 
+                  className="absolute inset-8 rounded-full border border-emerald-500/10"
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+                >
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]" />
+                </motion.div>
+
+                {/* Rotating Globe Core */}
+                <motion.div
+                  className="absolute flex items-center justify-center"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 55, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Globe className="w-24 h-24 text-emerald-400/25" strokeWidth={1} />
+                </motion.div>
+
+                {/* Light Sweep Effect */}
+                <motion.div
+                  className="absolute w-full h-[1.5px] bg-gradient-to-r from-transparent via-white/[0.08] to-transparent -skew-y-12"
+                  animate={{ y: ['-40%', '140%'] }}
+                  transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
+                />
+              </motion.div>
+
+              {/* Floating Cards (Glassmorphic) with individual offset & delays */}
+              {/* Card 1: Strategy (Top Left) */}
+              <motion.div
+                style={{
+                  x: mousePosition.x * 16,
+                  y: mousePosition.y * 16,
+                }}
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute top-4 left-2 bg-white/[0.02] backdrop-blur-md border border-white/10 rounded-2xl p-3 shadow-lg shadow-black/30 flex items-center gap-2.5 max-w-[140px]"
+              >
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                  <Target size={16} />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-white">Strategy</div>
+                  <div className="text-[9px] text-zinc-400 font-medium">Define direction</div>
+                </div>
+              </motion.div>
+
+              {/* Card 2: Build (Bottom Left) */}
+              <motion.div
+                style={{
+                  x: mousePosition.x * 16,
+                  y: mousePosition.y * 16,
+                }}
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+                className="absolute bottom-6 left-0 bg-white/[0.02] backdrop-blur-md border border-white/10 rounded-2xl p-3 shadow-lg shadow-black/30 flex items-center gap-2.5 max-w-[130px]"
+              >
+                <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400">
+                  <Layers size={16} />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-white">Build</div>
+                  <div className="text-[9px] text-zinc-400 font-medium">Ship software</div>
+                </div>
+              </motion.div>
+
+              {/* Card 3: Automate (Top Right) */}
+              <motion.div
+                style={{
+                  x: mousePosition.x * 16,
+                  y: mousePosition.y * 16,
+                }}
+                animate={{ y: [0, 7, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                className="absolute top-10 right-4 bg-white/[0.02] backdrop-blur-md border border-white/10 rounded-2xl p-3 shadow-lg shadow-black/30 flex items-center gap-2.5 max-w-[140px]"
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <Zap size={16} />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-white">Automate</div>
+                  <div className="text-[9px] text-zinc-400 font-medium">Streamline ops</div>
+                </div>
+              </motion.div>
+
+              {/* Card 4: Grow (Bottom Right) */}
+              <motion.div
+                style={{
+                  x: mousePosition.x * 16,
+                  y: mousePosition.y * 16,
+                }}
+                animate={{ y: [0, -7, 0] }}
+                transition={{ duration: 6.2, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
+                className="absolute bottom-8 right-2 bg-white/[0.02] backdrop-blur-md border border-white/10 rounded-2xl p-3 shadow-lg shadow-black/30 flex items-center gap-2.5 max-w-[130px]"
+              >
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                  <TrendingUp size={16} />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-white">Grow</div>
+                  <div className="text-[9px] text-zinc-400 font-medium">Drive impact</div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
