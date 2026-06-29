@@ -31,8 +31,22 @@ const fadeUp = {
 };
 
 const pillars = [
-  { icon: Target, label: ABOUT_COPY.mission.title, text: ABOUT_COPY.mission.text },
-  { icon: Eye, label: ABOUT_COPY.vision.title, text: ABOUT_COPY.vision.text },
+  {
+    icon: Target,
+    label: ABOUT_COPY.mission.title,
+    text: ABOUT_COPY.mission.text,
+    bg: 'bg-emerald-50/30 hover:bg-emerald-50/60',
+    border: 'border-emerald-100/80 hover:border-emerald-200',
+    iconBg: 'bg-emerald-100/60 text-emerald-700',
+  },
+  {
+    icon: Eye,
+    label: ABOUT_COPY.vision.title,
+    text: ABOUT_COPY.vision.text,
+    bg: 'bg-blue-50/30 hover:bg-blue-50/60',
+    border: 'border-blue-100/80 hover:border-blue-200',
+    iconBg: 'bg-blue-100/60 text-blue-700',
+  },
 ] as const;
 
 const boxStyles = [
@@ -304,12 +318,12 @@ const About = () => {
               {pillars.map((pillar) => (
                 <div
                   key={pillar.label}
-                  className="overflow-hidden rounded-xl border border-slate-200/90 bg-white"
+                  className={`overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${pillar.bg} ${pillar.border}`}
                 >
                   <div className="h-0.5 w-full bg-gradient-to-r from-primary via-emerald-500 to-teal-600" aria-hidden />
                   <div className="p-4 sm:p-5">
                     <div className="flex gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/12 to-primary/5 text-primary ring-1 ring-primary/12">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ring-1 ring-black/5 ${pillar.iconBg}`}>
                         <pillar.icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
                       </div>
                       <h3 className="min-w-0 flex-1 pt-0.5 font-display text-[0.9375rem] font-bold leading-snug text-slate-900">
