@@ -1,12 +1,12 @@
 /** Service catalog — productized offers; aligned with JSON-LD OfferCatalog */
 import {
-  Layers,
   Globe,
   TrendingUp,
-  Cpu,
-  Sparkles,
   BookOpen,
-} from "lucide-react";
+  Cpu,
+  Layers,
+  Sparkles,
+} from 'lucide-react';
 
 export const SERVICES = [
   {

@@ -81,16 +81,21 @@ export const TESTIMONIALS = [
   },
 ] as const;
 
-export const TESTIMONIAL_AGGREGATE = [
-  { value: '98%', label: 'On-time milestone delivery' },
-  { value: '60+', label: 'Completed engagements' },
-  { value: '4.9/5', label: 'Post-project satisfaction' },
-] as const;
-
 export const SECTION_TESTIMONIALS = {
   tag: 'Client references',
   title: 'What leaders and teams',
   highlight: 'say about delivery',
   description:
     'Post-engagement feedback from product, engineering, operations, and academic clients—focused on scope discipline, measurable outcomes, and handover quality. Identifiers summarized where confidentiality applies.',
+  footnote:
+    'Metrics are compiled from internal delivery records and structured post-engagement surveys; they are not aggregated from public review marketplaces.',
+  clientVoicesLabel: 'Client voices',
+  clientVoicesAnimatedLabel: 'Client voices — continuously updated',
+  deliveryIndicatorsLabel: 'Delivery indicators',
 } as const;
+
+export const TESTIMONIAL_AGGREGATE = [
+  { value: '98%', label: 'On-time milestone delivery' },
+  { value: '60+', label: 'Completed engagements' },
+  { value: '4.9/5', label: 'Post-project satisfaction' },
+] as const;

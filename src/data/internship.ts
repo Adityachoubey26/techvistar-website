@@ -1,11 +1,27 @@
 /** 3-month program — aligned with public internship poster */
+export const INTERNSHIP_MARQUEE_SEGMENTS = [
+  'New batch open — 3-Month AI & Python Program',
+  'Limited seats — register now',
+  '1 hour daily training · Guest lectures · Certificate · Real-time projects',
+  'Call +91 9573157982 · techvistar.com',
+] as const;
+
 export const INTERNSHIP_PROGRAM = {
   eyebrow: 'Professional program',
   title: '3-Month AI & Python',
   titleAccent: 'Program',
   subtitle:
     'A structured, twelve-week pathway from Python fundamentals through applied AI and generative systems—delivered with weekly learning outcomes, guided practice, and a capstone project suitable for your portfolio.',
-
+  enrollingLabel: 'Now enrolling — new batch',
+  curriculumLabel: 'Curriculum structure',
+  syllabusLabel: 'Three-phase syllabus',
+  progressionLabel: 'Week-by-week progression',
+  weeklyFocusLabel: 'Weekly focus',
+  highlightsLabel: 'Program highlights',
+  audienceLabel: 'Who should apply',
+  registerButtonText: 'Enquire & register',
+  phaseLabel: 'Phase',
+  ofLabel: 'of',
   summaryStats: [
     { label: 'Duration', value: '3 months' },
     { label: 'Curriculum', value: '12 weeks' },
@@ -53,7 +69,6 @@ export const INTERNSHIP_PROGRAM = {
     'Program certificate on completion',
     'Real-time project experience',
   ],
-
   audience: [
     'B.Tech / degree students',
     'Diploma students',
@@ -66,5 +81,6 @@ export const INTERNSHIP_PROGRAM = {
     phoneDisplay: '+91 9573157982',
     phoneTel: '+919573157982',
     website: 'https://www.techvistar.com',
+    footnote: 'Internship certificate and portfolio-ready project guidance on successful completion.',
   },
 } as const;

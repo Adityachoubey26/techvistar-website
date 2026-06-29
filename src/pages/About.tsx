@@ -92,10 +92,10 @@ const About = () => {
           <section className={`${sectionPad} border-b border-slate-100 bg-slate-50/40`} aria-labelledby="focus-heading">
             <motion.div {...fadeUp}>
               <h2 id="focus-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-                What we focus on
+                {ABOUT_PAGE.focusAreasHeading}
               </h2>
               <p className="mt-2 text-sm leading-snug text-slate-600">
-                Six practice areas—scoped standalone or as part of a broader program.
+                {ABOUT_PAGE.focusAreasDescription}
               </p>
             </motion.div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
@@ -120,7 +120,7 @@ const About = () => {
           {/* Mission & vision */}
           <section className={`${sectionPad} border-b border-slate-100`} aria-labelledby="mission-heading">
             <h2 id="mission-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-              Mission & vision
+              {ABOUT_PAGE.missionVisionHeading}
             </h2>
             <div className="mt-5 grid gap-3 md:grid-cols-2 md:gap-4">
               {pillars.map((pillar) => (
@@ -148,7 +148,7 @@ const About = () => {
           {/* Operating principles */}
           <motion.section {...fadeUp} className={`${sectionPad} border-b border-slate-100 bg-slate-50/40`} aria-labelledby="principles-heading">
             <h2 id="principles-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-              How we run engagements
+              {ABOUT_PAGE.principlesHeading}
             </h2>
             <p className="mt-2 text-sm leading-snug text-slate-600">{ABOUT_PAGE.principlesIntro}</p>
             <ul className="mt-4 space-y-2.5 border-t border-slate-200/80 pt-4" role="list">
@@ -171,25 +171,25 @@ const About = () => {
               </div>
               <div className="min-w-0 flex-1">
                 <h2 id="location-heading" className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  Headquarters
+                  {ABOUT_PAGE.location.heading}
                 </h2>
                 <p className="mt-1 text-sm font-medium text-slate-800">{ABOUT_COPY.locationLine}</p>
-                <p className="mt-1 text-xs text-slate-600">Remote delivery for clients across India and overseas.</p>
+                <p className="mt-1 text-xs text-slate-600">{ABOUT_PAGE.location.detail}</p>
               </div>
             </div>
 
             <div className="mt-5 border-t border-slate-100 pt-5">
-              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-slate-500">Our commitment</p>
+              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-slate-500">{ABOUT_PAGE.commitmentHeading}</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">{ABOUT_COPY.closing}</p>
             </div>
 
             <div className="mt-5 flex flex-col gap-3 rounded-xl bg-primary px-4 py-4 text-primary-foreground sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <p className="text-xs font-medium leading-snug sm:max-w-[70%] sm:text-sm">
-                Discuss scope or a statement of work—we respond to new business inquiries within one business day.
+                {ABOUT_PAGE.ctaText}
               </p>
               <Button variant="secondary" size="default" className="shrink-0 border-0 bg-white text-primary hover:bg-slate-100 text-sm" asChild>
                 <Link to="/#contact" className="inline-flex items-center gap-2">
-                  Contact us
+                  {ABOUT_PAGE.ctaButtonText}
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               </Button>

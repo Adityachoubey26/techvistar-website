@@ -4,7 +4,7 @@ import {
   Code2,
   Share2,
   Headset,
-} from "lucide-react";
+} from 'lucide-react';
 
 export const SECTION_PROCESS = {
   tag: 'Delivery process',
@@ -12,6 +12,8 @@ export const SECTION_PROCESS = {
   highlight: 'without guesswork',
   description:
     'A four-phase VISTAR-style framework: align on vision and insight, lock strategy and build, ship technology with integration discipline, then accelerate with support and measurable optimization.',
+  footnote:
+    'The same phases apply whether discovery is a focused workshop or a full audit, and whether build is one squad or several—governance, documentation, and sign-off stay consistent throughout.',
 } as const;
 
 export const PROCESS_PILLARS = ['Vision', 'Insight', 'Strategy', 'Results'] as const;

@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PROJECTS, SECTION_PROJECTS } from "@/data";
+import { Link } from 'react-router-dom';
 
 export const ProjectsSection = () => {
   const { ref, isInView } = useAnimatedSection();
@@ -91,21 +92,19 @@ export const ProjectsSection = () => {
                         }`}>
                           
                           {/* Image Container */}
-                          <div className={`relative overflow-hidden bg-slate-100 border-b border-slate-200/60 w-full ${
+                          <Link to={`/work/${project.slug}`} className={`relative block overflow-hidden bg-slate-100 border-b border-slate-200/60 w-full ${
                             isFeatured ? 'h-52' : 'h-48'
                           }`}>
                             {/* Gradient Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-slate-900/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 z-10 pointer-events-none" />
                             
                             {/* Micro-CTA Case Study Overlay on hover */}
-                            {project.liveUrl !== '#' || project.githubUrl !== '#' ? (
-                              <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center pointer-events-none">
-                                <span className="px-3.5 py-1.5 rounded-full bg-white/95 text-slate-900 text-[0.6875rem] font-bold shadow-md backdrop-blur-sm transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 flex items-center gap-1.5">
-                                  View Case Study
-                                  <ArrowUpRight className="w-3.5 h-3.5" />
-                                </span>
-                              </div>
-                            ) : null}
+                            <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center pointer-events-none">
+                              <span className="px-3.5 py-1.5 rounded-full bg-white/95 text-slate-900 text-[0.6875rem] font-bold shadow-md backdrop-blur-sm transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 flex items-center gap-1.5">
+                                View Case Study
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              </span>
+                            </div>
 
                             {/* Floating Category Badge */}
                             <Badge
@@ -120,12 +119,12 @@ export const ProjectsSection = () => {
                             </Badge>
 
                             <img
-                              src={project.image}
+                              src={project.thumbnail}
                               alt={project.title}
                               className="h-full w-full object-cover transition-transform duration-750 ease-out transform-gpu group-hover:scale-105"
                               loading="lazy"
                             />
-                          </div>
+                          </Link>
 
                           {/* Text & Meta details container */}
                           <div className="flex flex-col flex-grow">
@@ -135,10 +134,10 @@ export const ProjectsSection = () => {
                                   ★ Featured Case
                                 </span>
                               )}
-                              <CardTitle className={`font-bold font-display text-slate-900 leading-snug ${
+                              <CardTitle className={`font-bold font-display text-slate-900 leading-snug hover:text-primary transition-colors ${
                                 isFeatured ? 'text-xl' : 'text-lg'
                               }`}>
-                                {project.title}
+                                <Link to={`/work/${project.slug}`}>{project.title}</Link>
                               </CardTitle>
                               <CardDescription className="text-slate-600 text-sm leading-relaxed line-clamp-[6] md:line-clamp-5">
                                 {project.description}

@@ -7,7 +7,7 @@ import {
   PROCESS_PILLARS,
   PROCESS_STEPS,
   SECTION_PROCESS,
-} from "@/data";
+} from '@/data';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -139,8 +139,7 @@ export const ProcessSection = () => {
           transition={{ duration: 0.4, delay: 0.32 }}
           className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-slate-600"
         >
-          The same phases apply whether discovery is a focused workshop or a full audit, and whether build is one squad or
-          several—governance, documentation, and sign-off stay consistent throughout.
+          {SECTION_PROCESS.footnote}
         </motion.p>
       </div>
     </SiteSection>

@@ -34,3 +34,37 @@ export const CONTACT_SIDEBAR = {
   slaBody:
     'We acknowledge new business inquiries within one business day (IST). For urgent production issues from existing clients, please call and reference your engagement ID.',
 } as const;
+
+export const CONTACT_FORM = {
+  actionUrl: 'https://script.google.com/macros/s/AKfycbyVFalUML0Mnb-S2RuoCA68d5422p5MvMWF_id4Uw-MIQyiH5PxiglxPGdHDV47QJ22/exec',
+  fields: {
+    name: {
+      label: 'Full name',
+      placeholder: 'Name as per business records',
+    },
+    email: {
+      label: 'Work email',
+      placeholder: 'name@organization.com',
+    },
+    subject: {
+      label: 'Subject / reference',
+      placeholder: 'e.g. RFP — mobile app Q3',
+    },
+    message: {
+      label: 'Requirements summary',
+      placeholder: 'Goals, timeline, budget band, integrations, compliance constraints, and success criteria.',
+    },
+  },
+  submitButton: 'Submit inquiry',
+  submittingText: 'Submitting…',
+  toasts: {
+    success: {
+      title: 'Inquiry received',
+      description: 'We will respond within one business day where possible.',
+    },
+    error: {
+      title: 'Unable to send',
+      description: 'Please try again or email us directly.',
+    },
+  },
+} as const;

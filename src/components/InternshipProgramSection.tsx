@@ -63,7 +63,7 @@ export const InternshipProgramSection = () => {
             variant="secondary"
             className="mb-5 border border-slate-200 bg-white/90 text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-slate-600 shadow-sm"
           >
-            Now enrolling — new batch
+            {INTERNSHIP_PROGRAM.enrollingLabel}
           </Badge>
           <h2
             id="internship-heading"
@@ -104,7 +104,7 @@ export const InternshipProgramSection = () => {
 
         <div className="mx-auto mb-8 flex items-center justify-center gap-2 text-slate-500">
           <Layers className="h-4 w-4 text-primary" aria-hidden />
-          <span className="text-sm font-semibold tracking-tight text-slate-700">Curriculum structure</span>
+          <span className="text-sm font-semibold tracking-tight text-slate-700">{INTERNSHIP_PROGRAM.curriculumLabel}</span>
           <Separator className="hidden max-w-[120px] flex-1 sm:block" />
         </div>
 
@@ -114,9 +114,9 @@ export const InternshipProgramSection = () => {
             <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
               <h3 className="flex items-center gap-2 font-display text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
                 <BookOpen className="h-4 w-4 text-primary" aria-hidden />
-                Three-phase syllabus
+                {INTERNSHIP_PROGRAM.syllabusLabel}
               </h3>
-              <span className="hidden text-xs text-slate-400 sm:inline">Week-by-week progression</span>
+              <span className="hidden text-xs text-slate-400 sm:inline">{INTERNSHIP_PROGRAM.progressionLabel}</span>
             </div>
 
             <div className="relative space-y-6 pl-0 sm:pl-2">
@@ -163,13 +163,13 @@ export const InternshipProgramSection = () => {
                         </h4>
                       </div>
                       <Badge variant="outline" className="shrink-0 border-slate-200 bg-white text-slate-700">
-                        Phase {pi + 1} of {phaseCount}
+                        {INTERNSHIP_PROGRAM.phaseLabel} {pi + 1} {INTERNSHIP_PROGRAM.ofLabel} {phaseCount}
                       </Badge>
                     </div>
 
                     <div className="p-5 sm:p-6">
                       <p className="mb-4 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                        Weekly focus
+                        {INTERNSHIP_PROGRAM.weeklyFocusLabel}
                       </p>
                       <ul className="grid gap-2 sm:grid-cols-2 sm:gap-3">
                         {phase.weeks.map((w) => (
@@ -201,7 +201,7 @@ export const InternshipProgramSection = () => {
             >
               <h3 className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
                 <Sparkles className="h-4 w-4 text-amber-500" aria-hidden />
-                Program highlights
+                {INTERNSHIP_PROGRAM.highlightsLabel}
               </h3>
               <ul className="space-y-3.5">
                 {INTERNSHIP_PROGRAM.highlights.map((item) => (
@@ -223,7 +223,7 @@ export const InternshipProgramSection = () => {
             >
               <h3 className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 font-display text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
                 <Users className="h-4 w-4 text-sky-600" aria-hidden />
-                Who should apply
+                {INTERNSHIP_PROGRAM.audienceLabel}
               </h3>
               <ul className="space-y-2.5">
                 {INTERNSHIP_PROGRAM.audience.map((item) => (
@@ -268,19 +268,19 @@ export const InternshipProgramSection = () => {
                     className="gap-2"
                   >
                     <ExternalLink className="h-4 w-4" aria-hidden />
-                    techvistar.com
+                    {new URL(INTERNSHIP_PROGRAM.cta.website).hostname}
                   </a>
                 </Button>
                 <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" asChild>
                   <Link to="/#register" className="gap-2">
-                    Enquire & register
+                    {INTERNSHIP_PROGRAM.registerButtonText}
                     <ArrowUpRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
               </div>
               <p className="mt-4 flex items-start gap-2 border-t border-white/10 pt-4 text-xs leading-relaxed text-slate-300">
                 <Award className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" aria-hidden />
-                Internship certificate and portfolio-ready project guidance on successful completion.
+                {INTERNSHIP_PROGRAM.cta.footnote}
               </p>
             </motion.div>
           </aside>

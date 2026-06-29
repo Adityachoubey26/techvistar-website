@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 import { useToast } from '@/hooks/use-toast';
-import { NAV_LINKS } from '@/data';
+import { NAV_LINKS, SITE, NAVBAR_REGISTER_FORM } from '@/data';
 import logo from '../logo.webp';
 
 export const Navbar = () => {
@@ -92,7 +92,7 @@ export const Navbar = () => {
       params.append('message', `Phone: ${registerData.phone}`);
 
       const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbyVFalUML0Mnb-S2RuoCA68d5422p5MvMWF_id4Uw-MIQyiH5PxiglxPGdHDV47QJ22/exec',
+        NAVBAR_REGISTER_FORM.actionUrl,
         {
           method: 'POST',
           headers: {
@@ -107,15 +107,15 @@ export const Navbar = () => {
       }
 
       toast({
-        title: 'Registration submitted',
-        description: 'Thank you. Our team will contact you shortly.',
+        title: NAVBAR_REGISTER_FORM.toasts.success.title,
+        description: NAVBAR_REGISTER_FORM.toasts.success.description,
       });
       setRegisterData({ name: '', email: '', phone: '' });
       setIsRegisterOpen(false);
     } catch {
       toast({
-        title: 'Submission failed',
-        description: 'Unable to submit now. Please try again shortly.',
+        title: NAVBAR_REGISTER_FORM.toasts.error.title,
+        description: NAVBAR_REGISTER_FORM.toasts.error.description,
         variant: 'destructive',
       });
     } finally {
@@ -154,7 +154,7 @@ export const Navbar = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src={logo}
-              alt="TechVistar"
+              alt={SITE.name}
               className={cn(
                 'h-8 w-8 sm:h-9 sm:w-9 md:h-11 md:w-11 rounded-full object-cover ring-2 transition-all',
                 // Mobile always on dark hero (transparent header over video)
@@ -170,7 +170,7 @@ export const Navbar = () => {
                 !onDarkHero && 'md:text-slate-900'
               )}
             >
-              TechVistar
+              {SITE.name}
             </span>
           </Link>
 
@@ -198,7 +198,7 @@ export const Navbar = () => {
               )}
               onClick={openRegisterModal}
             >
-              Register now
+              {NAVBAR_REGISTER_FORM.headerButtonText}
             </Button>
           </div>
 
@@ -237,7 +237,7 @@ export const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              <Button variant="hero" size="lg" className="mt-3 w-full" onClick={openRegisterModal}>
+              <Button variant="hero" size="lg" className="mt-4 w-full" onClick={openRegisterModal}>
                 Register now
               </Button>
             </div>
@@ -248,47 +248,47 @@ export const Navbar = () => {
       <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="font-display text-xl">Register now</DialogTitle>
+            <DialogTitle className="font-display text-xl">{NAVBAR_REGISTER_FORM.dialog.title}</DialogTitle>
             <DialogDescription>
-              Share your details and our team will connect with you about the next batch.
+              {NAVBAR_REGISTER_FORM.dialog.description}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleRegisterSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="reg-name">Full name</Label>
+              <Label htmlFor="reg-name">{NAVBAR_REGISTER_FORM.dialog.fields.name.label}</Label>
               <Input
                 id="reg-name"
                 type="text"
                 value={registerData.name}
                 onChange={(e) => setRegisterData((prev) => ({ ...prev, name: e.target.value }))}
-                placeholder="Your full name"
+                placeholder={NAVBAR_REGISTER_FORM.dialog.fields.name.placeholder}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="reg-email">Email ID</Label>
+              <Label htmlFor="reg-email">{NAVBAR_REGISTER_FORM.dialog.fields.email.label}</Label>
               <Input
                 id="reg-email"
                 type="email"
                 value={registerData.email}
                 onChange={(e) => setRegisterData((prev) => ({ ...prev, email: e.target.value }))}
-                placeholder="name@example.com"
+                placeholder={NAVBAR_REGISTER_FORM.dialog.fields.email.placeholder}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="reg-phone">Number</Label>
+              <Label htmlFor="reg-phone">{NAVBAR_REGISTER_FORM.dialog.fields.phone.label}</Label>
               <Input
                 id="reg-phone"
                 type="tel"
                 value={registerData.phone}
                 onChange={(e) => setRegisterData((prev) => ({ ...prev, phone: e.target.value }))}
-                placeholder="+91 9876543210"
+                placeholder={NAVBAR_REGISTER_FORM.dialog.fields.phone.placeholder}
                 required
               />
             </div>
             <Button type="submit" variant="hero" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting…' : 'Submit'}
+              {isSubmitting ? NAVBAR_REGISTER_FORM.dialog.submittingText : NAVBAR_REGISTER_FORM.dialog.submitButton}
             </Button>
           </form>
         </DialogContent>

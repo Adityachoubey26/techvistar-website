@@ -25,3 +25,29 @@ export const FOOTER_LINKS = {
   ],
   social: SOCIAL_LINKS,
 } as const;
+
+export const FOOTER_NEWSLETTER = {
+  actionUrl: 'https://script.google.com/macros/s/AKfycbxBjqGscTRlKH9XHiT022xxGJ4BKYRj9p3c0aiKP30mj_11ZVRExsQfL114Y7DOVwwE/exec',
+  title: 'Updates',
+  description: 'Occasional notes on product delivery and tech tips.',
+  placeholder: 'Email address',
+  buttonText: 'Subscribe',
+  toasts: {
+    success: {
+      title: 'Subscribed',
+      description: 'Thank you for subscribing.',
+    },
+    error: {
+      title: 'Error',
+      description: 'Failed to subscribe. Please try again.',
+    },
+  },
+} as const;
+
+export const FOOTER_COPYRIGHT = {
+  text: 'TechVistar. All rights reserved.',
+  links: [
+    { label: 'Privacy', href: '#' },
+    { label: 'Terms', href: '#' },
+  ],
+} as const;

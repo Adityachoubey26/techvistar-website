@@ -19,18 +19,15 @@ export const JsonLd = () => {
         description: SITE.description,
         address: {
           '@type': 'PostalAddress',
-          addressLocality: 'Hyderabad',
-          addressRegion: 'Telangana',
-          addressCountry: 'IN',
+          addressLocality: SITE.address.locality,
+          addressRegion: SITE.address.region,
+          addressCountry: SITE.address.countryCode,
         },
         areaServed: {
           '@type': 'Country',
-          name: 'India',
+          name: SITE.address.countryName,
         },
-        sameAs: [
-          'https://www.linkedin.com/company/techvistar',
-          'https://www.instagram.com/tech_vistar',
-        ],
+        sameAs: [...SITE.socials],
       },
       {
         '@type': 'ProfessionalService',
