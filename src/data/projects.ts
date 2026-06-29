@@ -23,6 +23,7 @@ export interface Project {
   gallery: string[];
   tags: string[]; // For keyword matching, search, and related project queries
   status: 'Completed' | 'In Progress'; // Project status for sorting and filtering
+  serviceSlugs: string[]; // Map projects to relevant services
 }
 
 export const PROJECTS: readonly Project[] = [
@@ -56,6 +57,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img1, img2],
     tags: ['routing', 'logistics', 'optimization', 'maps', 'operations-research', 'dashboard'],
     status: 'Completed',
+    serviceSlugs: ['web-development', 'custom-software-development'],
   },
   {
     id: 2,
@@ -87,6 +89,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img2, img3],
     tags: ['sustainability', 'sensors', 'iot', 'data-pipeline', 'reporting', 'analytics'],
     status: 'Completed',
+    serviceSlugs: ['web-development', 'custom-software-development', 'digital-marketing'],
   },
   {
     id: 3,
@@ -118,6 +121,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img3, img4],
     tags: ['machine-learning', 'agriculture', 'computer-vision', 'tensorflow', 'classification', 'offline-first'],
     status: 'Completed',
+    serviceSlugs: ['ai-automation', 'mobile-app-development'],
   },
   {
     id: 4,
@@ -149,6 +153,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img4, img1],
     tags: ['nlp', 'sentiment-analysis', 'text-processing', 'scikit-learn', 'api', 'dashboard'],
     status: 'Completed',
+    serviceSlugs: ['ai-automation', 'custom-software-development'],
   },
   {
     id: 5,
@@ -180,6 +185,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img3, img2],
     tags: ['llm', 'resume-parsing', 'ats', 'productivity', 'recruitment', 'ai-assistant'],
     status: 'Completed',
+    serviceSlugs: ['ai-automation'],
   },
   {
     id: 6,
@@ -211,6 +217,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img4, img3],
     tags: ['healthcare', 'risk-scoring', 'explainable-ai', 'machine-learning', 'ehr', 'analytics'],
     status: 'Completed',
+    serviceSlugs: ['web-development', 'ai-automation'],
   },
   {
     id: 7,
@@ -242,6 +249,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img1, img4],
     tags: ['translation', 'nlp', 'llm', 'websockets', 'localization', 'real-time'],
     status: 'Completed',
+    serviceSlugs: ['ai-automation', 'custom-software-development'],
   },
   {
     id: 8,
@@ -273,6 +281,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img2, img1],
     tags: ['translation-memory', 'batch-processing', 'document-parsing', 'docx', 'pdf', 'workers'],
     status: 'Completed',
+    serviceSlugs: ['cloud-devops', 'ai-automation', 'custom-software-development'],
   },
   {
     id: 9,
@@ -304,6 +313,7 @@ export const PROJECTS: readonly Project[] = [
     gallery: [img3, img4],
     tags: ['finance', 'fintech', 'analytics', 'compliance', 'rbac', 'reporting'],
     status: 'Completed',
+    serviceSlugs: ['web-development', 'custom-software-development'],
   },
 ] as const;
 

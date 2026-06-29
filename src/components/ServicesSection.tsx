@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -74,49 +75,51 @@ export const ServicesSection = () => {
             >
               <div className="h-1 w-full bg-gradient-to-r from-primary via-emerald-500 to-teal-600" aria-hidden />
 
-              <motion.div
-                className="flex flex-1 flex-col p-6 sm:p-7"
-                custom={index}
-                variants={contentStagger}
-                initial="hidden"
-                animate={isInView ? 'visible' : 'hidden'}
-              >
-                <motion.div variants={rowVariants} className="flex gap-4">
-                  <div
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/12 to-primary/5 text-primary shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9)] ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-[1.04]"
-                    aria-hidden
-                  >
-                    <service.icon className="h-6 w-6" strokeWidth={1.75} />
-                  </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-slate-900">
-                      {service.title}
-                    </h3>
-                  </div>
-                </motion.div>
+              <Link to={`/services/${service.slug}`} className="flex flex-1 flex-col h-full">
+                <motion.div
+                  className="flex flex-1 flex-col p-6 sm:p-7"
+                  custom={index}
+                  variants={contentStagger}
+                  initial="hidden"
+                  animate={isInView ? 'visible' : 'hidden'}
+                >
+                  <motion.div variants={rowVariants} className="flex gap-4">
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/12 to-primary/5 text-primary shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9)] ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-[1.04]"
+                      aria-hidden
+                    >
+                      <service.icon className="h-6 w-6" strokeWidth={1.75} />
+                    </div>
+                    <div className="min-w-0 flex-1 pt-0.5">
+                      <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-slate-900 group-hover:text-primary transition-colors">
+                        {service.title}
+                      </h3>
+                    </div>
+                  </motion.div>
 
-                <motion.p variants={rowVariants} className="mt-4 flex-1 text-sm leading-relaxed text-slate-600 sm:text-[0.9375rem]">
-                  {service.description}
-                </motion.p>
+                  <motion.p variants={rowVariants} className="mt-4 flex-1 text-sm leading-relaxed text-slate-600 sm:text-[0.9375rem]">
+                    {service.description}
+                  </motion.p>
 
-                <motion.div variants={rowVariants} className="mt-6">
-                  <p className="mb-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-slate-500">
-                    Typical deliverables
-                  </p>
-                  <div className="rounded-xl border border-slate-100 bg-gradient-to-b from-slate-50/95 to-white p-4 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95)]">
-                    <ul className="space-y-2.5" role="list">
-                      {service.deliverables.map((item) => (
-                        <li key={item} className="flex gap-3 text-[0.8125rem] leading-snug text-slate-700">
-                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/15">
-                            <Check className="h-3 w-3 stroke-[2.5]" aria-hidden />
-                          </span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <motion.div variants={rowVariants} className="mt-6">
+                    <p className="mb-3 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                      Typical deliverables
+                    </p>
+                    <div className="rounded-xl border border-slate-100 bg-gradient-to-b from-slate-50/95 to-white p-4 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.95)]">
+                      <ul className="space-y-2.5" role="list">
+                        {service.offerings.map((item) => (
+                          <li key={item} className="flex gap-3 text-[0.8125rem] leading-snug text-slate-700">
+                            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/15">
+                              <Check className="h-3 w-3 stroke-[2.5]" aria-hidden />
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              </Link>
 
               <div
                 className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-slate-950/[0.04] transition-[box-shadow] duration-300 group-hover:shadow-[0_12px_40px_-16px_rgba(22,163,74,0.18)] group-hover:ring-primary/15"

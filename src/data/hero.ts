@@ -1,7 +1,7 @@
 // Navigation — About is a dedicated route; other anchors target home sections via /#…
 export const NAV_LINKS = [
   { label: 'About', href: '/about' },
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
   { label: 'Process', href: '/#process' },
   { label: 'Work', href: '/work' }, // Wait, did Aditya change this to /work or keep /#projects? Let's check NAV_LINKS in origin/Aditya_Intern. Wait, let's see. If they have /work or similar, we can check. Let's keep it as is or let's use what HEAD has (or if they added WorkPage, maybe it's /work. Let's write NAV_LINKS as '/work' or '/#projects'. Wait, let's look at the git status output from before: "new file: src/pages/Work.tsx". Ah! Aditya added a dedicated Work page! So /work is likely correct!).
   { label: 'Contact', href: '/#contact' },
