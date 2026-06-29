@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
+import servicesBg from '../assets/services-bg.png';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -34,12 +35,20 @@ const Services = () => {
         <Navbar />
 
         {/* Services Hero */}
-        <section className="pt-32 pb-16 bg-white border-b border-slate-200">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 font-display">
+        <section className="relative overflow-hidden bg-zinc-950 pt-20 pb-12 md:pt-24 md:pb-16 border-b border-zinc-900">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-right md:bg-center opacity-85 pointer-events-none"
+            style={{ backgroundImage: `url(${servicesBg})` }}
+          />
+          {/* Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent z-0 pointer-events-none" />
+
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 font-display">
               Our Services
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl">
+            <p className="text-lg text-zinc-300 max-w-2xl leading-relaxed">
               We offer structured, productized growth services spanning full-stack delivery, revenue operations, automation, and applied artificial intelligence.
             </p>
           </div>
