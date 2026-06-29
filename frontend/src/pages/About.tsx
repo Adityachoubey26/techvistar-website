@@ -135,7 +135,7 @@ const About = () => {
 
       {/* Page Hero with Custom Background & Animations */}
       <section 
-        className="relative overflow-hidden bg-zinc-950 pt-28 pb-20 md:pt-36 md:pb-28 border-b border-zinc-900"
+        className="relative overflow-hidden bg-zinc-950 pt-20 pb-12 md:pt-24 md:pb-16 border-b border-zinc-900"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -221,7 +221,7 @@ const About = () => {
             </motion.div>
 
             {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 relative flex items-center justify-center h-[350px] sm:h-[400px]">
+            <div className="lg:col-span-5 relative flex items-center justify-center h-[260px] sm:h-[300px]">
               {/* Soft radial glow under the globe */}
               <div className="absolute w-44 h-44 rounded-full bg-emerald-500/10 blur-[60px] pointer-events-none" />
 
