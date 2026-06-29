@@ -231,7 +231,7 @@ const About = () => {
                   x: mousePosition.x * 12,
                   y: mousePosition.y * 12,
                 }}
-                className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
+                className="relative w-36 h-36 lg:w-44 lg:h-44 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
                 animate={{
                   boxShadow: [
                     '0 0 35px rgba(16,185,129,0.04)',
