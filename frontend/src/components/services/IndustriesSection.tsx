@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Service } from '@/data/services';
 import { INDUSTRIES } from '@/data/industries';
 import { ShieldCheck } from 'lucide-react';
+import { GlowHover } from '@/components/animations/MicroInteractions';
 
 interface SectionProps {
   service: Service;
@@ -34,23 +35,24 @@ export const IndustriesSection = ({ service }: SectionProps) => {
           {finalIndustries.map((ind) => {
             const IndustryIcon = ind.icon || ShieldCheck;
             return (
-              <Link 
-                key={ind.id} 
-                to={`/industries/${ind.slug}`}
-                className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-500/20 hover:bg-emerald-50/[0.15] transition-all group"
-              >
-                <span className={`p-2.5 rounded-lg bg-gradient-to-br ${ind.industriesColor} text-white shrink-0 shadow-sm`}>
-                  <IndustryIcon className="h-4 w-4" />
-                </span>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-slate-800 group-hover:text-primary transition-colors leading-snug">
-                    {ind.title}
+              <GlowHover key={ind.id} glowColor="rgba(16, 185, 129, 0.05)" className="rounded-xl">
+                <Link 
+                  to={`/industries/${ind.slug}`}
+                  className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-500/20 hover:bg-emerald-50/[0.15] transition-all group h-full"
+                >
+                  <span className={`p-2.5 rounded-lg bg-gradient-to-br ${ind.industriesColor} text-white shrink-0 shadow-sm`}>
+                    <IndustryIcon className="h-4.5 w-4.5" />
                   </span>
-                  <span className="text-[9px] text-slate-400 font-medium">
-                    Explore solutions &rarr;
-                  </span>
-                </div>
-              </Link>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-slate-800 group-hover:text-primary transition-colors leading-snug">
+                      {ind.title}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-medium">
+                      Explore solutions &rarr;
+                    </span>
+                  </div>
+                </Link>
+              </GlowHover>
             );
           })}
         </div>
