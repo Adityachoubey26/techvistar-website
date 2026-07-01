@@ -29,6 +29,8 @@ import {
   HelpCircle 
 } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
+import { SpotlightCard } from '@/components/animations/SpotlightCard';
+import { resolveSpotlightColors } from './Industries';
 import servicesBg from '../assets/services-bg.png'; // Reusing premium background asset
 
 export const IndustryDetails = () => {
@@ -86,6 +88,7 @@ export const IndustryDetails = () => {
   }
 
   const Icon = industry.icon;
+  const colors = resolveSpotlightColors(industry.id);
 
   // Resolve related services and projects objects
   const relatedServicesData = SERVICES.filter((s) => industry.services.includes(s.slug) && s.status === 'active');
@@ -153,7 +156,7 @@ export const IndustryDetails = () => {
           <div className="container-custom max-w-5xl mx-auto px-4 relative z-10">
             <Link 
               to="/industries" 
-              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-350 transition-colors mb-6"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-450 hover:text-emerald-350 transition-colors mb-6"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Industries</span>
@@ -218,14 +221,19 @@ export const IndustryDetails = () => {
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   {industry.challenges.map((challenge, index) => (
-                    <Card key={index} className="border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)]">
+                    <SpotlightCard 
+                      key={index} 
+                      spotlightColor="rgba(239, 68, 68, 0.03)"
+                      borderColor="rgba(239, 68, 68, 0.15)"
+                      className="border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] hover:scale-[1.01] transition-transform duration-300"
+                    >
                       <h3 className="font-display font-extrabold text-teal-955 text-base mb-2">
                         {index + 1}. {challenge.title}
                       </h3>
                       <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
                         {challenge.description}
                       </p>
-                    </Card>
+                    </SpotlightCard>
                   ))}
                 </div>
               </div>
@@ -240,7 +248,12 @@ export const IndustryDetails = () => {
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   {industry.solutions.map((solution, index) => (
-                    <Card key={index} className="border border-emerald-100 bg-emerald-50/[0.15] p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)]">
+                    <SpotlightCard 
+                      key={index} 
+                      spotlightColor="rgba(16, 185, 129, 0.04)"
+                      borderColor="rgba(16, 185, 129, 0.2)"
+                      className="border border-emerald-100 bg-emerald-50/[0.12] p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)] hover:scale-[1.01] transition-transform duration-300"
+                    >
                       <div className="flex gap-3">
                         <div className="h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5">
                           <Check className="h-3.5 w-3.5" />
@@ -254,7 +267,7 @@ export const IndustryDetails = () => {
                           </p>
                         </div>
                       </div>
-                    </Card>
+                    </SpotlightCard>
                   ))}
                 </div>
               </div>
@@ -275,19 +288,25 @@ export const IndustryDetails = () => {
                         <Link 
                           key={svc.id} 
                           to={`/services/${svc.slug}`}
-                          className="group block border border-slate-200/50 bg-white p-5 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-emerald-500/20 transition-all"
+                          className="group block rounded-2xl overflow-hidden"
                         >
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="p-2 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 transition-colors">
-                              <SvcIcon className="h-4.5 w-4.5" />
-                            </span>
-                            <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base">
-                              {svc.title}
-                            </h3>
-                          </div>
-                          <p className="text-slate-550 text-xs font-medium leading-relaxed line-clamp-2">
-                            {svc.shortDescription}
-                          </p>
+                          <SpotlightCard
+                            spotlightColor={colors.spotlight}
+                            borderColor={colors.border}
+                            className="border border-slate-200/50 bg-white p-5 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-emerald-500/20 hover:scale-[1.01] transition-all duration-300"
+                          >
+                            <div className="flex items-center gap-3 mb-3">
+                              <span className="p-2 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-300">
+                                <SvcIcon className="h-4.5 w-4.5" />
+                              </span>
+                              <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base">
+                                {svc.title}
+                              </h3>
+                            </div>
+                            <p className="text-slate-550 text-xs font-medium leading-relaxed line-clamp-2">
+                              {svc.shortDescription}
+                            </p>
+                          </SpotlightCard>
                         </Link>
                       );
                     })}
@@ -309,39 +328,45 @@ export const IndustryDetails = () => {
                       <Link 
                         key={proj.id} 
                         to={`/work/${proj.slug}`}
-                        className="group flex flex-col sm:flex-row gap-4 border border-slate-200/50 bg-white p-4 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all"
+                        className="group block rounded-2xl overflow-hidden"
                       >
-                        {proj.thumbnail && (
-                          <div className="w-full sm:w-1/3 h-32 rounded-xl overflow-hidden shrink-0 bg-slate-50">
-                            <img 
-                              src={proj.thumbnail} 
-                              alt={proj.title} 
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
+                        <SpotlightCard
+                          spotlightColor={colors.spotlight}
+                          borderColor={colors.border}
+                          className="flex flex-col sm:flex-row gap-4 border border-slate-200/50 bg-white p-4 rounded-2xl shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.05)] hover:scale-[1.005] transition-all duration-300"
+                        >
+                          {proj.thumbnail && (
+                            <div className="w-full sm:w-1/3 h-32 rounded-xl overflow-hidden shrink-0 bg-slate-50 relative">
+                              <img 
+                                src={proj.thumbnail} 
+                                alt={proj.title} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
+                          )}
+                          <div className="flex-grow flex flex-col justify-between py-1 px-1">
+                            <div>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-primary">
+                                {proj.category}
+                              </span>
+                              <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base mt-1">
+                                {proj.title}
+                              </h3>
+                              <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mt-2">
+                                {proj.description}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between mt-4">
+                              <span className="text-[10px] font-bold text-slate-400">
+                                Client: {proj.client}
+                              </span>
+                              <span className="text-xs font-bold text-primary flex items-center gap-1">
+                                View case study
+                                <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1.5" />
+                              </span>
+                            </div>
                           </div>
-                        )}
-                        <div className="flex-grow flex flex-col justify-between py-1 px-1">
-                          <div>
-                            <span className="text-[10px] font-black uppercase tracking-wider text-primary">
-                              {proj.category}
-                            </span>
-                            <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base mt-1">
-                              {proj.title}
-                            </h3>
-                            <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mt-2">
-                              {proj.description}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between mt-4">
-                            <span className="text-[10px] font-bold text-slate-400">
-                              Client: {proj.client}
-                            </span>
-                            <span className="text-xs font-bold text-primary flex items-center gap-1">
-                              View case study
-                              <ChevronRight className="h-3 w-3" />
-                            </span>
-                          </div>
-                        </div>
+                        </SpotlightCard>
                       </Link>
                     ))}
                   </div>
@@ -363,13 +388,13 @@ export const IndustryDetails = () => {
                   <div className="relative border-l border-slate-200/80 ml-3 pl-6 space-y-8 mt-6">
                     {PROCESS_STEPS.map((step, idx) => {
                       return (
-                        <div key={idx} className="relative">
+                        <div key={idx} className="relative group/timeline">
                           {/* Dot step indicator */}
-                          <span className="absolute -left-[35px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white border-2 border-emerald-500 text-emerald-600 font-bold text-xs">
+                          <span className="absolute -left-[35px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white border-2 border-emerald-500 text-emerald-600 font-bold text-xs group-hover/timeline:scale-110 group-hover/timeline:bg-emerald-500 group-hover/timeline:text-white transition-all">
                             {idx + 1}
                           </span>
                           <div>
-                            <h3 className="font-display font-extrabold text-teal-955 text-sm sm:text-base">
+                            <h3 className="font-display font-extrabold text-teal-955 text-sm sm:text-base group-hover/timeline:text-primary transition-colors">
                               {step.title}
                             </h3>
                             <p className="text-slate-500 text-xs font-medium mt-1 leading-relaxed max-w-2xl">
@@ -377,7 +402,7 @@ export const IndustryDetails = () => {
                             </p>
                             <div className="mt-3 flex flex-wrap gap-1.5">
                               {step.deliverables.map((deliv, dIdx) => (
-                                <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg">
+                                <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg transition-transform hover:scale-[1.03]">
                                   {deliv}
                                 </Badge>
                               ))}
@@ -404,9 +429,9 @@ export const IndustryDetails = () => {
                       <AccordionItem 
                         key={index} 
                         value={`item-${index}`}
-                        className="border border-slate-200/50 bg-white rounded-2xl px-4 overflow-hidden shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)]"
+                        className="border border-slate-200/50 bg-white rounded-2xl px-4 overflow-hidden shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] transition-all"
                       >
-                        <AccordionTrigger className="hover:no-underline font-display font-extrabold text-teal-955 text-xs sm:text-sm text-left py-4">
+                        <AccordionTrigger className="hover:no-underline font-display font-extrabold text-teal-955 text-xs sm:text-sm text-left py-4 transition-colors hover:text-primary">
                           {faq.question}
                         </AccordionTrigger>
                         <AccordionContent className="text-slate-500 text-xs sm:text-sm font-semibold leading-relaxed pt-0 pb-4">
@@ -431,7 +456,7 @@ export const IndustryDetails = () => {
                 <div className="space-y-6">
                   {industry.statistics.map((stat, index) => (
                     <div key={index} className="group border-b border-slate-100 last:border-0 pb-4 last:pb-0">
-                      <div className={`text-3xl font-black bg-gradient-to-r ${industry.industriesColor} bg-clip-text text-transparent`}>
+                      <div className={`text-3xl font-black bg-gradient-to-r ${industry.industriesColor} bg-clip-text text-transparent group-hover:scale-105 transition-transform origin-left duration-300`}>
                         {stat.value}
                       </div>
                       <div className="text-teal-955 text-xs sm:text-sm font-bold mt-1">
@@ -459,7 +484,7 @@ export const IndustryDetails = () => {
                   {industry.technologies.map((tech) => (
                     <Badge 
                       key={tech} 
-                      className="bg-slate-50 hover:bg-slate-150 text-slate-650 border border-slate-200/60 font-bold px-2.5 py-1 rounded-lg text-xs"
+                      className="bg-slate-50 hover:bg-slate-100 text-slate-650 border border-slate-200/60 font-bold px-2.5 py-1 rounded-lg text-xs transition-all duration-200 hover:scale-[1.05]"
                     >
                       {tech}
                     </Badge>
@@ -477,7 +502,7 @@ export const IndustryDetails = () => {
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-emerald-550/5 blur-[120px] pointer-events-none" />
           
           <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-3 block">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-3 block animate-pulse">
               {industry.title} Partnering
             </span>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tighter">
@@ -489,10 +514,10 @@ export const IndustryDetails = () => {
               </p>
             )}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10" asChild>
+              <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
                 <Link to={industry.cta.buttonLink}>{industry.cta.buttonText}</Link>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl" asChild>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
                 <Link to="/industries">Browse Other Verticals</Link>
               </Button>
             </div>

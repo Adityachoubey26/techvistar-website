@@ -3,15 +3,31 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { INDUSTRIES, Industry } from '@/data/industries';
 import { SERVICES } from '@/data/services';
-import { PROJECTS } from '@/data/projects';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
+import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import servicesBg from '../assets/services-bg.png'; // Reusing premium background asset
+
+// Shared color utility for premium spotlight rendering
+export const resolveSpotlightColors = (id: string) => {
+  const colorMap: Record<string, { spotlight: string; border: string }> = {
+    healthcare: { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' },
+    education: { spotlight: 'rgba(59, 130, 246, 0.06)', border: 'rgba(59, 130, 246, 0.25)' },
+    finance: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'retail-ecommerce': { spotlight: 'rgba(244, 63, 94, 0.06)', border: 'rgba(244, 63, 94, 0.25)' },
+    manufacturing: { spotlight: 'rgba(249, 115, 22, 0.06)', border: 'rgba(249, 115, 22, 0.25)' },
+    'real-estate': { spotlight: 'rgba(6, 182, 212, 0.06)', border: 'rgba(6, 182, 212, 0.25)' },
+    logistics: { spotlight: 'rgba(139, 92, 246, 0.06)', border: 'rgba(139, 92, 246, 0.25)' },
+    agriculture: { spotlight: 'rgba(34, 197, 94, 0.06)', border: 'rgba(34, 197, 94, 0.25)' },
+    hospitality: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+  };
+  return colorMap[id] || { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' };
+};
 
 export const Industries = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -169,7 +185,7 @@ export const Industries = () => {
                   placeholder="Search industries, services, or tech stack..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-0 text-white placeholder-slate-450 focus:outline-none focus:ring-0 text-xs sm:text-sm py-2.5 font-medium"
+                  className="w-full bg-transparent border-0 text-white placeholder-slate-455 focus:outline-none focus:ring-0 text-xs sm:text-sm py-2.5 font-medium"
                 />
                 {searchQuery && (
                   <button 
@@ -200,6 +216,7 @@ export const Industries = () => {
               >
                 {filteredIndustries.map((ind: Industry) => {
                   const Icon = ind.icon;
+                  const colors = resolveSpotlightColors(ind.id);
                   return (
                     <motion.div
                       key={ind.id}
@@ -209,13 +226,17 @@ export const Industries = () => {
                       exit={{ opacity: 0, scale: 0.96 }}
                       transition={{ duration: 0.4 }}
                     >
-                      <Card className="h-full flex flex-col border border-slate-200/50 bg-white shadow-[0_4px_25px_-4px_rgba(10,46,43,0.03)] hover:shadow-[0_16px_35px_-8px_rgba(10,46,43,0.08)] hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden">
+                      <SpotlightCard 
+                        spotlightColor={colors.spotlight}
+                        borderColor={colors.border}
+                        className="h-full flex flex-col border border-slate-200/50 bg-white shadow-[0_4px_25px_-4px_rgba(10,46,43,0.03)] hover:shadow-[0_18px_38px_-8px_rgba(10,46,43,0.09)] hover:scale-[1.01] hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
+                      >
                         {/* Elegant Teal/Emerald Gradient strip */}
                         <div className={`h-1.5 bg-gradient-to-r ${ind.industriesColor}`} />
 
                         <CardHeader className="p-6 pb-4">
                           <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 rounded-xl bg-emerald-50/80 text-emerald-600 border border-emerald-100/60 shadow-sm shrink-0">
+                            <div className="p-3 rounded-xl bg-emerald-50/80 text-emerald-600 border border-emerald-100/60 shadow-sm shrink-0 group-hover:rotate-6 group-hover:scale-110 transition-transform duration-300">
                               <Icon className="h-5 w-5" />
                             </div>
                             {ind.statistics.length > 0 && (
@@ -224,7 +245,7 @@ export const Industries = () => {
                               </Badge>
                             )}
                           </div>
-                          <CardTitle className="font-display text-xl font-extrabold text-teal-950 tracking-tight leading-snug">
+                          <CardTitle className="font-display text-xl font-extrabold text-teal-955 tracking-tight leading-snug">
                             {ind.title}
                           </CardTitle>
                           <CardDescription className="text-slate-500 font-medium text-xs mt-2.5 line-clamp-2 leading-relaxed">
@@ -268,7 +289,7 @@ export const Industries = () => {
                               </div>
                               <div className="flex flex-wrap gap-1.5">
                                 {ind.services.slice(0, 3).map((svcSlug) => (
-                                  <Badge key={svcSlug} variant="secondary" className="bg-teal-50/60 hover:bg-teal-50 text-[10px] text-teal-800 font-bold border border-teal-100/30 px-2 py-0.5 rounded-lg">
+                                  <Badge key={svcSlug} variant="secondary" className="bg-teal-50/60 hover:bg-teal-50 text-[10px] text-teal-800 font-bold border border-teal-100/30 px-2 py-0.5 rounded-lg transition-all duration-200 hover:scale-[1.03]">
                                     {resolveServiceTitle(svcSlug)}
                                   </Badge>
                                 ))}
@@ -283,7 +304,7 @@ export const Industries = () => {
                               </div>
                               <div className="flex flex-wrap gap-1.5">
                                 {ind.technologies.slice(0, 4).map((tech) => (
-                                  <Badge key={tech} variant="outline" className="text-[10px] text-slate-500 border-slate-200 bg-white font-semibold px-2 py-0.5 rounded-lg">
+                                  <Badge key={tech} variant="outline" className="text-[10px] text-slate-500 border-slate-200 bg-white font-semibold px-2 py-0.5 rounded-lg transition-all duration-200 hover:scale-[1.03]">
                                     {tech}
                                   </Badge>
                                 ))}
@@ -304,12 +325,12 @@ export const Industries = () => {
                             >
                               <Link to={`/industries/${ind.slug}`}>
                                 <span>Explore details</span>
-                                <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                                <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1.5" />
                               </Link>
                             </Button>
                           </div>
                         </CardContent>
-                      </Card>
+                      </SpotlightCard>
                     </motion.div>
                   );
                 })}
@@ -349,10 +370,10 @@ export const Industries = () => {
               We collaborate closely with technical and product stakeholders to scope, design, and deploy secure, high-performance systems tailored to your vertical's specific requirements.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10" asChild>
+              <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
                 <Link to="/contact">Get in Touch</Link>
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl" asChild>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
                 <Link to="/work">View Anonymized Portfolio</Link>
               </Button>
             </div>
