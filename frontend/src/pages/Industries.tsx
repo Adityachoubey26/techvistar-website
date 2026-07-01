@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { INDUSTRIES, Industry } from '@/data/industries';
 import { SERVICES } from '@/data/services';
 import { Navbar } from '@/components/Navbar';
@@ -12,6 +12,7 @@ import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
+import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
 
 // Shared color utility for premium spotlight rendering
 export const resolveSpotlightColors = (id: string) => {
@@ -63,11 +64,7 @@ export const Industries = () => {
         {/* Premium Redesigned Industries Hero with Aurora Background */}
         <AuroraBackground className="bg-gradient-to-b from-zinc-950 via-[#041d1a] to-zinc-950 pt-20 pb-20 md:pt-32 md:pb-28 border-b border-emerald-950/40">
           <div className="container-custom relative z-10 text-center max-w-4xl mx-auto px-4 mt-6">
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-            >
+            <BlurReveal duration={0.6}>
               <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
                 Custom Vertical Architecture
               </Badge>
@@ -80,15 +77,10 @@ export const Industries = () => {
               <p className="mt-6 text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-semibold leading-relaxed">
                 We combine industry-specific domain expertise with scalable software engineering to deliver secure, regulatory-compliant, and high-performance digital ecosystems.
               </p>
-            </motion.div>
+            </BlurReveal>
 
             {/* Interactive Search Bar */}
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="mt-10 max-w-xl mx-auto relative group"
-            >
+            <BlurReveal duration={0.6} delay={0.15} className="mt-10 max-w-xl mx-auto relative group">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-xl opacity-60 group-hover:opacity-90 transition-opacity" />
               <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden focus-within:border-emerald-500/40 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all px-4 py-1.5 backdrop-blur-md">
                 <Search className="h-5 w-5 text-slate-450 mr-3 shrink-0" />
@@ -102,13 +94,13 @@ export const Industries = () => {
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="text-[10px] font-bold text-slate-450 hover:text-white px-2 py-1 bg-white/10 rounded-lg transition-colors"
+                    className="text-[10px] font-bold text-slate-400 hover:text-white px-2 py-1 bg-white/10 rounded-lg transition-colors"
                   >
                     Clear
                   </button>
                 )}
               </div>
-            </motion.div>
+            </BlurReveal>
           </div>
         </AuroraBackground>
 
@@ -120,8 +112,7 @@ export const Industries = () => {
           <div className="container-custom max-w-6xl mx-auto px-4 relative">
             <AnimatePresence mode="popLayout">
               {filteredIndustries.length > 0 ? (
-                <motion.div 
-                  layout
+                <StaggerContainer 
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                   {filteredIndustries.map((ind: Industry, index: number) => {
@@ -130,13 +121,8 @@ export const Industries = () => {
                     const isFeatured = index % 3 === 0;
 
                     return (
-                      <motion.div
+                      <StaggerItem
                         key={ind.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
-                        transition={{ duration: 0.4 }}
                         className={isFeatured ? 'md:col-span-2' : 'md:col-span-1'}
                       >
                         <SpotlightCard 
@@ -254,10 +240,10 @@ export const Industries = () => {
 
                           </div>
                         </SpotlightCard>
-                      </motion.div>
+                      </StaggerItem>
                     );
                   })}
-                </motion.div>
+                </StaggerContainer>
               ) : (
                 <motion.div 
                   initial={{ opacity: 0 }}
@@ -285,23 +271,25 @@ export const Industries = () => {
         {/* Global Redesigned CTA Section with Aurora Background Effect */}
         <AuroraBackground className="bg-gradient-to-br from-zinc-950 via-[#031d1b] to-zinc-950 border-t border-emerald-950/40 py-20 md:py-28">
           <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
-            <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-              Enterprise Collaboration
-            </Badge>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight mt-3">
-              Looking for a custom enterprise platform?
-            </h2>
-            <p className="mt-6 text-slate-300 max-w-xl mx-auto text-sm sm:text-base font-semibold leading-relaxed">
-              We collaborate closely with technical and product stakeholders to scope, design, and deploy secure, high-performance systems tailored to your vertical's specific requirements.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
-                <Link to="/contact">Get in Touch</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
-                <Link to="/work">View Anonymized Portfolio</Link>
-              </Button>
-            </div>
+            <ScaleIn>
+              <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
+                Enterprise Collaboration
+              </Badge>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight mt-3">
+                Looking for a custom enterprise platform?
+              </h2>
+              <p className="mt-6 text-slate-300 max-w-xl mx-auto text-sm sm:text-base font-semibold leading-relaxed">
+                We collaborate closely with technical and product stakeholders to scope, design, and deploy secure, high-performance systems tailored to your vertical's specific requirements.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
+                  <Link to="/contact">Get in Touch</Link>
+                </Button>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
+                  <Link to="/work">View Anonymized Portfolio</Link>
+                </Button>
+              </div>
+            </ScaleIn>
           </div>
         </AuroraBackground>
 
