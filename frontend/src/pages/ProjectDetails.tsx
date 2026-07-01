@@ -1,12 +1,13 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { PROJECTS, Project } from '@/data/projects';
+import { INDUSTRIES } from '@/data/industries';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { ArrowLeft, ExternalLink, Github, Calendar, Briefcase, User } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github, Calendar, Briefcase, User, Building2 } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 
 const ProjectDetails = () => {
@@ -14,6 +15,15 @@ const ProjectDetails = () => {
 
   // Find current project
   const project = PROJECTS.find((p) => p.slug === slug);
+
+  // Find related industries dynamically
+  const matchingIndustries = project ? INDUSTRIES.filter(
+    (ind) => 
+      ind.caseStudies.includes(project.slug) || 
+      ind.title.toLowerCase() === project.industry.toLowerCase() || 
+      ind.id.toLowerCase() === project.industry.toLowerCase()
+  ) : [];
+
 
   // Set document title if project exists
   useEffect(() => {
@@ -192,8 +202,25 @@ const ProjectDetails = () => {
                         <span className="font-semibold text-slate-800">Completed:</span> {new Date(project.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
                       </div>
                     </div>
+                    {matchingIndustries.length > 0 && (
+                      <div className="flex items-center gap-3 text-slate-600 text-sm">
+                        <Building2 className="h-4 w-4 text-slate-400" />
+                        <div>
+                          <span className="font-semibold text-slate-800">Industry:</span>{' '}
+                          {matchingIndustries.map((ind, idx) => (
+                            <span key={ind.id}>
+                              {idx > 0 && ', '}
+                              <Link to={`/industries/${ind.slug}`} className="text-primary hover:underline font-medium">
+                                {ind.title}
+                              </Link>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+
 
                 <hr className="border-slate-100" />
 
