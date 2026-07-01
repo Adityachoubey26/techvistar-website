@@ -9,3 +9,5 @@ export * from "./testimonials";
 export * from "./contact";
 export * from "./footer";
 export * from "./faqs";
+export * from "./industries";
+
