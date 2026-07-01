@@ -32,9 +32,9 @@ import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
 import { resolveSpotlightColors } from './Industries';
-import { PremiumImage } from '@/components/common/PremiumImage';
 import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
-
+import { PremiumImage } from '@/components/common/PremiumImage';
+import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';
 
 export const IndustryDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -107,9 +107,11 @@ export const IndustryDetails = () => {
               <div className="lg:col-span-7">
                 <BlurReveal duration={0.6}>
                   <div className="flex flex-wrap gap-2 items-center mb-4">
-                    <Badge variant="outline" className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.15em] text-[10px] px-2.5 py-0.5 rounded-full">
-                      Industry Verticals
-                    </Badge>
+                    <ShineEffect className="rounded-full">
+                      <Badge variant="outline" className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.15em] text-[10px] px-2.5 py-0.5 rounded-full">
+                        Industry Verticals
+                      </Badge>
+                    </ShineEffect>
                     {relatedProjectsData.length > 0 && (
                       <Badge variant="secondary" className="bg-white/10 text-white font-semibold text-[10px] px-2.5 py-0.5 border border-white/5 rounded-full">
                         {relatedProjectsData.length} Case Studies Deployed
@@ -183,34 +185,38 @@ export const IndustryDetails = () => {
                       Strategic Capabilities
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <SpotlightCard 
-                        spotlightColor={colors.spotlight} 
-                        borderColor={colors.border}
-                        className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between"
-                      >
-                        <div>
-                          <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
-                            Enterprise Governance
-                          </h4>
-                          <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
-                            Configured from day one to comply with vertical-specific regulatory guidelines, access logs, and data encryption.
-                          </p>
-                        </div>
-                      </SpotlightCard>
-                      <SpotlightCard 
-                        spotlightColor={colors.spotlight} 
-                        borderColor={colors.border}
-                        className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between"
-                      >
-                        <div>
-                          <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
-                            API-First Integrations
-                          </h4>
-                          <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
-                            Seamlessly connecting modern microservices databases with pre-existing legacy structures and third-party contracts.
-                          </p>
-                        </div>
-                      </SpotlightCard>
+                      <GlowHover glowColor={colors.border}>
+                        <SpotlightCard 
+                          spotlightColor={colors.spotlight} 
+                          borderColor={colors.border}
+                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
+                        >
+                          <div>
+                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                              Enterprise Governance
+                            </h4>
+                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
+                              Configured from day one to comply with vertical-specific regulatory guidelines, access logs, and data encryption.
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
+                      <GlowHover glowColor={colors.border}>
+                        <SpotlightCard 
+                          spotlightColor={colors.spotlight} 
+                          borderColor={colors.border}
+                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
+                        >
+                          <div>
+                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                              API-First Integrations
+                            </h4>
+                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
+                              Seamlessly connecting modern microservices databases with pre-existing legacy structures and third-party contracts.
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
                     </div>
                   </div>
                 </ScaleIn>
@@ -260,23 +266,25 @@ export const IndustryDetails = () => {
               <StaggerContainer className="grid grid-cols-1 gap-4">
                 {industry.challenges.map((challenge, index) => (
                   <StaggerItem key={index}>
-                    <SpotlightCard 
-                      spotlightColor="rgba(239, 68, 68, 0.02)"
-                      borderColor="rgba(239, 68, 68, 0.15)"
-                      className="flex flex-col sm:flex-row gap-4 sm:items-start border border-slate-200/40 bg-white p-5 rounded-2xl shadow-sm hover:scale-[1.005] transition-all"
-                    >
-                      <div className="px-3 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100/60 text-[10px] font-black uppercase tracking-wider shrink-0 w-fit">
-                        Challenge 0{index + 1}
-                      </div>
-                      <div>
-                        <h3 className="font-display font-extrabold text-teal-955 text-base mb-1">
-                          {challenge.title}
-                        </h3>
-                        <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
-                          {challenge.description}
-                        </p>
-                      </div>
-                    </SpotlightCard>
+                    <GlowHover glowColor="rgba(239, 68, 68, 0.05)">
+                      <SpotlightCard 
+                        spotlightColor="rgba(239, 68, 68, 0.02)"
+                        borderColor="rgba(239, 68, 68, 0.15)"
+                        className="flex flex-col sm:flex-row gap-4 sm:items-start border border-slate-200/40 bg-white p-5 rounded-2xl shadow-sm hover:scale-[1.005] transition-all"
+                      >
+                        <div className="px-3 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100/60 text-[10px] font-black uppercase tracking-wider shrink-0 w-fit">
+                          Challenge 0{index + 1}
+                        </div>
+                        <div>
+                          <h3 className="font-display font-extrabold text-teal-955 text-base mb-1">
+                            {challenge.title}
+                          </h3>
+                          <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
+                            {challenge.description}
+                          </p>
+                        </div>
+                      </SpotlightCard>
+                    </GlowHover>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
@@ -296,28 +304,30 @@ export const IndustryDetails = () => {
               <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {industry.solutions.map((solution, index) => (
                   <StaggerItem key={index}>
-                    <SpotlightCard 
-                      spotlightColor="rgba(16, 185, 129, 0.04)"
-                      borderColor="rgba(16, 185, 129, 0.2)"
-                      className="border border-emerald-100/60 bg-emerald-50/[0.12] p-6 rounded-2xl h-full shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)]"
-                    >
-                      <div className="flex gap-4">
-                        <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                          <Check className="h-3.5 w-3.5" />
+                    <GlowHover glowColor="rgba(16, 185, 129, 0.05)">
+                      <SpotlightCard 
+                        spotlightColor="rgba(16, 185, 129, 0.04)"
+                        borderColor="rgba(16, 185, 129, 0.2)"
+                        className="border border-emerald-100/60 bg-emerald-50/[0.12] p-6 rounded-2xl h-full shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)]"
+                      >
+                        <div className="flex gap-4">
+                          <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                            <Check className="h-3.5 w-3.5" />
+                          </div>
+                          <div>
+                            <span className="text-[9px] font-black uppercase tracking-wider text-emerald-600 mb-1 block">
+                              Solution Strategy 0{index + 1}
+                            </span>
+                            <h3 className="font-display font-extrabold text-teal-955 text-base mb-2">
+                              {solution.title}
+                            </h3>
+                            <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
+                              {solution.description}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-[9px] font-black uppercase tracking-wider text-emerald-600 mb-1 block">
-                            Solution Strategy 0{index + 1}
-                          </span>
-                          <h3 className="font-display font-extrabold text-teal-955 text-base mb-2">
-                            {solution.title}
-                          </h3>
-                          <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
-                            {solution.description}
-                          </p>
-                        </div>
-                      </div>
-                    </SpotlightCard>
+                      </SpotlightCard>
+                    </GlowHover>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
@@ -344,28 +354,30 @@ export const IndustryDetails = () => {
                           to={`/services/${svc.slug}`}
                           className="group block rounded-2xl overflow-hidden h-full"
                         >
-                          <SpotlightCard
-                            spotlightColor={colors.spotlight}
-                            borderColor={colors.border}
-                            className="h-full flex flex-col justify-between border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.05)] hover:scale-[1.01] transition-all duration-300"
-                          >
-                            <div className="flex flex-col flex-grow">
-                              <div className="flex items-center gap-3 mb-4">
-                                <span className="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-300 shadow-sm shrink-0 flex items-center justify-center">
-                                  <SvcIcon className="h-4.5 w-4.5" />
-                                </span>
-                                <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base leading-snug">
-                                  {svc.title}
-                                </h3>
+                          <GlowHover glowColor={colors.border} className="h-full">
+                            <SpotlightCard
+                              spotlightColor={colors.spotlight}
+                              borderColor={colors.border}
+                              className="h-full flex flex-col justify-between border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.05)] hover:scale-[1.01] transition-all duration-300"
+                            >
+                              <div className="flex flex-col flex-grow">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <span className="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-300 shadow-sm shrink-0 flex items-center justify-center">
+                                    <SvcIcon className="h-4.5 w-4.5" />
+                                  </span>
+                                  <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base leading-snug">
+                                    {svc.title}
+                                  </h3>
+                                </div>
+                                <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mb-4 flex-grow">
+                                  {svc.shortDescription}
+                                </p>
                               </div>
-                              <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mb-4 flex-grow">
-                                {svc.shortDescription}
-                              </p>
-                            </div>
-                            <span className="text-[10px] font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform mt-auto shrink-0">
-                              Explore service details <ChevronRight className="h-3 w-3" />
-                            </span>
-                          </SpotlightCard>
+                              <span className="text-[10px] font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform mt-auto shrink-0">
+                                Explore service details <ChevronRight className="h-3 w-3" />
+                              </span>
+                            </SpotlightCard>
+                          </GlowHover>
                         </Link>
                       </StaggerItem>
                     );
@@ -393,52 +405,54 @@ export const IndustryDetails = () => {
                         to={`/work/${proj.slug}`}
                         className="group block rounded-2xl overflow-hidden"
                       >
-                        <SpotlightCard
-                          spotlightColor={colors.spotlight}
-                          borderColor={colors.border}
-                          className="flex flex-col md:flex-row gap-6 border border-slate-200/50 bg-white p-5 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_16px_36px_rgb(0,0,0,0.05)] hover:scale-[1.003] transition-all duration-300"
-                        >
-                          {proj.thumbnail && (
-                            <div className="w-full md:w-[32%] h-44 rounded-xl overflow-hidden shrink-0 bg-slate-50 relative border border-slate-200/40">
-                              <img 
-                                src={proj.thumbnail} 
-                                alt={proj.title} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            </div>
-                          )}
-                          <div className="flex-grow flex flex-col justify-between py-1">
-                            <div>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-[10px] font-black uppercase tracking-wider text-primary">
-                                  {proj.category}
-                                </span>
-                                <span className="text-[10px] text-slate-400">|</span>
-                                <span className="text-[10px] font-bold text-slate-400">
-                                  Client: {proj.client}
+                        <GlowHover glowColor={colors.border}>
+                          <SpotlightCard
+                            spotlightColor={colors.spotlight}
+                            borderColor={colors.border}
+                            className="flex flex-col md:flex-row gap-6 border border-slate-200/50 bg-white p-5 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_16px_36px_rgb(0,0,0,0.05)] hover:scale-[1.003] transition-all duration-300"
+                          >
+                            {proj.thumbnail && (
+                              <div className="w-full md:w-[32%] h-44 rounded-xl overflow-hidden shrink-0 bg-slate-50 relative border border-slate-200/40">
+                                <img 
+                                  src={proj.thumbnail} 
+                                  alt={proj.title} 
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                              </div>
+                            )}
+                            <div className="flex-grow flex flex-col justify-between py-1">
+                              <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-[10px] font-black uppercase tracking-wider text-primary">
+                                    {proj.category}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400">|</span>
+                                  <span className="text-[10px] font-bold text-slate-400">
+                                    Client: {proj.client}
+                                  </span>
+                                </div>
+                                <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-lg sm:text-xl mt-1">
+                                  {proj.title}
+                                </h3>
+                                <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed mt-2.5">
+                                  {proj.description}
+                                </p>
+                              </div>
+                              <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-50">
+                                <div className="flex flex-wrap gap-1.5">
+                                  {proj.technologies.slice(0, 4).map((tech) => (
+                                    <Badge key={tech} variant="outline" className="text-[9px] text-slate-400 border-slate-200 bg-white px-2 py-0.5 rounded">
+                                      {tech}
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <span className="text-xs font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform shrink-0">
+                                  View details <ChevronRight className="h-3.5 w-3.5" />
                                 </span>
                               </div>
-                              <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-lg sm:text-xl mt-1">
-                                {proj.title}
-                              </h3>
-                              <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed mt-2.5">
-                                {proj.description}
-                              </p>
                             </div>
-                            <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-slate-50">
-                              <div className="flex flex-wrap gap-1.5">
-                                {proj.technologies.slice(0, 4).map((tech) => (
-                                  <Badge key={tech} variant="outline" className="text-[9px] text-slate-400 border-slate-200 bg-white px-2 py-0.5 rounded">
-                                    {tech}
-                                  </Badge>
-                                ))}
-                              </div>
-                              <span className="text-xs font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform shrink-0">
-                                View details <ChevronRight className="h-3.5 w-3.5" />
-                              </span>
-                            </div>
-                          </div>
-                        </SpotlightCard>
+                          </SpotlightCard>
+                        </GlowHover>
                       </Link>
                     </StaggerItem>
                   ))}
@@ -521,9 +535,11 @@ export const IndustryDetails = () => {
         <AuroraBackground className="bg-gradient-to-br from-zinc-950 via-[#031c19] to-zinc-950 border-t border-emerald-950/40 py-20 md:py-24">
           <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
             <ScaleIn>
-              <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-                Let's partner up
-              </Badge>
+              <ShineEffect className="inline-block rounded-full mb-4">
+                <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
+                  Let's partner up
+                </Badge>
+              </ShineEffect>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight mt-3">
                 {industry.cta.title}
               </h2>
@@ -533,12 +549,16 @@ export const IndustryDetails = () => {
                 </p>
               )}
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
-                  <Link to={industry.cta.buttonLink}>{industry.cta.buttonText}</Link>
-                </Button>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
-                  <Link to="/industries">Browse Other Verticals</Link>
-                </Button>
+                <Magnetic>
+                  <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
+                    <Link to={industry.cta.buttonLink}>{industry.cta.buttonText}</Link>
+                  </Button>
+                </Magnetic>
+                <Magnetic>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
+                    <Link to="/industries">Browse Other Verticals</Link>
+                  </Button>
+                </Magnetic>
               </div>
             </ScaleIn>
           </div>
