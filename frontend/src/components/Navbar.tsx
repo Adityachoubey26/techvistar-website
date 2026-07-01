@@ -144,7 +144,7 @@ export const Navbar = () => {
       links: [
         { label: 'Case Studies', to: '/work', icon: FolderGit2 },
         { label: 'Featured Projects', to: '/work?featured=true', icon: Briefcase },
-        { label: 'Industries', to: '/work', icon: Building2 },
+        { label: 'Industries', to: '/industries', icon: Building2 },
         { label: 'Technologies', to: '/work', icon: HelpCircle },
       ]
     },

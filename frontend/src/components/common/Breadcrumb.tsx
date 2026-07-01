@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { PROJECTS } from '@/data/projects';
 import { SERVICES } from '@/data/services';
+import { INDUSTRIES } from '@/data/industries';
 
 export const Breadcrumb = () => {
   const location = useLocation();
@@ -26,6 +27,11 @@ export const Breadcrumb = () => {
       if (service) return service.title;
     }
 
+    if (parentSegment === 'industries') {
+      const industry = INDUSTRIES.find((i) => i.slug === segment);
+      if (industry) return industry.title;
+    }
+
     // Static mappings
     const staticMap: Record<string, string> = {
       about: 'About Us',
@@ -33,7 +39,9 @@ export const Breadcrumb = () => {
       services: 'Services',
       careers: 'Careers',
       contact: 'Contact Us',
+      industries: 'Industries',
     };
+
 
     if (staticMap[segment]) {
       return staticMap[segment];
