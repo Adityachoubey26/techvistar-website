@@ -2,6 +2,10 @@ import mobilityImg from '../assets/mobility_routing_dashboard.png';
 import sustainabilityImg from '../assets/sustainability_dashboard.png';
 import cropImg from '../assets/crop_health_analysis.png';
 import nlpImg from '../assets/sentiment_nlp_dashboard.png';
+import resumeReviewImg from '../assets/resume_review_assistant.png';
+import clinicalRiskImg from '../assets/clinical_risk_scoring.png';
+import aiTranslatorImg from '../assets/ai_translator.png';
+import aiTranslatorBatchesImg from '../assets/ai_translator_batches.png';
 
 export interface Project {
   id: number;
@@ -171,7 +175,7 @@ export const PROJECTS: readonly Project[] = [
     slug: 'resume-review-assistant',
     description:
       'Guided scoring against role templates, ATS-oriented formatting checks, and actionable suggestions—keeping human review in the loop.',
-    thumbnail: cropImg,
+    thumbnail: resumeReviewImg,
     category: 'Productivity AI',
     technologies: ['Python', 'OpenAI', 'React', 'TypeScript'],
     liveUrl: '#',
@@ -205,7 +209,7 @@ export const PROJECTS: readonly Project[] = [
     slug: 'clinical-risk-scoring-prototype',
     description:
       'Interpretable ML pipeline with calibrated outputs and confidence bands, focused on safe presentation of assistive—not diagnostic—information.',
-    thumbnail: nlpImg,
+    thumbnail: clinicalRiskImg,
     category: 'Healthcare ML',
     technologies: ['Python', 'React', 'MongoDB', 'TypeScript'],
     liveUrl: '#',
@@ -239,7 +243,7 @@ export const PROJECTS: readonly Project[] = [
     slug: 'ai-translator',
     description:
       'Multilingual translation service with configurable engines (neural + optional LLM assist), customer glossary and “do-not-translate” lists, segment-level confidence, and a review queue for low-confidence spans. Exposes REST/WebSocket APIs for product embeds plus an operator console for batch runs.',
-    thumbnail: mobilityImg,
+    thumbnail: aiTranslatorImg,
     category: 'NLP / GenAI',
     technologies: ['Python', 'OpenAI', 'React', 'TypeScript', 'Express'],
     liveUrl: '#',
@@ -273,7 +277,7 @@ export const PROJECTS: readonly Project[] = [
     slug: 'ai-translator-documents-batches',
     description:
       'Long-form and high-volume translation pipeline: structured uploads (DOCX/PDF/HTML), layout-aware segmentation, translation memory reuse, and export that preserves headings, tables, and inline markup where feasible. Job queue with retries, per-file status, and downloadable artefacts for audit.',
-    thumbnail: sustainabilityImg,
+    thumbnail: aiTranslatorBatchesImg,
     category: 'NLP / GenAI',
     technologies: ['Python', 'PostgreSQL', 'Docker', 'AWS'],
     liveUrl: '#',
