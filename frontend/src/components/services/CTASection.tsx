@@ -1,6 +1,7 @@
 import { Service } from '@/data/services';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Calendar } from 'lucide-react';
+import { MessageSquare, Calendar, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface SectionProps {
   service: Service;
@@ -25,26 +26,69 @@ export const CTASection = ({ service }: SectionProps) => {
   };
 
   return (
-    <section id="contact" className="bg-gradient-to-r from-primary to-emerald-600 rounded-2xl p-8 text-white shadow-md scroll-mt-24 text-center max-w-4xl mx-auto">
-      <h2 className="text-xl md:text-3xl font-bold font-display mb-3">
-        Ready to build your next digital product?
-      </h2>
-      <p className="text-white/80 text-xs md:text-sm max-w-lg mx-auto mb-8 leading-relaxed">
-        {service.cta || 'Let\'s collaborate on structuring and engineering your next web portal or AI integration.'}
-      </p>
-      
-      <div className="flex flex-wrap gap-4 justify-center">
-        <Button onClick={scrollToForm} className="bg-white text-primary hover:bg-slate-50 font-bold border-none shadow-none px-6 py-2.5 rounded-lg inline-flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
-          Book Free Consultation
-        </Button>
-        <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 font-bold px-6 py-2.5 rounded-lg inline-flex items-center gap-2" asChild>
-          <a href="mailto:architect@techvistar.com?subject=Consultation%20Escalation">
-            <MessageSquare className="h-4 w-4" />
-            Talk to an Expert
-          </a>
-        </Button>
+    <motion.section 
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      id="contact" 
+      className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-[#10B981] to-emerald-700 border border-emerald-500/30 rounded-3xl p-8 md:p-12 text-white shadow-[0_20px_50px_rgba(16,185,129,0.15)] scroll-mt-24 text-center max-w-4xl mx-auto"
+    >
+      {/* Blurred background glows */}
+      <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+      <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-emerald-300/20 blur-2xl pointer-events-none" />
+
+      {/* Grid Pattern overlay */}
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-10" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <pattern id="cta-mesh" width="16" height="16" patternUnits="userSpaceOnUse">
+            <path d="M 16 0 L 0 0 0 16" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#cta-mesh)" />
+        </svg>
       </div>
-    </section>
+
+      <div className="relative z-10 space-y-6">
+        {/* Floating badge */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-xs font-semibold select-none">
+          <Sparkles className="h-3 w-3 text-emerald-100 animate-pulse" />
+          <span>Let's collaborate</span>
+        </div>
+
+        <h2 className="text-2xl md:text-4xl font-black font-display tracking-tight leading-tight max-w-2xl mx-auto">
+          Ready to build your next digital product?
+        </h2>
+        
+        <p className="text-emerald-50/90 text-xs md:text-sm max-w-xl mx-auto leading-relaxed font-medium">
+          {service.cta || 'Let\'s collaborate on structuring and engineering your next web portal or AI integration.'}
+        </p>
+        
+        <div className="flex flex-wrap gap-4 justify-center pt-2">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+            <Button 
+              onClick={scrollToForm} 
+              className="bg-white text-emerald-700 hover:bg-slate-50 font-bold border-none shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_-4px_rgba(0,0,0,0.2)] px-7 py-3 rounded-xl inline-flex items-center gap-2 transition-all h-11 text-xs md:text-sm"
+            >
+              <Calendar className="h-4.5 w-4.5" />
+              Book Free Consultation
+            </Button>
+          </motion.div>
+          
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+            <Button 
+              variant="outline" 
+              className="border-white/30 hover:border-white text-white hover:bg-white/10 font-bold px-7 py-3 rounded-xl inline-flex items-center gap-2 h-11 text-xs md:text-sm transition-all"
+              asChild
+            >
+              <a href="mailto:architect@techvistar.com?subject=Consultation%20Escalation">
+                <MessageSquare className="h-4.5 w-4.5" />
+                Talk to an Expert
+              </a>
+            </Button>
+          </motion.div>
+        </div>
+      </div>
+    </motion.section>
   );
 };
+export default CTASection;

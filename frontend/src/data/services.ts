@@ -248,7 +248,10 @@ export const SERVICES: readonly Service[] = [
     caseStudies: [],
     technologies: ['OpenAI API', 'LangChain', 'Python', 'n8n', 'Pinecone', 'Hugging Face'],
     faqs: [
-      { question: 'How do you prevent AI hallucinations?', answer: 'We implement Retrieval-Augmented Generation (RAG) to restrict model contexts to verified internal documentation and apply strict content filters.' }
+      { question: 'How do you prevent AI hallucinations?', answer: 'We implement Retrieval-Augmented Generation (RAG) to restrict model contexts to verified internal documentation and apply strict content filters.' },
+      { question: 'How do we manage API token costs and usage limits?', answer: 'We build semantic caching layers to reuse response structures, throttle heavy consumer requests, and route lighter queries to open-source models like Llama 3.' },
+      { question: 'Will our proprietary business data be used to train public LLMs?', answer: 'No. We configure private cloud instances (AWS/Azure VPC) and strictly utilize zero-data retention enterprise API contracts so your data remains entirely confidential.' },
+      { question: 'Can your AI workflows connect to our legacy internal systems?', answer: 'Yes. We construct custom webhooks, secure REST API bridges, and database synchronization pipelines to connect legacy platforms with modern orchestration frameworks.' }
     ],
     benefits: [
       'Substantial reduction in manual administrative support ticket volume',

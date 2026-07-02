@@ -66,7 +66,7 @@ const ServiceDetails = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-slate-50 pt-24 pb-16">
+      <main className="min-h-screen bg-slate-50 pt-0">
         
         {/* Hero Section */}
         <ServiceHero service={service} />
@@ -77,7 +77,7 @@ const ServiceDetails = () => {
         <ServiceSectionNavigation />
 
         {/* Dynamic Detail Modules Content Area */}
-        <section className="container mx-auto px-4 max-w-6xl mt-8">
+        <section className="container mx-auto px-4 max-w-6xl mt-8 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Left/Main Column for Detail Blocks */}

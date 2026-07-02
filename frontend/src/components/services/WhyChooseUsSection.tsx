@@ -41,7 +41,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
   };
 
   return (
-    <section id="why-us" className="relative overflow-hidden bg-white border border-slate-200/80 rounded-3xl p-6 md:p-10 scroll-mt-24 shadow-sm">
+    <section id="why-us" className="relative overflow-hidden bg-white border-2 border-emerald-500/20 rounded-3xl p-6 md:p-10 scroll-mt-24 shadow-sm">
       
       {/* Accent backdrop radial light */}
       <div className="absolute right-0 top-0 w-80 h-80 rounded-full bg-emerald-500/[0.03] blur-3xl pointer-events-none z-0" />
@@ -52,7 +52,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
         <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
           <Sparkles className="h-3 w-3 text-emerald-600" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 font-display">Why Choose TechVistar</h2>
+        <h2 className="text-xl font-black text-slate-900 font-display tracking-tight">Why Choose TechVistar</h2>
       </div>
 
       {/* Grid of highlight cards */}
@@ -68,7 +68,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
             key={idx} 
             variants={itemVariants}
             whileHover={prefersReducedMotion ? {} : { y: -4 }}
-            className="group flex gap-4 p-5 rounded-2xl border-2 border-emerald-500/10 bg-emerald-50/10 hover:bg-emerald-500/[0.04] hover:border-emerald-500/30 transition-all duration-300 hover:shadow-[0_12px_30px_-10px_rgba(16,185,129,0.12)]"
+            className="group flex gap-4 p-5 rounded-2xl border-2 border-emerald-500/20 bg-emerald-50/40 hover:bg-emerald-50/70 hover:border-emerald-500/40 transition-all duration-300 hover:shadow-[0_12px_30px_-10px_rgba(16,185,129,0.12)]"
           >
             {/* Clean, simple highlighted star badge */}
             <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-100/30 group-hover:scale-105 group-hover:bg-emerald-500 transition-all duration-300">
