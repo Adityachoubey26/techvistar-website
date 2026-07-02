@@ -85,8 +85,7 @@ export const RelatedServicesSection = ({ service }: SectionProps) => {
       <motion.div 
         variants={containerVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        animate="visible"
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
         {relatedServices.map((rs) => {

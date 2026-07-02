@@ -59,8 +59,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
       <motion.div 
         variants={containerVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 relative z-10"
       >
         {list.map((item, idx) => (

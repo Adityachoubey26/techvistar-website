@@ -56,8 +56,7 @@ export const ProcessSection = ({ service }: SectionProps) => {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          animate="visible"
           className="space-y-6"
         >
           {service.process.map((step, idx) => (

@@ -768,10 +768,10 @@ export const SERVICES: readonly Service[] = [
   },
   {
     id: '9',
-    slug: 'brand-creative-design',
-    title: 'Branding & Creative Design',
+    slug: 'branding',
+    title: 'Branding',
     shortDescription: 'Distinct visual identities, logo marks, brand assets, and marketing collateral with cohesive brand narratives.',
-    longDescription: 'We translate your business goals into premium visual marks that establish immediate market trust. From logo creation and typography guidelines to packaging designs, marketing assets, presentations, and kinetic vector movements, we establish unified identity standards that reflect your core values.',
+    longDescription: 'We translate your business goals into premium visual marks that establish immediate market trust. From logo creation and typography guidelines to packaging designs, marketing assets, presentations, and visual identity books, we establish unified standards that reflect your core values.',
     category: 'Design',
     icon: PenTool,
     coverImage: serviceBranding,
@@ -781,10 +781,8 @@ export const SERVICES: readonly Service[] = [
       'Logo Design',
       'Brand Identity Systems',
       'Packaging Design',
-      'Graphic Design Assets',
-      'Marketing Creatives',
-      'Presentation Design',
-      'Motion Graphics'
+      'Corporate Guidelines',
+      'Brand Books'
     ],
     detailedOfferings: [
       {
@@ -802,18 +800,18 @@ export const SERVICES: readonly Service[] = [
         iconName: 'pentool'
       },
       {
-        title: 'Presentation Deck Design',
-        description: 'Format corporate slide decks matching layout constraints, brand details, and font scales.',
-        badges: ['Keynote', 'PowerPoint', 'Typography'],
+        title: 'Packaging & Print Design',
+        description: 'Create premium box mockups, label shapes, and print materials aligned with corporate branding.',
+        badges: ['InDesign', 'Packaging', 'Print'],
         color: 'purple',
         iconName: 'layouttemplate'
       },
       {
-        title: 'Motion Graphics',
-        description: 'Inject kinetic energy into assets with custom transitions and animated brand elements.',
-        badges: ['After Effects', 'SVG Animation', 'Motion'],
+        title: 'Corporate Stationery',
+        description: 'Align business cards, letterheads, envelope scales, and corporate files to the visual identity.',
+        badges: ['Stationery', 'Business Cards', 'PDF'],
         color: 'orange',
-        iconName: 'sparkles'
+        iconName: 'checkcircle'
       }
     ],
     process: [
@@ -823,7 +821,7 @@ export const SERVICES: readonly Service[] = [
       { step: 4, title: 'Identity Documentation', description: 'Draft detailed brand books defining minimum clearance rules.' }
     ],
     caseStudies: [],
-    technologies: ['Illustrator', 'Photoshop', 'InDesign', 'After Effects', 'Figma'],
+    technologies: ['Illustrator', 'Photoshop', 'InDesign', 'Figma'],
     faqs: [
       { question: 'What is included in the brand style guide?', answer: 'It defines your primary/secondary logomark rules, typography hierarchies, exact color formulas, and asset templates.' }
     ],
@@ -846,6 +844,87 @@ export const SERVICES: readonly Service[] = [
       { value: '2.5x', label: 'Brand Recall', iconType: 'star', colorTheme: 'purple' },
       { value: '45+', label: 'Page Guideline', iconType: 'clock', colorTheme: 'gold' },
       { value: 'SVG', label: 'Format Export', iconType: 'rocket', colorTheme: 'blue' }
+    ],
+    dashboardImage: 'resume_review_assistant'
+  },
+  {
+    id: '9-2',
+    slug: 'creative-design',
+    title: 'Creative Design',
+    shortDescription: 'Motion graphics, digital illustrations, marketing creatives, and custom vector assets for campaigns.',
+    longDescription: 'We craft compelling digital artwork and kinetic media designed to engage online audiences. From marketing banner ads and corporate slide sheets to social media vectors and custom site illustrations, we support campaign needs with fast execution pipelines.',
+    category: 'Design',
+    icon: Layers,
+    coverImage: serviceBranding,
+    thumbnail: serviceBranding,
+    overview: 'Design interactive, animated, and visual assets tailored for digital platforms and social campaigns.',
+    offerings: [
+      'Graphic Design Assets',
+      'Marketing Creatives',
+      'Presentation Design',
+      'Motion Graphics',
+      'Digital Illustrations'
+    ],
+    detailedOfferings: [
+      {
+        title: 'Motion Graphics',
+        description: 'Inject kinetic energy into assets with custom transitions, logo animation, and video loops.',
+        badges: ['After Effects', 'Premiere Pro', 'Lottie'],
+        color: 'blue',
+        iconName: 'sparkles'
+      },
+      {
+        title: 'Custom Illustrations',
+        description: 'Compile unique UI graphics, vector scenes, and icon sets tailored to site styles.',
+        badges: ['Illustrator', 'Figma', 'Vector'],
+        color: 'purple',
+        iconName: 'pentool'
+      },
+      {
+        title: 'Presentation & Deck Design',
+        description: 'Format corporate slide decks matching layout constraints, brand details, and font scales.',
+        badges: ['Keynote', 'PowerPoint', 'Slides'],
+        color: 'green',
+        iconName: 'layouttemplate'
+      },
+      {
+        title: 'Marketing & Ad Creatives',
+        description: 'Draft conversion-oriented social ad banners, banner sets, and visual campaign blocks.',
+        badges: ['Photoshop', 'Figma', 'Ads'],
+        color: 'orange',
+        iconName: 'megaphone'
+      }
+    ],
+    process: [
+      { step: 1, title: 'Visual Direction', description: 'Define asset themes, illustration styles, and animation paces.' },
+      { step: 2, title: 'Storyboard & Drafting', description: 'Sketch storyboards for motion works or drafts for illustrations.' },
+      { step: 3, title: 'Asset Compilation', description: 'Render high-resolution visual files and animate vector keys.' },
+      { step: 4, title: 'Format Delivery', description: 'Export final works in JSON (Lottie), MP4, SVG, or layered assets.' }
+    ],
+    caseStudies: [],
+    technologies: ['After Effects', 'Photoshop', 'Illustrator', 'Figma', 'Premiere Pro'],
+    faqs: [
+      { question: 'What file formats do you deliver for animation?', answer: 'We deliver in MP4, WebM, and Lottie (JSON) format for web micro-animations.' }
+    ],
+    benefits: [
+      'Engaging animated elements enhancing interface interactions',
+      'Custom vector styles unique to your brand identity',
+      'Flexible sizes for diverse social platform structures'
+    ],
+    cta: 'Discuss Your Creative Project',
+    featured: false,
+    order: 9,
+    status: 'active',
+    industries: ['SaaS platforms', 'Digital Advertisers', 'E-Commerce Brands', 'Social Media Agencies'],
+    whyChooseUs: [
+      { title: 'Tailored Media Assets', description: 'We customize vector styles matching your brand layout guidelines.' },
+      { title: 'Interactive Formats', description: 'We support Web/Lottie outputs for fast load speeds.' }
+    ],
+    stats: [
+      { value: 'Lottie', label: 'Web Format', iconType: 'rocket', colorTheme: 'green' },
+      { value: '24hr', label: 'Turnaround', iconType: 'clock', colorTheme: 'purple' },
+      { value: '100%', label: 'Custom Drawn', iconType: 'star', colorTheme: 'gold' },
+      { value: 'SVG', label: 'Vector Format', iconType: 'code', colorTheme: 'blue' }
     ],
     dashboardImage: 'resume_review_assistant'
   },

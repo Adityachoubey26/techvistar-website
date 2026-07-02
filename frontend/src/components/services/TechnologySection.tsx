@@ -348,8 +348,7 @@ export const TechnologySection = ({ service }: SectionProps) => {
       <motion.div 
         variants={containerVariants}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
+        animate="visible"
         className="flex overflow-x-auto whitespace-nowrap gap-2.5 pb-2.5 scrollbar-none w-full"
       >
         {service.technologies.map((tech) => {

@@ -74,9 +74,9 @@ export const Navbar = () => {
 
   const designServices = [
     { label: 'UI/UX', to: '/services/ui-ux-design', icon: Palette, desc: 'User-centric products.' },
-    { label: 'Branding', to: '/services/brand-creative-design', icon: Sparkles, desc: 'Unified visual identity.' },
+    { label: 'Branding', to: '/services/branding', icon: Sparkles, desc: 'Unified visual identity.' },
     { label: 'Product Design', to: '/services/product-design', icon: Target, desc: 'Prototyping & validation.' },
-    { label: 'Creative Design', to: '/services/brand-creative-design', icon: Layers, desc: 'Visual assets & illustrations.' },
+    { label: 'Creative Design', to: '/services/creative-design', icon: Layers, desc: 'Visual assets & illustrations.' },
   ];
 
   const cloudServices = [
