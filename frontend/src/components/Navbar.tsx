@@ -14,6 +14,8 @@ export const Navbar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
+  const [isMobileSolutionsOpen, setIsMobileSolutionsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
@@ -28,6 +30,13 @@ export const Navbar = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      setIsMobileServicesOpen(false);
+      setIsMobileSolutionsOpen(false);
+    }
+  }, [isMobileMenuOpen]);
 
   const handleMouseEnter = (menu: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -647,13 +656,118 @@ export const Navbar = () => {
           >
             <div className="container-custom py-6 px-5 space-y-6">
               <div className="space-y-2">
-                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Home</Link>
-                <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Services</Link>
-                <Link to="/solutions" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Solutions</Link>
-                <Link to="/industries" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Industries</Link>
-                <Link to="/work" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Portfolio</Link>
-                <Link to="/careers" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">Careers</Link>
-                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[15px] font-bold text-slate-800 border-b border-slate-100">About</Link>
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Home</Link>
+                
+                {/* Services Accordion */}
+                <div>
+                  <button
+                    onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                    className="flex items-center justify-between w-full py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100 text-left"
+                  >
+                    <span>Services</span>
+                    <ChevronDown className={cn("w-4 h-4 text-slate-500 transition-transform duration-205", isMobileServicesOpen && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {isMobileServicesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="pl-4 py-2 border-l-2 border-emerald-500/20 space-y-3 mt-1 overflow-hidden"
+                      >
+                        <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} className="block py-1 text-xs font-bold text-emerald-600 uppercase tracking-wider">→ View All Services</Link>
+                        
+                        <div className="space-y-2 pt-1">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Development</span>
+                          {devServices.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="space-y-2 pt-2">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-455 block">Design</span>
+                          {designServices.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="space-y-2 pt-2">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Cloud & AI</span>
+                          {cloudServices.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Solutions Accordion */}
+                <div>
+                  <button
+                    onClick={() => setIsMobileSolutionsOpen(!isMobileSolutionsOpen)}
+                    className="flex items-center justify-between w-full py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100 text-left"
+                  >
+                    <span>Solutions</span>
+                    <ChevronDown className={cn("w-4 h-4 text-slate-500 transition-transform duration-205", isMobileSolutionsOpen && "rotate-180")} />
+                  </button>
+                  <AnimatePresence>
+                    {isMobileSolutionsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="pl-4 py-2 border-l-2 border-emerald-500/20 space-y-3 mt-1 overflow-hidden"
+                      >
+                        <Link to="/solutions" onClick={() => setIsMobileMenuOpen(false)} className="block py-1 text-xs font-bold text-emerald-600 uppercase tracking-wider">→ View All Solutions</Link>
+                        
+                        <div className="space-y-2 pt-1">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Business</span>
+                          {bizSolutions.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="space-y-2 pt-2">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-455 block">AI</span>
+                          {aiSolutions.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="space-y-2 pt-2">
+                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Digital</span>
+                          {digSolutions.map(srv => (
+                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                              <span>{srv.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <Link to="/industries" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Industries</Link>
+                <Link to="/work" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Portfolio</Link>
+                <Link to="/careers" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Careers</Link>
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">About</Link>
               </div>
 
               <div className="pt-4">
