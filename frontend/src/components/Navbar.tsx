@@ -26,6 +26,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
   // Registration Modal State
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -52,12 +53,14 @@ export const Navbar = () => {
   const handleMouseEnter = (menu: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setActiveDropdown(menu);
+    setHoveredItem(menu);
   };
 
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveDropdown(null);
     }, 200);
+    setHoveredItem(null);
   };
 
   useEffect(() => {
@@ -147,7 +150,6 @@ export const Navbar = () => {
     { label: 'Automation', to: '/services/ai-automation', icon: Repeat, desc: 'RPA & workflow optimizers.' },
   ];
 
-  // Solutions data mirroring Services structure
   const bizSolutions = [
     { label: 'Enterprise Software', to: '/work', icon: Building2, desc: 'Core business platforms.' },
     { label: 'CRM Systems', to: '/work', icon: Target, desc: 'Customer insights & workflows.' },
@@ -169,14 +171,51 @@ export const Navbar = () => {
     { label: 'Cyber Security', to: '/services/cloud-devops', icon: Shield, desc: 'Threat detection & lock-downs.' },
   ];
 
+  // Framer Motion variants for stagger entry
+  const megamenuVariants = {
+    hidden: { opacity: 0, y: 10, scale: 0.99 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: {
+        duration: 0.25,
+        ease: [0.16, 1, 0.3, 1], // easeOutExpo
+        staggerChildren: 0.02
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: 8, 
+      scale: 0.995,
+      transition: {
+        duration: 0.15,
+        ease: 'easeIn'
+      }
+    }
+  };
+
+  const columnVariants = {
+    hidden: { opacity: 0, y: 8 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 24
+      }
+    }
+  };
+
   return (
     <>
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 sm:h-22 flex items-center',
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] h-20 sm:h-22 flex items-center',
           isScrolled 
             ? 'bg-white/90 backdrop-blur-md shadow-md shadow-slate-100/45 border-b border-slate-200/50' 
             : 'bg-white border-b border-slate-100'
@@ -200,12 +239,21 @@ export const Navbar = () => {
             {/* Home */}
             <Link
               to="/"
+              onMouseEnter={() => setHoveredItem('Home')}
+              onMouseLeave={() => setHoveredItem(null)}
               className={cn(
-                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide',
-                isLinkActive('/') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide relative',
+                isLinkActive('/') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
-              Home
+              <span>Home</span>
+              {hoveredItem === 'Home' && (
+                <motion.span
+                  layoutId="navbar-underline"
+                  className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
 
             {/* Services (Megamenu Dropdown Trigger) */}
@@ -217,12 +265,25 @@ export const Navbar = () => {
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'services' ? null : 'services')}
                 className={cn(
-                  'flex items-center gap-1 text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide h-11',
-                  activeDropdown === 'services' || isLinkActive('/services') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                  'flex items-center gap-1.5 text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide h-11 relative',
+                  activeDropdown === 'services' || isLinkActive('/services') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
                 )}
               >
                 <span>Services</span>
-                <ChevronDown className={cn('w-4 h-4 transition-transform duration-300', activeDropdown === 'services' && 'rotate-180')} />
+                <motion.span
+                  animate={{ rotate: activeDropdown === 'services' ? 180 : 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="inline-block"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </motion.span>
+                {hoveredItem === 'services' && (
+                  <motion.span
+                    layoutId="navbar-underline"
+                    className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
               </button>
             </div>
 
@@ -235,71 +296,122 @@ export const Navbar = () => {
               <button
                 onClick={() => setActiveDropdown(activeDropdown === 'solutions' ? null : 'solutions')}
                 className={cn(
-                  'flex items-center gap-1 text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide h-11',
-                  activeDropdown === 'solutions' || isLinkActive('/work') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                  'flex items-center gap-1.5 text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide h-11 relative',
+                  activeDropdown === 'solutions' || isLinkActive('/work') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
                 )}
               >
                 <span>Solutions</span>
-                <ChevronDown className={cn('w-4 h-4 transition-transform duration-300', activeDropdown === 'solutions' && 'rotate-180')} />
+                <motion.span
+                  animate={{ rotate: activeDropdown === 'solutions' ? 180 : 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="inline-block"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </motion.span>
+                {hoveredItem === 'solutions' && (
+                  <motion.span
+                    layoutId="navbar-underline"
+                    className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
               </button>
             </div>
 
             {/* Portfolio */}
             <Link
               to="/work"
+              onMouseEnter={() => setHoveredItem('Portfolio')}
+              onMouseLeave={() => setHoveredItem(null)}
               className={cn(
-                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide',
-                isLinkActive('/work') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide relative',
+                isLinkActive('/work') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
-              Portfolio
+              <span>Portfolio</span>
+              {hoveredItem === 'Portfolio' && (
+                <motion.span
+                  layoutId="navbar-underline"
+                  className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
 
             {/* Blog */}
             <Link
               to="/about"
+              onMouseEnter={() => setHoveredItem('Blog')}
+              onMouseLeave={() => setHoveredItem(null)}
               className={cn(
-                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide',
-                isLinkActive('/blog') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide relative',
+                isLinkActive('/blog') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
-              Blog
+              <span>Blog</span>
+              {hoveredItem === 'Blog' && (
+                <motion.span
+                  layoutId="navbar-underline"
+                  className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
 
-            {/* Join TSP (Careers) */}
+            {/* Join TSP */}
             <Link
               to="/careers"
+              onMouseEnter={() => setHoveredItem('Join TSP')}
+              onMouseLeave={() => setHoveredItem(null)}
               className={cn(
-                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide',
-                isLinkActive('/careers') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide relative',
+                isLinkActive('/careers') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
-              Join TSP
+              <span>Join TSP</span>
+              {hoveredItem === 'Join TSP' && (
+                <motion.span
+                  layoutId="navbar-underline"
+                  className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
 
             {/* About */}
             <Link
               to="/about"
+              onMouseEnter={() => setHoveredItem('About')}
+              onMouseLeave={() => setHoveredItem(null)}
               className={cn(
-                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide',
-                isLinkActive('/about') ? 'text-emerald-600 bg-emerald-50/40' : 'text-slate-800 hover:text-emerald-600'
+                'text-[15px] font-semibold transition-all px-4 py-2.5 rounded-lg hover:bg-slate-50 tracking-wide relative',
+                isLinkActive('/about') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
-              About
+              <span>About</span>
+              {hoveredItem === 'About' && (
+                <motion.span
+                  layoutId="navbar-underline"
+                  className="absolute bottom-1 left-4 right-4 h-[2px] bg-emerald-600 rounded-full"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
           </nav>
 
           {/* Right: Premium Outline Contact CTA */}
           <div className="hidden lg:flex items-center gap-4 shrink-0">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setIsRegisterOpen(true)}
-              className="inline-flex items-center gap-3.5 pl-6 pr-2 py-2 border border-slate-300 rounded-full hover:border-slate-800 hover:bg-slate-50 transition-all font-bold text-sm tracking-wide text-slate-800 active:scale-95 group"
+              className="inline-flex items-center gap-3.5 pl-6 pr-2 py-2 border border-slate-300 rounded-full hover:border-slate-800 hover:bg-slate-50 transition-all font-bold text-sm tracking-wide text-slate-800 group"
             >
               <span>{NAVBAR_REGISTER_FORM.headerButtonText}</span>
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white group-hover:bg-slate-900 transition-colors">
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </span>
-            </button>
+            </motion.button>
           </div>
 
           {/* Mobile hamburger menu toggle */}
@@ -315,16 +427,16 @@ export const Navbar = () => {
           <AnimatePresence>
             {activeDropdown === 'services' && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
+                variants={megamenuVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
                 onMouseEnter={() => handleMouseEnter('services')}
                 onMouseLeave={handleMouseLeave}
-                className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left"
+                className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left origin-top"
               >
                 {/* Column 1: Development Services */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Development Services</h4>
                   <div className="space-y-0.5">
                     {devServices.map((srv) => {
@@ -336,9 +448,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -350,10 +462,10 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 2: Design Services */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Design Services</h4>
                   <div className="space-y-0.5">
                     {designServices.map((srv) => {
@@ -365,9 +477,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -379,10 +491,10 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 3: Cloud & AI */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Cloud & AI</h4>
                   <div className="space-y-0.5">
                     {cloudServices.map((srv) => {
@@ -394,9 +506,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -408,10 +520,14 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 4: Featured Service Card */}
-                <div className="col-span-3 bg-gradient-to-br from-slate-900 to-zinc-950 text-white rounded-xl p-5 flex flex-col justify-between h-full relative overflow-hidden group/featured shadow-md border border-slate-850">
+                <motion.div 
+                  variants={columnVariants}
+                  whileHover={{ y: -3, scale: 1.005 }}
+                  className="col-span-3 bg-gradient-to-br from-slate-900 to-zinc-950 text-white rounded-xl p-5 flex flex-col justify-between h-full relative overflow-hidden group/featured shadow-md border border-slate-850"
+                >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                   
                   <div className="space-y-3.5 relative z-10">
@@ -440,7 +556,7 @@ export const Navbar = () => {
                     <span>Explore Services</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/featured:translate-x-0.5 transition-transform" />
                   </Link>
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -449,16 +565,16 @@ export const Navbar = () => {
           <AnimatePresence>
             {activeDropdown === 'solutions' && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 8 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
+                variants={megamenuVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
                 onMouseEnter={() => handleMouseEnter('solutions')}
                 onMouseLeave={handleMouseLeave}
-                className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left"
+                className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left origin-top"
               >
                 {/* Column 1: Business Solutions */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Business Solutions</h4>
                   <div className="space-y-0.5">
                     {bizSolutions.map((srv) => {
@@ -470,9 +586,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -484,10 +600,10 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 2: AI Solutions */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">AI Solutions</h4>
                   <div className="space-y-0.5">
                     {aiSolutions.map((srv) => {
@@ -499,9 +615,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -513,10 +629,10 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 3: Digital Solutions */}
-                <div className="col-span-3 space-y-4">
+                <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                   <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Digital Solutions</h4>
                   <div className="space-y-0.5">
                     {digSolutions.map((srv) => {
@@ -528,9 +644,9 @@ export const Navbar = () => {
                           onClick={() => setActiveDropdown(null)}
                           className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          <span className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
                             <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                          </span>
+                          </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
@@ -542,10 +658,14 @@ export const Navbar = () => {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Column 4: Featured Solution Card */}
-                <div className="col-span-3 bg-gradient-to-br from-slate-900 to-zinc-950 text-white rounded-xl p-5 flex flex-col justify-between h-full relative overflow-hidden group/featured shadow-md border border-slate-850">
+                <motion.div 
+                  variants={columnVariants}
+                  whileHover={{ y: -3, scale: 1.005 }}
+                  className="col-span-3 bg-gradient-to-br from-slate-900 to-zinc-950 text-white rounded-xl p-5 flex flex-col justify-between h-full relative overflow-hidden group/featured shadow-md border border-slate-850"
+                >
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                   
                   <div className="space-y-3.5 relative z-10">
@@ -574,7 +694,7 @@ export const Navbar = () => {
                     <span>Explore Solutions</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/featured:translate-x-0.5 transition-transform" />
                   </Link>
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
