@@ -73,7 +73,7 @@ export const Footer = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8"
         >
           {/* Column 1: Left Premium Contact Card */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-4 space-y-6">
+          <motion.div variants={itemFadeUp} className="lg:col-span-4 md:col-span-2 space-y-6">
             <Link to="/" className="inline-flex items-center gap-3">
               <img src={logo} alt="TechVistar" className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/10" />
               <span className="text-xl font-bold font-display text-white tracking-tight">TechVistar</span>
@@ -142,7 +142,7 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 2: Services List */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 space-y-5">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
             <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Services</h4>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
@@ -169,7 +169,7 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 3: Industries Serve List */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 space-y-5">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
             <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Industries</h4>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
@@ -196,7 +196,7 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 4: Company Links */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 space-y-5">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
             <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Company</h4>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
@@ -224,7 +224,7 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 5: Premium Newsletter Card */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 space-y-5">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
             <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Newsletter</h4>
             
             <div className="space-y-3">
