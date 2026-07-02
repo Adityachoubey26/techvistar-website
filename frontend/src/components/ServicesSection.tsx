@@ -35,16 +35,7 @@ const ctaVariants = {
   },
 };
 
-const SERVICE_IMAGES = [
-  'https://images.unsplash.com/photo-1547082299-de196ea013d6?w=150&auto=format&fit=crop&q=80', // Web Development
-  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=150&auto=format&fit=crop&q=80', // Mobile App Development
-  'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=150&auto=format&fit=crop&q=80', // UI/UX Design
-  'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=150&auto=format&fit=crop&q=80', // AI & Automation
-  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=150&auto=format&fit=crop&q=80', // Cloud & DevOps
-  'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?w=150&auto=format&fit=crop&q=80', // Branding & Creative Design
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=150&auto=format&fit=crop&q=80', // Digital Marketing
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=150&auto=format&fit=crop&q=80', // Custom Software Development
-];
+
 
 export const ServicesSection = () => {
   const { ref, isInView } = useAnimatedSection();
@@ -78,7 +69,6 @@ export const ServicesSection = () => {
           {/* Left Column */}
           <div className="flex flex-col gap-8">
             {leftServices.map((service) => {
-              const originalIndex = SERVICES.findIndex(s => s.id === service.id);
               return (
                 <motion.div key={service.title} variants={itemVariants}>
                   <Link to={`/services/${service.slug}`} className="block">
@@ -88,11 +78,11 @@ export const ServicesSection = () => {
                       borderColor="rgba(34, 197, 94, 0.18)"
                     >
                       <div className="flex gap-4 items-start">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm bg-white ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
                           <img
-                            src={SERVICE_IMAGES[originalIndex]}
+                            src={service.coverImage}
                             alt={service.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="h-full w-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
                         
@@ -119,7 +109,6 @@ export const ServicesSection = () => {
           {/* Right Column */}
           <div className="flex flex-col gap-8">
             {rightServices.map((service) => {
-              const originalIndex = SERVICES.findIndex(s => s.id === service.id);
               return (
                 <motion.div key={service.title} variants={itemVariants}>
                   <Link to={`/services/${service.slug}`} className="block">
@@ -129,11 +118,11 @@ export const ServicesSection = () => {
                       borderColor="rgba(34, 197, 94, 0.18)"
                     >
                       <div className="flex gap-4 items-start">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm bg-white ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
                           <img
-                            src={SERVICE_IMAGES[originalIndex]}
+                            src={service.coverImage}
                             alt={service.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="h-full w-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
                         
