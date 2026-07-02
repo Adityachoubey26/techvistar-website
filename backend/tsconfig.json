@@ -1,16 +1,40 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    // ─── Compilation target ────────────────────────────────────────────────
+    "target": "ES2022",           // Modern JS features (async/await, optional chaining, etc.)
+    "module": "CommonJS",         // CJS for Node.js dev ergonomics (no .js extension on imports)
+    "moduleResolution": "node",   // Classic Node module resolution
+
+    // ─── Type support ──────────────────────────────────────────────────────
     "lib": ["ES2022"],
+    "types": ["node"],            // Pulls in @types/node globally
+
+    // ─── Output ────────────────────────────────────────────────────────────
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "sourceMap": true,            // Source maps for debuggable stack traces in production
+
+    // ─── Path aliases ──────────────────────────────────────────────────────
+    // Allows: import { env } from '@/config/env'
+    // from anywhere — no more ../../.. chains
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    // ─── Strictness ────────────────────────────────────────────────────────
+    "strict": true,                        // Enables all strict type-checking options
+    "noUnusedLocals": true,                // Error on variables declared but not used
+    "noUnusedParameters": true,            // Error on function params declared but not used
+    "noImplicitReturns": true,             // Every code path in a function must return a value
+    "noFallthroughCasesInSwitch": true,    // No fall-through in switch statements
+
+    // ─── Interop ───────────────────────────────────────────────────────────
+    "esModuleInterop": true,               // Allows: import express from 'express'
+    "allowSyntheticDefaultImports": true,  // Companion to esModuleInterop
+    "skipLibCheck": true,                  // Skip type-checking of declaration files
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true              // Allows: import pkg from '../package.json'
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

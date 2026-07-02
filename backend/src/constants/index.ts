@@ -1,0 +1,107 @@
+/**
+ * @file src/constants/index.ts
+ * @description Application-wide constants.
+ *
+ * ARCHITECTURE DECISION:
+ *   Magic numbers and magic strings are a maintenance trap. Any value that
+ *   appears in more than one file — or could change in the future — lives here.
+ */
+
+// ─── HTTP Status Codes ────────────────────────────────────────────────────────
+// Named constants instead of bare numbers — improves readability and prevents
+// typos (returning 20 instead of 200 is caught by TypeScript when you use the enum)
+export const HTTP_STATUS = {
+  // 2xx — Success
+  OK:                    200,
+  CREATED:               201,
+  ACCEPTED:              202,
+  NO_CONTENT:            204,
+
+  // 3xx — Redirection
+  MOVED_PERMANENTLY:     301,
+  NOT_MODIFIED:          304,
+
+  // 4xx — Client Errors
+  BAD_REQUEST:           400,
+  UNAUTHORIZED:          401,
+  FORBIDDEN:             403,
+  NOT_FOUND:             404,
+  METHOD_NOT_ALLOWED:    405,
+  CONFLICT:              409,
+  UNPROCESSABLE_ENTITY:  422,
+  TOO_MANY_REQUESTS:     429,
+
+  // 5xx — Server Errors
+  INTERNAL_SERVER_ERROR: 500,
+  NOT_IMPLEMENTED:       501,
+  BAD_GATEWAY:           502,
+  SERVICE_UNAVAILABLE:   503,
+} as const;
+
+// ─── API Response Status Strings ─────────────────────────────────────────────
+// Used in ApiResponse.ts to set the `status` field on every JSON envelope
+export const API_STATUS = {
+  SUCCESS: 'success',
+  ERROR:   'error',
+  FAIL:    'fail',      // Client fault (4xx)
+} as const;
+
+// ─── Error Codes ─────────────────────────────────────────────────────────────
+// Machine-readable error codes returned in the JSON envelope.
+// The frontend / admin panel can switch on these instead of comparing messages.
+export const ERROR_CODES = {
+  // Generic
+  INTERNAL_ERROR:      'INTERNAL_ERROR',
+  VALIDATION_ERROR:    'VALIDATION_ERROR',
+  NOT_FOUND:           'NOT_FOUND',
+  UNAUTHORIZED:        'UNAUTHORIZED',
+  FORBIDDEN:           'FORBIDDEN',
+  CONFLICT:            'CONFLICT',
+  TOO_MANY_REQUESTS:   'TOO_MANY_REQUESTS',
+  BAD_REQUEST:         'BAD_REQUEST',
+
+  // Auth-specific (Phase 2)
+  INVALID_TOKEN:       'INVALID_TOKEN',
+  TOKEN_EXPIRED:       'TOKEN_EXPIRED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  ACCOUNT_LOCKED:      'ACCOUNT_LOCKED',
+
+  // Database-specific
+  DB_CONNECTION_ERROR: 'DB_CONNECTION_ERROR',
+  DB_QUERY_ERROR:      'DB_QUERY_ERROR',
+  DUPLICATE_KEY:       'DUPLICATE_KEY',
+} as const;
+
+// ─── Database Constants ───────────────────────────────────────────────────────
+export const DB = {
+  CONNECTION_TIMEOUT_MS: 10_000,   // 10 seconds
+  SOCKET_TIMEOUT_MS:     45_000,   // 45 seconds
+  MAX_POOL_SIZE:         10,        // Max concurrent connections
+  MIN_POOL_SIZE:         2,         // Keep 2 connections alive (reduce cold start latency)
+  SERVER_SELECTION_TIMEOUT_MS: 5_000,
+} as const;
+
+// ─── Rate Limiting ────────────────────────────────────────────────────────────
+export const RATE_LIMIT = {
+  WINDOW_MS:   15 * 60 * 1000,  // 15 minutes
+  MAX_REQUESTS: 100,              // Max requests per window per IP
+  SKIP_SUCCESSFUL_REQUESTS: false,
+} as const;
+
+// ─── Pagination Defaults ──────────────────────────────────────────────────────
+export const PAGINATION = {
+  DEFAULT_PAGE:  1,
+  DEFAULT_LIMIT: 10,
+  MAX_LIMIT:     100,
+} as const;
+
+// ─── API Versioning ───────────────────────────────────────────────────────────
+export const API_VERSION = 'v1' as const;
+
+// ─── CORS Origins ─────────────────────────────────────────────────────────────
+// Development origins — production origins come from env.clientUrl
+export const DEV_ORIGINS = [
+  'http://localhost:8080',   // Vite dev server (frontend)
+  'http://localhost:3000',   // Future admin panel
+  'http://localhost:5173',   // Alternative Vite port
+] as const;

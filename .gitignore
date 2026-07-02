@@ -7,6 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Root-level node_modules guard (root has no package.json — this prevents accidents)
+/node_modules
+/package-lock.json
+
 node_modules
 dist
 dist-ssr
@@ -32,6 +36,8 @@ frontend/*.local
 backend/node_modules
 backend/dist
 backend/.env
+backend/logs/
+backend/uploads/
 
 # Temporary Vite config parsing timestamps
 *.timestamp-*.mjs
