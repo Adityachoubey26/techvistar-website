@@ -21,7 +21,7 @@ export const ServiceSidebar = () => {
   };
 
   return (
-    <div className="sticky top-28 space-y-6">
+    <div className="lg:sticky lg:top-36 space-y-6">
       
       {/* Consultation Summary Block */}
       <div className="bg-white border-2 border-emerald-500/20 rounded-3xl p-6 shadow-sm space-y-6 relative overflow-hidden">
