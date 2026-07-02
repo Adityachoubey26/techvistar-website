@@ -106,11 +106,11 @@ export const RelatedServicesSection = ({ service }: SectionProps) => {
               >
                 <div>
                   {/* Thumbnail Image Header */}
-                  <div className="relative aspect-video w-full overflow-hidden bg-slate-50 border-b border-slate-100">
+                  <div className="relative aspect-video w-full overflow-hidden bg-transparent border-b border-slate-100/50">
                     <img 
                       src={rs.coverImage} 
                       alt={rs.title} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+                      className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/card:scale-105 mix-blend-multiply contrast-115 brightness-102"
                     />
                     
                     {/* Category Badge on top of Image */}

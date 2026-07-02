@@ -1,75 +1,132 @@
 import { Service } from '@/data/services';
 import { PROJECTS, Project } from '@/data/projects';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Briefcase } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { ArrowRight, Briefcase, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface SectionProps {
   service: Service;
 }
 
 export const CaseStudiesSection = ({ service }: SectionProps) => {
+  const prefersReducedMotion = useReducedMotion();
+
   // Query projects dynamically where serviceSlugs matches current service's slug
   const relatedProjects = PROJECTS.filter((project: Project) => 
     project.serviceSlugs && project.serviceSlugs.includes(service.slug)
   );
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  };
+
   return (
-    <section id="case-studies" className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 scroll-mt-24">
-      <h2 className="text-xl font-bold text-slate-900 mb-4 font-display">Case Studies & Projects</h2>
+    <section id="case-studies" className="relative overflow-hidden bg-white border border-slate-200/80 rounded-3xl p-6 md:p-10 scroll-mt-24 shadow-sm">
+      
+      {/* Light mesh backdrop */}
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.02]" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <pattern id="case-mesh" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="1" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#case-mesh)" />
+        </svg>
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 flex items-center gap-2 mb-6">
+        <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
+          <Sparkles className="h-3 w-3 text-emerald-600" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900 font-display">Case Studies & Projects</h2>
+      </div>
       
       {relatedProjects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10"
+        >
           {relatedProjects.map((project) => (
-            <Card 
-              key={project.id} 
-              className="group border border-slate-100 hover:border-primary/20 hover:shadow-md transition-all overflow-hidden flex flex-col bg-slate-50/30"
+            <motion.div
+              key={project.id}
+              variants={itemVariants}
+              whileHover={prefersReducedMotion ? {} : { y: -6 }}
+              className="group/card flex flex-col justify-between rounded-2xl bg-white/70 backdrop-blur-md border border-slate-100/80 hover:border-emerald-500/30 hover:shadow-[0_15px_30px_-8px_rgba(16,185,129,0.12)] transition-all duration-300 overflow-hidden h-full"
             >
-              <div className="relative h-40 overflow-hidden bg-slate-100 border-b border-slate-150">
+              <div>
+              <div className="relative h-44 overflow-hidden bg-transparent border-b border-slate-100/50">
                 <img 
                   src={project.thumbnail} 
                   alt={project.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                  className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/card:scale-105 mix-blend-multiply contrast-115 brightness-102" 
                 />
+                {/* Status Overlay */}
+                <Badge variant="outline" className="absolute top-3 right-3 text-[9px] border-emerald-500/20 text-emerald-700 bg-emerald-50/90 backdrop-blur-sm px-2 py-0.5 rounded-md shadow-sm">
+                  {project.status}
+                </Badge>
               </div>
-              <CardHeader className="p-4 pb-2 space-y-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border border-primary/15">
+                
+                <div className="p-5 space-y-2.5">
+                  <Badge variant="secondary" className="text-[9px] font-semibold bg-emerald-50/60 text-emerald-700 border border-emerald-100/30 px-2 py-0.5 rounded-md">
                     {project.category}
                   </Badge>
-                  <Badge variant="outline" className="text-[10px] border-slate-200 text-slate-600 bg-slate-50">
-                    {project.status}
-                  </Badge>
+                  
+                  <h3 className="text-sm font-bold text-slate-900 group-hover/card:text-emerald-700 transition-colors font-display line-clamp-1 leading-snug">
+                    <Link to={`/work/${project.slug}`}>{project.title}</Link>
+                  </h3>
+                  
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                    {project.description}
+                  </p>
                 </div>
-                <CardTitle className="text-sm font-bold text-slate-900 leading-snug group-hover:text-primary transition-colors">
-                  <Link to={`/work/${project.slug}`}>{project.title}</Link>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 flex-grow flex flex-col justify-between">
-                <p className="text-xs text-slate-600 leading-relaxed mb-4 line-clamp-3">
-                  {project.description}
-                </p>
+              </div>
+
+              <div className="px-5 pb-5 pt-3 border-t border-slate-100/50">
                 <Link 
                   to={`/work/${project.slug}`} 
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline mt-auto"
+                  className="text-xs font-bold text-emerald-600 flex items-center gap-1 group-hover/card:text-emerald-700 transition-colors"
                 >
                   View Case Study
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/card:translate-x-1 duration-300" />
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
-        <div className="rounded-lg bg-slate-50 border border-slate-100 p-6 text-center">
-          <Briefcase className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-          <p className="text-sm text-slate-500 mb-3">Custom integration case studies are available upon request.</p>
-          <a href="#contact" className="inline-flex items-center text-xs font-semibold text-primary hover:underline">
-            Request past build logs <ArrowRight className="h-3.5 w-3.5 ml-1" />
+        <div className="relative z-10 rounded-2xl bg-slate-50 border border-slate-100 p-8 text-center">
+          <Briefcase className="h-8 w-8 text-slate-300 mx-auto mb-3" />
+          <p className="text-xs font-medium text-slate-500 mb-4 leading-relaxed">Custom integration case studies are available upon request.</p>
+          <a href="#contact" className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+            Request past build logs <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
       )}
     </section>
   );
 };
+export default CaseStudiesSection;
