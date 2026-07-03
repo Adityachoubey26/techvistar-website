@@ -412,7 +412,7 @@ export const Work = () => {
 
           <div className="grid md:grid-cols-12 gap-8 items-stretch">
             <div className="md:col-span-8 space-y-6">
-              <div className="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-md space-y-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl hover:shadow-[0_20px_50px_rgba(16,185,129,0.08)] transition-all duration-300 space-y-4">
                 <div className="flex gap-1 text-amber-400 border border-slate-200/80 rounded-full px-3 py-1 w-fit bg-amber-50/30">
                   <Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" />
                 </div>
@@ -555,7 +555,7 @@ export const Work = () => {
                   borderColor: 'rgba(16,185,129,0.3)'
                 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="bg-white border border-slate-200/60 rounded-2xl p-6 space-y-4 shadow-sm cursor-pointer group/ind"
+                className="bg-emerald-50/30 border border-emerald-100/40 rounded-2xl p-6 space-y-4 shadow-sm cursor-pointer group/ind"
               >
                 <h4 className="font-extrabold text-slate-900 text-sm group-hover/ind:text-emerald-600 transition-colors">{ind.name}</h4>
                 <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{ind.desc}</p>
@@ -581,24 +581,35 @@ export const Work = () => {
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
           <motion.div 
             whileHover={{ y: -2 }}
-            className="rounded-3xl bg-gradient-to-br from-slate-100 to-white border border-slate-200/85 p-8 sm:p-12 text-center relative overflow-hidden shadow-md text-slate-900"
+            className="rounded-3xl bg-gradient-to-r from-emerald-600 via-[#10B981] to-emerald-700 border border-emerald-500/30 p-8 sm:p-12 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(16,185,129,0.15)] text-white"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-2xl pointer-events-none" />
+            {/* Blurred background glows */}
+            <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-emerald-300/20 blur-2xl pointer-events-none" />
             
+            {/* Grid Pattern overlay */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-10" aria-hidden="true">
+              <svg width="100%" height="100%">
+                <pattern id="cta-mesh-work" width="16" height="16" patternUnits="userSpaceOnUse">
+                  <path d="M 16 0 L 0 0 0 16" fill="none" stroke="currentColor" strokeWidth="1" />
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#cta-mesh-work)" />
+              </svg>
+            </div>
+
             <div className="max-w-2xl mx-auto relative z-10 space-y-6">
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Ready to Build Your Next Product?</h3>
-              <p className="text-slate-600 font-semibold text-sm sm:text-base leading-relaxed">
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-white">Ready to Build Your Next Product?</h3>
+              <p className="text-emerald-50/90 font-medium text-sm sm:text-base leading-relaxed">
                 Let's discuss your idea. Connect with our engineering leads to outline timelines, compliance metrics, and technical requirements.
               </p>
               <div className="pt-2 flex flex-wrap justify-center gap-4">
                 <Link to="/contact">
-                  <Button className="h-12 px-8 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-bold text-sm rounded-xl transition-all shadow-md">
+                  <Button className="h-12 px-8 bg-white hover:bg-slate-50 text-emerald-700 font-bold text-sm rounded-xl transition-all shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_-4px_rgba(0,0,0,0.2)]">
                     Book Consultation
                   </Button>
                 </Link>
                 <Link to="/contact">
-                  <Button variant="outline" className="h-12 px-8 border-slate-200 hover:bg-slate-50 font-bold rounded-xl text-slate-700 text-sm">
+                  <Button variant="outline" className="h-12 px-8 border-white/30 hover:border-white text-white hover:bg-white/10 font-bold rounded-xl text-sm transition-all bg-transparent">
                     Contact Us
                   </Button>
                 </Link>
