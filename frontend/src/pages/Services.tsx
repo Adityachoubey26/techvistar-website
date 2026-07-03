@@ -11,6 +11,7 @@ import { Check, ArrowRight } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { FAQSection } from '@/components/faq';
 import servicesBg from '../assets/services-bg.png';
+import { DotGrid } from '@/components/ui/DotGrid';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -60,57 +61,20 @@ const Services = () => {
           onMouseLeave={handleMouseLeave}
           className="relative overflow-hidden bg-zinc-950 pt-20 pb-12 md:pt-24 md:pb-16 border-b border-zinc-900"
         >
-          {/* Animated Mesh Waves + Mouse Parallax */}
-          <motion.div 
-            className="absolute inset-0 opacity-85 pointer-events-none z-0"
-            style={{ 
-              backgroundImage: `url(${servicesBg})`,
-              backgroundSize: 'auto 100%',
-              backgroundPosition: 'right',
-              backgroundRepeat: 'no-repeat',
-            }}
-            animate={{
-              x: [0, 8, 0],
-              y: [0, -4, 0],
-            }}
-            transition={{
-              duration: 22,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.div
-              className="absolute inset-0"
-              style={{ 
-                backgroundImage: `url(${servicesBg})`,
-                backgroundSize: 'auto 100%',
-                backgroundPosition: 'right',
-                backgroundRepeat: 'no-repeat',
-              }}
-              animate={{
-                x: mousePosition.x * 10,
-                y: mousePosition.y * 10,
-              }}
-              transition={{ type: "tween", ease: "easeOut", duration: 0.5 }}
+          {/* Interactive DotGrid Background */}
+          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+            <DotGrid
+              dotSize={5}
+              gap={24}
+              baseColor="#475569"
+              activeColor="#10b981"
+              proximity={120}
+              shockRadius={200}
+              shockStrength={3}
+              resistance={600}
+              returnDuration={1.2}
             />
-          </motion.div>
-
-          {/* Grid Pulse */}
-          <motion.div 
-            className="absolute inset-0 pointer-events-none z-0"
-            style={{
-              backgroundImage: `linear-gradient(to right, rgba(16, 185, 129, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 185, 129, 0.05) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-            animate={{
-              opacity: [0.15, 0.25, 0.15],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
+          </div>
 
           {/* Gradient Breathing (Background radial glow) */}
           <motion.div 

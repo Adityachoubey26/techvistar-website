@@ -1,11 +1,7 @@
 import { Service } from '@/data/services';
 import { Brain, Lightbulb } from 'lucide-react';
 import '../ui/GlassIcons.css';
-
-// Import high-fidelity dashboard assets
-import aiOverviewIllustration from '../../assets/ai_overview_illustration.png';
-import mobilityDashboard from '../../assets/mobility_routing_dashboard.png';
-import sustainabilityDashboard from '../../assets/sustainability_dashboard.png';
+import { OverviewIllustration } from './OverviewIllustration';
 
 interface SectionProps {
   service: Service;
@@ -13,20 +9,6 @@ interface SectionProps {
 
 export const OverviewSection = ({ service }: SectionProps) => {
   const IconComponent = service.icon || Brain;
-  const isAiService = service.slug === 'ai-automation';
-
-  // Dynamically map high-fidelity project images based on the service slug
-  const getDashboardImage = () => {
-    switch (service.slug) {
-      case 'ai-automation':
-        return aiOverviewIllustration;
-      case 'custom-software-development':
-      case 'custom-software':
-        return mobilityDashboard;
-      default:
-        return sustainabilityDashboard;
-    }
-  };
 
   return (
     <section id="overview" className="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 scroll-mt-24 shadow-sm relative overflow-hidden">
@@ -52,7 +34,7 @@ export const OverviewSection = ({ service }: SectionProps) => {
               <span className="icon-btn__back" style={{ background: 'linear-gradient(hsl(123, 90%, 40%), hsl(108, 90%, 40%))' }}></span>
               <span className="icon-btn__front">
                 <span className="icon-btn__icon">
-                  {isAiService ? <Brain className="w-6 h-6 text-white" /> : <IconComponent className="w-6 h-6 text-white" />}
+                  <IconComponent className="w-6 h-6 text-white" />
                 </span>
               </span>
             </div>
@@ -81,17 +63,15 @@ export const OverviewSection = ({ service }: SectionProps) => {
           </div>
         </div>
 
-        {/* Right Dashboard Image Column */}
+        {/* Right Dashboard Image Column - Render dynamic monochrome emerald green 3D glass illustration */}
         <div className="md:col-span-5 flex justify-center items-center">
-          <div className="relative group/image">
+          <div className="relative group/image w-full">
             {/* Soft background glow */}
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-sky-500/10 opacity-75 blur-lg group-hover/image:opacity-100 transition duration-300" />
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500/10 to-sky-500/10 opacity-75 blur-xl group-hover/image:opacity-100 transition duration-300 pointer-events-none" />
             
-            <img 
-              src={getDashboardImage()} 
-              alt={`${service.title} Overview Illustration`} 
-              className="relative w-full max-w-[230px] md:max-w-full h-auto object-contain transition-transform duration-300 group-hover/image:scale-[1.04] mix-blend-multiply"
-            />
+            <div className="relative z-10 w-full transition-transform duration-300 group-hover/image:scale-[1.03]">
+              <OverviewIllustration slug={service.slug} />
+            </div>
           </div>
         </div>
       </div>

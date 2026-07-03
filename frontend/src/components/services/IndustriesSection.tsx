@@ -107,8 +107,7 @@ export const IndustriesSection = ({ service }: SectionProps) => {
         <motion.div 
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          animate="visible"
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 relative z-10"
         >
           {finalIndustries.map((ind) => {

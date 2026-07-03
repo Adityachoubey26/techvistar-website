@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useProjectFilters } from '@/hooks/useProjectFilters';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { TechStackSection } from '@/components/TechStackSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -492,11 +493,11 @@ export const Work = () => {
                 >
                   <div className="space-y-4">
                     {/* Cover image container */}
-                    <div className="h-48 overflow-hidden bg-slate-100 relative border-b border-slate-100">
+                    <div className="h-48 overflow-hidden bg-white relative border-b border-slate-100">
                       <img 
                         src={project.thumbnail} 
                         alt={project.title} 
-                        className="w-full h-full object-cover opacity-90 group-hover:scale-104 transition-transform duration-500"
+                        className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-102"
                       />
                       <span className="absolute top-3 left-3 px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-bold uppercase tracking-wider z-10 shadow-md">
                         {project.industry}
@@ -593,52 +594,65 @@ export const Work = () => {
             <p className="text-xs sm:text-sm text-slate-500 font-semibold">Our structural path from product constraints to production deployment.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {processSteps.map((step, idx) => (
-              <div 
-                key={step.title}
-                className="bg-white border border-slate-200/60 rounded-xl p-5 space-y-3 relative shadow-sm"
-              >
-                <span className="text-[10px] font-bold text-emerald-600">Step 0{idx + 1}</span>
-                <h4 className="font-extrabold text-slate-900 text-sm">{step.title}</h4>
-                <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.06
+                }
+              }
+            }}
+            className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4"
+          >
+            {(() => {
+              const stepColors = [
+                { bg: 'bg-emerald-50/80', border: 'border-emerald-100/70', hoverBorder: 'hover:border-emerald-400/40', badge: 'bg-emerald-500/10 text-emerald-700' },
+                { bg: 'bg-blue-50/80', border: 'border-blue-100/70', hoverBorder: 'hover:border-blue-400/40', badge: 'bg-blue-500/10 text-blue-700' },
+                { bg: 'bg-indigo-50/80', border: 'border-indigo-100/70', hoverBorder: 'hover:border-indigo-400/40', badge: 'bg-indigo-500/10 text-indigo-700' },
+                { bg: 'bg-amber-50/80', border: 'border-amber-100/70', hoverBorder: 'hover:border-amber-400/40', badge: 'bg-amber-500/10 text-amber-700' },
+                { bg: 'bg-rose-50/80', border: 'border-rose-100/70', hoverBorder: 'hover:border-rose-400/40', badge: 'bg-rose-500/10 text-rose-700' },
+                { bg: 'bg-teal-50/80', border: 'border-teal-100/70', hoverBorder: 'hover:border-teal-400/40', badge: 'bg-teal-500/10 text-teal-700' },
+                { bg: 'bg-violet-50/80', border: 'border-violet-100/70', hoverBorder: 'hover:border-violet-400/40', badge: 'bg-violet-500/10 text-violet-700' }
+              ];
+
+              return processSteps.map((step, idx) => {
+                const color = stepColors[idx % stepColors.length];
+                return (
+                  <motion.div 
+                    key={step.title}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { type: "spring", stiffness: 100, damping: 15 }
+                      }
+                    }}
+                    whileHover={{ 
+                      y: -5,
+                      scale: 1.02,
+                      boxShadow: '0 12px 25px -10px rgba(0,0,0,0.08)'
+                    }}
+                    className={`border rounded-xl p-5 space-y-3 relative transition-all duration-300 cursor-default select-none shadow-sm ${color.bg} ${color.border} ${color.hoverBorder}`}
+                  >
+                    <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${color.badge}`}>
+                      Step 0{idx + 1}
+                    </span>
+                    <h4 className="font-extrabold text-slate-800 text-xs tracking-wide pt-1">{step.title}</h4>
+                    <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{step.desc}</p>
+                  </motion.div>
+                );
+              });
+            })()}
+          </motion.div>
         </section>
 
         {/* SECTION 7 — TECHNOLOGY STACK */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/80">
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Technology Stack</h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-semibold">Production-hardened libraries we leverage across architecture frameworks.</p>
-          </div>
-
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
-            {techStack.map((tech) => (
-              <motion.div
-                key={tech.name}
-                whileHover={{ 
-                  y: -5, 
-                  scale: 1.04,
-                  boxShadow: '0 10px 25px -5px rgba(16,185,129,0.15)',
-                  borderColor: 'rgba(16,185,129,0.3)'
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="bg-white border border-slate-200/60 rounded-xl p-5 flex flex-col items-center justify-center gap-3.5 shadow-sm transition-colors cursor-pointer group/tech"
-              >
-                {/* Brand Logo with hover rotation & enlargement */}
-                <motion.div 
-                  className="flex items-center justify-center p-2.5 rounded-xl bg-slate-50 border border-slate-100 group-hover/tech:bg-emerald-500/10 group-hover/tech:border-emerald-500/20 group-hover/tech:scale-110 transition-all duration-300"
-                  whileHover={{ rotate: 7 }}
-                >
-                  {tech.logo}
-                </motion.div>
-                <span className="text-[11px] font-bold text-slate-700 group-hover/tech:text-emerald-600 transition-colors">{tech.name}</span>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        <TechStackSection />
 
         {/* SECTION 8 — INDUSTRIES */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/80">
