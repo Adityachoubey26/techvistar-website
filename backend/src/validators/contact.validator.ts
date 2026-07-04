@@ -9,6 +9,7 @@
  */
 
 import { ApiError } from '@/utils/ApiError';
+import { VALIDATION } from '@/constants';
 
 interface ContactInput {
   name?: unknown;
@@ -25,7 +26,7 @@ export function validateContactInput(input: ContactInput): {
   email: string;
   phone: string;
   company: string;
-  serviceInterested: 'web-development' | 'mobile-development' | 'ui-ux' | 'consulting' | 'other';
+  serviceInterested: typeof VALIDATION.VALID_SERVICES[number];
   budget: string;
   message: string;
 } {
@@ -38,6 +39,8 @@ export function validateContactInput(input: ContactInput): {
     const nameStr = String(input.name).trim();
     if (nameStr.length < 2) {
       errors.push({ field: 'name', message: 'Name must be at least 2 characters long' });
+    } else if (nameStr.length > VALIDATION.LIMITS.NAME_MAX) {
+      errors.push({ field: 'name', message: `Name cannot exceed ${VALIDATION.LIMITS.NAME_MAX} characters` });
     }
   }
 
@@ -46,8 +49,7 @@ export function validateContactInput(input: ContactInput): {
     errors.push({ field: 'email', message: 'Email is required' });
   } else {
     const emailStr = String(input.email).trim().toLowerCase();
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (!emailRegex.test(emailStr)) {
+    if (!VALIDATION.EMAIL_REGEX.test(emailStr)) {
       errors.push({ field: 'email', message: 'Please enter a valid email address' });
     }
   }
@@ -55,10 +57,17 @@ export function validateContactInput(input: ContactInput): {
   // 3. Phone Check
   if (input.phone === undefined || input.phone === null || String(input.phone).trim() === '') {
     errors.push({ field: 'phone', message: 'Phone number is required' });
+  } else {
+    const phoneStr = String(input.phone).trim();
+    if (!VALIDATION.PHONE_REGEX.test(phoneStr)) {
+      errors.push({ field: 'phone', message: 'Please enter a valid phone number' });
+    } else if (phoneStr.length > VALIDATION.LIMITS.PHONE_MAX) {
+      errors.push({ field: 'phone', message: `Phone number cannot exceed ${VALIDATION.LIMITS.PHONE_MAX} characters` });
+    }
   }
 
   // 4. Service Check
-  const validServices = ['web-development', 'mobile-development', 'ui-ux', 'consulting', 'other'];
+  const validServices = VALIDATION.VALID_SERVICES as readonly string[];
   if (input.serviceInterested === undefined || input.serviceInterested === null || String(input.serviceInterested).trim() === '') {
     errors.push({ field: 'serviceInterested', message: 'Service of interest is required' });
   } else {
@@ -71,15 +80,31 @@ export function validateContactInput(input: ContactInput): {
     }
   }
 
-  // 5. Message Check
+  // 5. Company Check (Optional but limited)
+  if (input.company !== undefined && input.company !== null) {
+    const companyStr = String(input.company).trim();
+    if (companyStr.length > VALIDATION.LIMITS.COMPANY_MAX) {
+      errors.push({ field: 'company', message: `Company name cannot exceed ${VALIDATION.LIMITS.COMPANY_MAX} characters` });
+    }
+  }
+
+  // 6. Budget Check (Optional but limited)
+  if (input.budget !== undefined && input.budget !== null) {
+    const budgetStr = String(input.budget).trim();
+    if (budgetStr.length > VALIDATION.LIMITS.BUDGET_MAX) {
+      errors.push({ field: 'budget', message: `Budget info cannot exceed ${VALIDATION.LIMITS.BUDGET_MAX} characters` });
+    }
+  }
+
+  // 7. Message Check
   if (input.message === undefined || input.message === null || String(input.message).trim() === '') {
     errors.push({ field: 'message', message: 'Message is required' });
   } else {
     const msgStr = String(input.message).trim();
     if (msgStr.length < 10) {
       errors.push({ field: 'message', message: 'Message must be at least 10 characters long' });
-    } else if (msgStr.length > 1000) {
-      errors.push({ field: 'message', message: 'Message cannot exceed 1000 characters' });
+    } else if (msgStr.length > VALIDATION.LIMITS.MESSAGE_MAX) {
+      errors.push({ field: 'message', message: `Message cannot exceed ${VALIDATION.LIMITS.MESSAGE_MAX} characters` });
     }
   }
 
@@ -98,3 +123,4 @@ export function validateContactInput(input: ContactInput): {
     message: String(input.message).trim(),
   };
 }
+
