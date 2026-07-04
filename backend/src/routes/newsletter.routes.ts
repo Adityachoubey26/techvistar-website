@@ -7,9 +7,9 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import {
   subscribeNewsletter,
-  listSubscribers,
-  unsubscribeNewsletter,
-  deleteSubscriber,
+  // listSubscribers,
+  // unsubscribeNewsletter,
+  // deleteSubscriber,
 } from '@/controllers/newsletter.controller';
 import { NEWSLETTER_RATE_LIMIT } from '@/constants';
 
@@ -31,9 +31,9 @@ const newsletterRateLimiter = rateLimit({
 // POST /api/newsletter - Public subscription endpoint (rate limited)
 router.post('/', newsletterRateLimiter, subscribeNewsletter);
 
-// Administrative CRUD Endpoints (Phase 5 / 7 readiness)
-router.get('/', listSubscribers);
-router.patch('/unsubscribe', unsubscribeNewsletter);
-router.delete('/:id', deleteSubscriber);
+// Administrative CRUD Endpoints (Disabled until Phase 7 JWT Auth and Admin Panel integration)
+// router.get('/', listSubscribers);
+// router.patch('/unsubscribe', unsubscribeNewsletter);
+// router.delete('/:id', deleteSubscriber);
 
 export default router;
