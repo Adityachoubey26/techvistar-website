@@ -24,6 +24,7 @@ import newsletterRouter from './newsletter.routes';
 import jobRouter from './job.routes';
 import jobApplicationRouter from './jobApplication.routes';
 import serviceRouter from './service.routes';
+import solutionRouter from './solution.routes';
 import { RATE_LIMIT } from '@/constants';
 
 const router = Router();
@@ -52,6 +53,7 @@ router.use('/newsletter', newsletterRouter);
 router.use('/careers/jobs', jobRouter);
 router.use('/careers/apply', jobApplicationRouter);
 router.use('/services', serviceRouter);
+router.use('/solutions', solutionRouter);
 
 // ─── API root info ─────────────────────────────────────────────────────────────
 // GET /api → Basic API info (not a real endpoint, just useful for developers)

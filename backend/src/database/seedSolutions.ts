@@ -1,93 +1,24 @@
-import { 
-  Building2, Brain, Sparkles, Cloud, Target, 
-  Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, Clock
-} from 'lucide-react';
+/**
+ * @file src/database/seedSolutions.ts
+ * @description Seeding script to migrate all 11 existing solutions from frontend to MongoDB.
+ */
 
-export interface SolutionDetail {
-  slug: string;
-  title: string;
-  subtitle: string;
-  icon: React.ComponentType<any>;
-  category: string;
-  challenges: {
-    title: string;
-    points: string[];
-    impact: string;
-  };
-  ourSolution: {
-    overview: string;
-    capabilities: string[];
-  };
-  features: {
-    title: string;
-    description: string;
-    icon: React.ComponentType<any>;
-  }[];
-  howItWorks: {
-    step: string;
-    title: string;
-    desc: string;
-  }[];
-  benefits: {
-    roi: string;
-    efficiency: string;
-    scalability: string;
-    security: string;
-  };
-  industries: { name: string; slug: string }[];
-  techStack: string[];
-  metrics: {
-    label: string;
-    value: string;
-  }[];
-  faqs: { q: string; a: string }[];
-}
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import path from 'path';
+import { Solution } from '../models/Solution';
 
-export const ICON_MAP: Record<string, React.ComponentType<any>> = {
-  Building2,
-  Brain,
-  Sparkles,
-  Cloud,
-  Target,
-  Layers,
-  Code2,
-  Cpu,
-  Repeat,
-  Settings,
-  FolderGit2,
-  Shield,
-  Clock
-};
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-export function decorateSolution(apiSolution: any): SolutionDetail {
-  return {
-    slug: apiSolution.slug,
-    title: apiSolution.title,
-    subtitle: apiSolution.subtitle,
-    icon: ICON_MAP[apiSolution.icon] || Brain,
-    category: apiSolution.category,
-    challenges: apiSolution.challenges || { title: '', points: [], impact: '' },
-    ourSolution: apiSolution.ourSolution || { overview: '', capabilities: [] },
-    features: (apiSolution.features || []).map((f: any) => ({
-      title: f.title,
-      description: f.description,
-      icon: ICON_MAP[f.icon] || Brain,
-    })),
-    howItWorks: apiSolution.howItWorks || [],
-    benefits: apiSolution.benefits || { roi: '', efficiency: '', scalability: '', security: '' },
-    industries: apiSolution.industries || [],
-    techStack: apiSolution.techStack || [],
-    metrics: apiSolution.metrics || [],
-    faqs: apiSolution.faqs || [],
-  };
-}
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/techvistar';
 
-export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
-  'enterprise-software': {
+const SOLUTIONS_DATA = [
+  {
     slug: 'enterprise-software',
     title: 'Enterprise Software',
     subtitle: 'Streamline Core Operations and Administrative Controls at Scale',
-    icon: Building2,
+    icon: 'Building2',
     category: 'Business Solutions',
     challenges: {
       title: 'Operational Inefficiencies and System Fragmentation',
@@ -107,9 +38,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Workflow Automation', description: 'Trigger automatic reporting runs on a scheduled cron pipeline.', icon: Repeat },
-      { title: 'Role Compliance', description: 'Fine-grained policy configurations for secure data access.', icon: Shield },
-      { title: 'Realtime Logs', description: 'Centralized telemetry logging to monitor system transactions.', icon: Settings }
+      { title: 'Workflow Automation', description: 'Trigger automatic reporting runs on a scheduled cron pipeline.', icon: 'Repeat' },
+      { title: 'Role Compliance', description: 'Fine-grained policy configurations for secure data access.', icon: 'Shield' },
+      { title: 'Realtime Logs', description: 'Centralized telemetry logging to monitor system transactions.', icon: 'Settings' }
     ],
     howItWorks: [
       { step: '01', title: 'Scoping & Architecture Design', desc: 'We detail system states, security bounds, and integration points.' },
@@ -134,13 +65,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'How long does a migration take?', a: 'Depending on complexity, typical migrations take 6 to 12 weeks with zero service disruption.' },
       { q: 'Do you offer ongoing SLAs?', a: 'Yes, we provide structured 24/7 telemetry monitoring and platform updates.' }
-    ]
+    ],
+    displayOrder: 1,
+    status: 'active'
   },
-  'crm-systems': {
+  {
     slug: 'crm-systems',
     title: 'CRM Systems',
     subtitle: 'Centralize Customer Engagements, Ticketing, and Lead Pipelines',
-    icon: Target,
+    icon: 'Target',
     category: 'Business Solutions',
     challenges: {
       title: 'Siloed Communication Channels and Lost Lead Insights',
@@ -160,9 +93,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Omnichannel Pipeline', description: 'Consolidate leads from social, web forms, and direct channels.', icon: Layers },
-      { title: 'Custom Metrics', description: 'Monitor closing rates, response speeds, and team activities.', icon: Settings },
-      { title: 'Ticketing Bots', description: 'Auto-reply to standard FAQs and escalate high-value tickets.', icon: Repeat }
+      { title: 'Omnichannel Pipeline', description: 'Consolidate leads from social, web forms, and direct channels.', icon: 'Layers' },
+      { title: 'Custom Metrics', description: 'Monitor closing rates, response speeds, and team activities.', icon: 'Settings' },
+      { title: 'Ticketing Bots', description: 'Auto-reply to standard FAQs and escalate high-value tickets.', icon: 'Repeat' }
     ],
     howItWorks: [
       { step: '01', title: 'Channel Integration', desc: 'We link your email, chat, and frontend lead sources.' },
@@ -182,18 +115,20 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     techStack: ['React', 'NestJS', 'PostgreSQL', 'ElasticSearch', 'GraphQL'],
     metrics: [
       { label: 'Retention Boost', value: '25%' },
-      { label: 'Avg Ticket Resolution Time', value: '‑40%' }
+      { label: 'Avg Ticket Resolution Time', value: '-40%' }
     ],
     faqs: [
       { q: 'Can this integrate with our legacy databases?', a: 'Yes, we specialize in building custom API connectors to sync with existing data setups.' },
       { q: 'Is it mobile-friendly?', a: 'Absolutely, the platform includes a fully responsive design for agents on the move.' }
-    ]
+    ],
+    displayOrder: 2,
+    status: 'active'
   },
-  'erp-platforms': {
+  {
     slug: 'erp-platforms',
     title: 'ERP Platforms',
     subtitle: 'Consolidate Supply Chains, Logistics, Inventory, and Audits',
-    icon: Layers,
+    icon: 'Layers',
     category: 'Business Solutions',
     challenges: {
       title: 'Inventory Mismatches and Supply Chain Instabilities',
@@ -213,9 +148,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Inventory Trace', description: 'Monitor product movements across multi-site warehouses instantly.', icon: Building2 },
-      { title: 'Financial Audits', description: 'Immutable transaction trails built directly into accounting cores.', icon: Shield },
-      { title: 'Supplier Webhooks', description: 'Auto-ping supplier systems when inventory dips below minimum levels.', icon: Repeat }
+      { title: 'Inventory Trace', description: 'Monitor product movements across multi-site warehouses instantly.', icon: 'Building2' },
+      { title: 'Financial Audits', description: 'Immutable transaction trails built directly into accounting cores.', icon: 'Shield' },
+      { title: 'Supplier Webhooks', description: 'Auto-ping supplier systems when inventory dips below minimum levels.', icon: 'Repeat' }
     ],
     howItWorks: [
       { step: '01', title: 'Data Consolidation', desc: 'We migrate inventory, purchase order, and audit logs into a unified base.' },
@@ -240,13 +175,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'How do you handle migration from SAP or oracle?', a: 'We build secure migration pipelines to extract, clean, and sync schemas with minimum operational risk.' },
       { q: 'Is multi-currency supported?', a: 'Yes, our accounting engine supports localized tax rules and multi-currency updates.' }
-    ]
+    ],
+    displayOrder: 3,
+    status: 'active'
   },
-  'business-automation': {
+  {
     slug: 'business-automation',
     title: 'Business Automation',
     subtitle: 'Deploy Workflow Runners to Eliminate Manual Overhead',
-    icon: Repeat,
+    icon: 'Repeat',
     category: 'Business Solutions',
     challenges: {
       title: 'Repetitive Admin Tasks and Human Verification Bottlenecks',
@@ -266,9 +203,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Background Cron Sync', description: 'Run automated reconciliation checks every midnight.', icon: Clock },
-      { title: 'Slack Triggers', description: 'Ping the target team Slack channels on pipeline errors.', icon: Settings },
-      { title: 'PDF Generation', description: 'Automatically assemble and sign PDF reports on project completions.', icon: FolderGit2 }
+      { title: 'Background Cron Sync', description: 'Run automated reconciliation checks every midnight.', icon: 'Clock' },
+      { title: 'Slack Triggers', description: 'Ping the target team Slack channels on pipeline errors.', icon: 'Settings' },
+      { title: 'PDF Generation', description: 'Automatically assemble and sign PDF reports on project completions.', icon: 'FolderGit2' }
     ],
     howItWorks: [
       { step: '01', title: 'Task Audits', desc: 'We analyze your teams workflows to identify manual bottlenecks.' },
@@ -293,13 +230,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'Do you use tools like Zapier or code it custom?', a: 'While we can connect to integrations like Zapier, we build custom node functions for maximum reliability and lower running costs.' },
       { q: 'How are errors handled?', a: 'Our systems feature auto-retry limits and send detailed slack notifications if an action fails.' }
-    ]
+    ],
+    displayOrder: 4,
+    status: 'active'
   },
-  'ai-chatbots': {
+  {
     slug: 'ai-chatbots',
     title: 'AI Chatbots',
     subtitle: 'Provide RAG-Backed Contextual Support 24/7 in Real-Time',
-    icon: Brain,
+    icon: 'Brain',
     category: 'AI Solutions',
     challenges: {
       title: 'Unhelpful Standard Auto-Replies and Slow Support Latency',
@@ -319,9 +258,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Vector Databases', description: 'Translate document segments into vector vectors for search.', icon: Layers },
-      { title: 'Retrieval Context', description: 'Provide context segments to LLMs to prevent text hallucinations.', icon: Brain },
-      { title: 'Token Guards', description: 'Strict token budget caps to prevent excessive query costs.', icon: Shield }
+      { title: 'Vector Databases', description: 'Translate document segments into vector vectors for search.', icon: 'Layers' },
+      { title: 'Retrieval Context', description: 'Provide context segments to LLMs to prevent text hallucinations.', icon: 'Brain' },
+      { title: 'Token Guards', description: 'Strict token budget caps to prevent excessive query costs.', icon: 'Shield' }
     ],
     howItWorks: [
       { step: '01', title: 'Data Ingestion', desc: 'We ingest your product docs, support histories, and FAQs.' },
@@ -346,13 +285,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'Will the bot make up fake answers?', a: 'We restrict the bot to ONLY answer from your provided documents, returning a "I don\'t know" response instead of hallucinating.' },
       { q: 'How often can we update the documentation?', a: 'Our automated pipelines re-sync and update the vector base within minutes of document modifications.' }
-    ]
+    ],
+    displayOrder: 5,
+    status: 'active'
   },
-  'ai-agents': {
+  {
     slug: 'ai-agents',
     title: 'AI Agents',
     subtitle: 'Deploy Autonomous System Workers for End-to-End Tasks',
-    icon: Cpu,
+    icon: 'Cpu',
     category: 'AI Solutions',
     challenges: {
       title: 'Manual Data Parsing and Decision Bottlenecks',
@@ -372,9 +313,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Task Auto-Chaining', description: 'Decompose complex requests into sequential logical steps.', icon: Brain },
-      { title: 'Async Callback Hooks', description: 'Verify transaction completion status via webhooks.', icon: Repeat },
-      { title: 'JSON Output Formatting', description: 'Strict formatting guarantees reliable parsing by database systems.', icon: Code2 }
+      { title: 'Task Auto-Chaining', description: 'Decompose complex requests into sequential logical steps.', icon: 'Brain' },
+      { title: 'Async Callback Hooks', description: 'Verify transaction completion status via webhooks.', icon: 'Repeat' },
+      { title: 'JSON Output Formatting', description: 'Strict formatting guarantees reliable parsing by database systems.', icon: 'Code2' }
     ],
     howItWorks: [
       { step: '01', title: 'Workflow Scoping', desc: 'We define the agents tools, APIs, and decision bounds.' },
@@ -399,13 +340,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'What safeguards prevent the agent from getting stuck?', a: 'We program max-step thresholds and loop detection limits to safely abort and escalate stuck threads.' },
       { q: 'Can the agent make real financial transactions?', a: 'Yes, within restricted limits and with mandatory multi-party approvals for high-value operations.' }
-    ]
+    ],
+    displayOrder: 6,
+    status: 'active'
   },
-  'generative-ai': {
+  {
     slug: 'generative-ai',
     title: 'Generative AI',
     subtitle: 'Custom Models Trained to Generate Premium Structured Content',
-    icon: Sparkles,
+    icon: 'Sparkles',
     category: 'AI Solutions',
     challenges: {
       title: 'Slow Document Drafting and Inconsistent Content Formats',
@@ -425,9 +368,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Fine-Tuned Outputs', description: 'Train models on company archives for brand voice alignment.', icon: Sparkles },
-      { title: 'Template Structures', description: 'Strict compliance matching PDF or Word formats.', icon: Layers },
-      { title: 'Draft Generation', description: 'Generate structured starter documents inside your workspace.', icon: Repeat }
+      { title: 'Fine-Tuned Outputs', description: 'Train models on company archives for brand voice alignment.', icon: 'Sparkles' },
+      { title: 'Template Structures', description: 'Strict compliance matching PDF or Word formats.', icon: 'Layers' },
+      { title: 'Draft Generation', description: 'Generate structured starter documents inside your workspace.', icon: 'Repeat' }
     ],
     howItWorks: [
       { step: '01', title: 'Data Alignment', desc: 'We gather and clean historical document archives.' },
@@ -452,13 +395,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'Is our corporate data safe?', a: 'Absolutely, all model training is done within your private cloud environment; your data is never sent to public OpenAI/Google servers.' },
       { q: 'Can we generate charts?', a: 'Yes, our pipelines can output structured JSON data mapped directly to rendering libraries.' }
-    ]
+    ],
+    displayOrder: 7,
+    status: 'active'
   },
-  'document-intelligence': {
+  {
     slug: 'document-intelligence',
     title: 'Document Intelligence',
     subtitle: 'Extract Clean Metadata and Lists from Raw Scans Instantly',
-    icon: FolderGit2,
+    icon: 'FolderGit2',
     category: 'AI Solutions',
     challenges: {
       title: 'Manual PDF Ingestion and Formatting Errors',
@@ -478,9 +423,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Multi-Column OCR', description: 'Extract tables and charts accurately across dense PDF layouts.', icon: Layers },
-      { title: 'Entity Extraction', description: 'Auto-detect billing names, invoice IDs, and tax percentages.', icon: Target },
-      { title: 'Format Conversion', description: 'Transform unstructured scans into clean JSON database formats.', icon: Code2 }
+      { title: 'Multi-Column OCR', description: 'Extract tables and charts accurately across dense PDF layouts.', icon: 'Layers' },
+      { title: 'Entity Extraction', description: 'Auto-detect billing names, invoice IDs, and tax percentages.', icon: 'Target' },
+      { title: 'Format Conversion', description: 'Transform unstructured scans into clean JSON database formats.', icon: 'Code2' }
     ],
     howItWorks: [
       { step: '01', title: 'File Analysis', desc: 'We review raw formats, resolutions, and output needs.' },
@@ -499,19 +444,21 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     ],
     techStack: ['Python', 'Tesseract OCR', 'PostgreSQL', 'FastAPI', 'Google Cloud Document AI'],
     metrics: [
-      { label: 'Processing Speed', value: '‑82%' },
+      { label: 'Processing Speed', value: '-82%' },
       { label: 'Extraction Accuracy', value: '99.5%' }
     ],
     faqs: [
       { q: 'How does it handle low-quality scans?', a: 'Our pre-processing algorithms clean, straighten, and sharpen images before parsing to maximize OCR accuracy.' },
       { q: 'Can it run offline?', a: 'Yes, we can deploy open-source models directly onto your internal local servers.' }
-    ]
+    ],
+    displayOrder: 8,
+    status: 'active'
   },
-  'cloud-migration': {
+  {
     slug: 'cloud-migration',
     title: 'Cloud Migration',
     subtitle: 'Establish Scalable, Secure Cloud Infrastructures',
-    icon: Cloud,
+    icon: 'Cloud',
     category: 'Digital Solutions',
     challenges: {
       title: 'Legacy Hardware Instabilities and High Maintenance Overhead',
@@ -531,9 +478,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'HA Cluster Setup', description: 'Deploy server clusters across multiple availability zones.', icon: Cloud },
-      { title: 'Zero Downtime Cutover', description: 'Sync systems live for smooth traffic switchovers.', icon: Repeat },
-      { title: 'VPC Segregation', description: 'Isolate database servers from public internet vectors.', icon: Shield }
+      { title: 'HA Cluster Setup', description: 'Deploy server clusters across multiple availability zones.', icon: 'Cloud' },
+      { title: 'Zero Downtime Cutover', description: 'Sync systems live for smooth traffic switchovers.', icon: 'Repeat' },
+      { title: 'VPC Segregation', description: 'Isolate database servers from public internet vectors.', icon: 'Shield' }
     ],
     howItWorks: [
       { step: '01', title: 'Audit & Mapping', desc: 'We catalog servers, logs, and database requirements.' },
@@ -558,13 +505,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'Will our application experience downtime during migration?', a: 'No, we keep systems synced live, switching DNS only when database integrity is fully verified.' },
       { q: 'Do you configure monitoring dashboards?', a: 'Yes, we set up full Grafana or CloudWatch alert dashboards.' }
-    ]
+    ],
+    displayOrder: 9,
+    status: 'active'
   },
-  'api-integration': {
+  {
     slug: 'api-integration',
     title: 'API Integration',
     subtitle: 'Unify Platform Workflows with Secure Middleware Systems',
-    icon: Code2,
+    icon: 'Code2',
     category: 'Digital Solutions',
     challenges: {
       title: 'Incompatible Formats and Broken Webhook Loops',
@@ -584,9 +533,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Webhook Sync', description: 'Trigger downstream updates instantly when frontend events occur.', icon: Repeat },
-      { title: 'Rate Limiting Layers', description: 'Protect database servers from API traffic spikes.', icon: Shield },
-      { title: 'Payload Validations', description: 'Validate incoming formats before writing details to db.', icon: Code2 }
+      { title: 'Webhook Sync', description: 'Trigger downstream updates instantly when frontend events occur.', icon: 'Repeat' },
+      { title: 'Rate Limiting Layers', description: 'Protect database servers from API traffic spikes.', icon: 'Shield' },
+      { title: 'Payload Validations', description: 'Validate incoming formats before writing details to db.', icon: 'Code2' }
     ],
     howItWorks: [
       { step: '01', title: 'Schema Mapping', desc: 'We detail API fields, endpoints, and validation requirements.' },
@@ -611,13 +560,15 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'Can you build custom API endpoints for legacy software?', a: 'Yes, we specialize in building custom adapters to expose secure REST APIs for older platforms.' },
       { q: 'How is security handled?', a: 'We use OAuth2 frameworks, API keys, and IP whitelisting to secure endpoints.' }
-    ]
+    ],
+    displayOrder: 10,
+    status: 'active'
   },
-  'data-analytics': {
+  {
     slug: 'data-analytics',
     title: 'Data Analytics',
     subtitle: 'Consolidate Siloed Databases into Unified Visual Dashboards',
-    icon: Settings,
+    icon: 'Settings',
     category: 'Digital Solutions',
     challenges: {
       title: 'Scattered Performance Data and Blind Business Decisions',
@@ -637,9 +588,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'Realtime Reporting', description: 'Watch dashboard statistics update live as orders process.', icon: Clock },
-      { title: 'Pre-Baked Queries', description: 'Instantly load high-weight analytical tables.', icon: Settings },
-      { title: 'Secure Exports', description: 'Export filtered data securely into CSV or PDF formats.', icon: FolderGit2 }
+      { title: 'Realtime Reporting', description: 'Watch dashboard statistics update live as orders process.', icon: 'Clock' },
+      { title: 'Pre-Baked Queries', description: 'Instantly load high-weight analytical tables.', icon: 'Settings' },
+      { title: 'Secure Exports', description: 'Export filtered data securely into CSV or PDF formats.', icon: 'FolderGit2' }
     ],
     howItWorks: [
       { step: '01', title: 'Sourcing & Cleaning', desc: 'We link your databases and clean formatting mismatches.' },
@@ -658,19 +609,21 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     ],
     techStack: ['Python', 'PostgreSQL', 'ClickHouse', 'Metabase', 'Docker'],
     metrics: [
-      { label: 'Time-to-Decision', value: '‑80%' },
+      { label: 'Time-to-Decision', value: '-80%' },
       { label: 'Monthly Data Indexed', value: '1B+' }
     ],
     faqs: [
       { q: 'Is there a limit on databases we can connect?', a: 'No, we build pipelines to pool details from multiple SQL/NoSQL databases and APIs.' },
       { q: 'Can we configure automated email reports?', a: 'Yes, we can schedule dashboards to email PDF digests daily or weekly.' }
-    ]
+    ],
+    displayOrder: 11,
+    status: 'active'
   },
-  'cyber-security': {
+  {
     slug: 'cyber-security',
     title: 'Cyber Security',
     subtitle: 'Deploy Endpoint Encryption and Access Control Compliance Layers',
-    icon: Shield,
+    icon: 'Shield',
     category: 'Digital Solutions',
     challenges: {
       title: 'Vulnerable System Endpoints and Credential Theft Risks',
@@ -690,9 +643,9 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
       ]
     },
     features: [
-      { title: 'SSO Integrations', description: 'Unify logins using secure Active Directory or Okta configs.', icon: Shield },
-      { title: 'Vulnerability Scans', description: 'Run automated daily checks to scan library vulnerabilities.', icon: Settings },
-      { title: 'Audit Trails', description: 'Trace every system transaction, change, and access log.', icon: Code2 }
+      { title: 'SSO Integrations', description: 'Unify logins using secure Active Directory or Okta configs.', icon: 'Shield' },
+      { title: 'Vulnerability Scans', description: 'Run automated daily checks to scan library vulnerabilities.', icon: 'Settings' },
+      { title: 'Audit Trails', description: 'Trace every system transaction, change, and access log.', icon: 'Code2' }
     ],
     howItWorks: [
       { step: '01', title: 'Security Audit', desc: 'We scan your codebase and hosting configurations.' },
@@ -717,6 +670,31 @@ export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
     faqs: [
       { q: 'What compliance frameworks do you support?', a: 'We specialize in aligning systems to SOC2, ISO 27001, HIPAA, and GDPR specifications.' },
       { q: 'How often are security scans run?', a: 'Our CI/CD pipelines run code dependency scans on every commit, and host scans execute daily.' }
-    ]
+    ],
+    displayOrder: 12,
+    status: 'active'
   }
-};
+];
+
+async function seed() {
+  try {
+    console.log('[Seed] Connecting to MongoDB Atlas...');
+    await mongoose.connect(MONGODB_URI);
+    console.log('[Seed] Connected successfully.');
+
+    console.log('[Seed] Cleaning up existing Solutions...');
+    await Solution.deleteMany({});
+    console.log('[Seed] Cleaned successfully.');
+
+    console.log('[Seed] Inserting 12 solutions...');
+    await Solution.insertMany(SOLUTIONS_DATA);
+    console.log('[Seed] Seeding completed successfully!');
+  } catch (error) {
+    console.error('[Seed] Seeding error:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('[Seed] Disconnected.');
+  }
+}
+
+seed();
