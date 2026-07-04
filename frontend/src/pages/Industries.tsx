@@ -8,7 +8,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers, Image } from 'lucide-react';
+import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers, Image, Sparkles, ArrowRight, Heart, GraduationCap, Landmark, ShoppingCart, Factory, Truck } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
@@ -27,6 +27,7 @@ export const resolveSpotlightColors = (id: string) => {
     logistics: { spotlight: 'rgba(139, 92, 246, 0.06)', border: 'rgba(139, 92, 246, 0.25)' },
     agriculture: { spotlight: 'rgba(34, 197, 94, 0.06)', border: 'rgba(34, 197, 94, 0.25)' },
     hospitality: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'energy-utilities': { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
   };
   return colorMap[id] || { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' };
 };
@@ -63,47 +64,226 @@ export const Industries = () => {
         <Navbar />
 
         {/* Premium Redesigned Industries Hero with Aurora Background */}
-        <AuroraBackground className="bg-gradient-to-b from-zinc-950 via-[#041d1a] to-zinc-950 pt-20 pb-20 md:pt-32 md:pb-28 border-b border-emerald-950/40">
-          <div className="container-custom relative z-10 text-center max-w-4xl mx-auto px-4 mt-6">
-            <BlurReveal duration={0.6}>
-              <ShineEffect className="inline-block rounded-full mb-4">
-                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-                  Custom Vertical Architecture
-                </Badge>
-              </ShineEffect>
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter leading-[1.1] mb-6">
-                Redefining Digitization <br />
-                <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-                  In Global Industries
-                </span>
-              </h1>
-              <p className="mt-6 text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto font-semibold leading-relaxed">
-                We combine industry-specific domain expertise with scalable software engineering to deliver secure, regulatory-compliant, and high-performance digital ecosystems.
-              </p>
-            </BlurReveal>
+        <AuroraBackground className="bg-gradient-to-b from-zinc-950 via-[#021815] to-zinc-950 pt-24 pb-10 md:pt-32 md:pb-14 border-b border-emerald-950/40 relative overflow-hidden">
+          {/* Decorative mesh background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+          
+          {/* Glowing colorful backdrop blobs */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-            {/* Interactive Search Bar */}
-            <BlurReveal duration={0.6} delay={0.15} className="mt-10 max-w-xl mx-auto relative group">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-xl opacity-60 group-hover:opacity-90 transition-opacity" />
-              <div className="relative flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden focus-within:border-emerald-500/40 focus-within:ring-2 focus-within:ring-emerald-500/10 transition-all px-4 py-1.5 backdrop-blur-md">
-                <Search className="h-5 w-5 text-slate-450 mr-3 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search industries, services, or tech stack..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-0 text-white placeholder-slate-455 focus:outline-none focus:ring-0 text-xs sm:text-sm py-2.5 font-medium"
-                />
-                {searchQuery && (
-                  <button 
-                    onClick={() => setSearchQuery('')}
-                    className="text-[10px] font-bold text-slate-400 hover:text-white px-2 py-1 bg-white/10 rounded-lg transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
+          <div className="container-custom relative z-10 max-w-6xl mx-auto px-4 mt-2">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              {/* Left Column: Text Content + Search */}
+              <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left">
+                <BlurReveal duration={0.6}>
+                  <ShineEffect className="inline-block rounded-full mb-6">
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-black uppercase tracking-[0.22em] text-[9px] px-4 py-1.5 rounded-full shadow-[0_0_20px_-3px_rgba(16,185,129,0.3)]">
+                      INDUSTRIES WE SERVE
+                    </Badge>
+                  </ShineEffect>
+                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter leading-[1.1] mb-6">
+                    Redefining Digitization <br />
+                    <span className="bg-gradient-to-r from-emerald-400 via-teal-350 to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
+                      In Global Industries
+                    </span>
+                  </h1>
+                  <p className="mt-4 text-sm sm:text-base md:text-lg text-zinc-300 max-w-xl font-semibold leading-relaxed">
+                    We combine industry-specific domain expertise with scalable software engineering to deliver secure, regulatory-compliant, and high-performance digital ecosystems.
+                  </p>
+                </BlurReveal>
+
+                {/* Interactive Search Bar */}
+                <BlurReveal duration={0.6} delay={0.15} className="mt-10 w-full max-w-xl relative group">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-teal-555/20 blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-300" />
+                  <div className="relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden focus-within:border-emerald-400/50 focus-within:ring-2 focus-within:ring-emerald-500/10 focus-within:bg-white/[0.05] transition-all duration-300 px-5 py-2 backdrop-blur-xl shadow-inner">
+                    <Search className="h-5 w-5 text-emerald-400 mr-3 shrink-0 animate-pulse" />
+                    <input
+                      type="text"
+                      placeholder="Search industries, services, or technologies..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-transparent border-0 text-white placeholder-slate-400 focus:outline-none focus:ring-0 text-xs sm:text-sm py-2.5 font-semibold tracking-wide"
+                    />
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        className="text-[10px] font-black text-emerald-400 hover:text-white px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg transition-colors border border-emerald-500/25"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </BlurReveal>
               </div>
-            </BlurReveal>
+
+              {/* Right Column: Globe + Floating Panels (Hidden on mobile for clean UX) */}
+              <div className="hidden lg:flex lg:col-span-6 relative h-[460px] w-full max-w-[500px] mx-auto items-center justify-center overflow-visible mt-0">
+                
+                {/* Connecting lines from panels to globe */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden sm:block" viewBox="0 0 500 500" fill="none">
+                  {/* Healthcare line */}
+                  <path d="M 120,95 C 170,110 200,160 215,215" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="215" cy="215" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="215" cy="215" r="1.5" fill="#10b981" />
+                  
+                  {/* Finance line */}
+                  <path d="M 110,265 C 160,265 180,255 210,248" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="210" cy="248" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="210" cy="248" r="1.5" fill="#10b981" />
+
+                  {/* Logistics line */}
+                  <path d="M 120,435 C 170,410 190,340 215,290" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="215" cy="290" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="215" cy="290" r="1.5" fill="#10b981" />
+
+                  {/* Manufacturing line */}
+                  <path d="M 380,75 C 330,95 310,160 285,215" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="285" cy="215" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="285" cy="215" r="1.5" fill="#10b981" />
+
+                  {/* Retail line */}
+                  <path d="M 390,210 C 340,230 320,240 290,248" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="290" cy="248" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="290" cy="248" r="1.5" fill="#10b981" />
+
+                  {/* Education line */}
+                  <path d="M 380,390 C 330,360 310,340 285,290" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" strokeDasharray="3 3" />
+                  <circle cx="285" cy="290" r="2.5" fill="#10b981" className="animate-ping" />
+                  <circle cx="285" cy="290" r="1.5" fill="#10b981" />
+                </svg>
+
+                {/* Globe Core */}
+                <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full bg-gradient-to-br from-emerald-950/80 via-teal-950/40 to-zinc-950/90 flex items-center justify-center border border-emerald-500/30 shadow-[0_0_80px_rgba(16,185,129,0.2),inset_0_0_40px_rgba(16,185,129,0.3)] animate-[pulse_3s_infinite] overflow-hidden">
+                  
+                  {/* Atmospheric gradient overlay */}
+                  <div className="absolute inset-0 bg-radial-gradient from-transparent to-zinc-950/90 pointer-events-none z-10" />
+
+                  {/* Styled SVG Globe grid with detailed continents */}
+                  <svg className="w-56 h-56 sm:w-64 sm:h-64 text-emerald-400/40 absolute" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.5">
+                    {/* Atmospheric grid lines */}
+                    <circle cx="50" cy="50" r="45" strokeDasharray="2 2" className="animate-[spin_40s_linear_infinite]" />
+                    <circle cx="50" cy="50" r="35" className="animate-[spin_20s_linear_infinite_reverse]" />
+                    <circle cx="50" cy="50" r="20" strokeDasharray="3 1" />
+                    
+                    {/* Detailed world map contours */}
+                    <g className="text-emerald-500/20 fill-emerald-500/10 stroke-none animate-[spin_55s_linear_infinite] origin-[50px_50px]">
+                      {/* North America */}
+                      <path d="M15,22 C18,20 22,18 26,19 C28,21 32,24 35,22 C36,25 38,27 35,30 C32,32 30,28 27,29 C24,31 22,34 18,33 C15,31 12,28 15,22 Z" />
+                      {/* South America */}
+                      <path d="M22,38 C25,37 28,40 29,43 C28,47 26,52 24,57 C22,62 23,68 20,72 C18,70 17,65 17,60 C18,55 16,50 15,45 C15,41 18,39 22,38 Z" />
+                      {/* Africa */}
+                      <path d="M42,40 C46,38 52,36 56,40 C58,42 62,45 61,48 C59,51 55,54 53,58 C51,62 48,65 45,69 C43,67 43,62 45,58 C47,54 44,50 42,46 C41,43 41,41 42,40 Z" />
+                      {/* Europe & Asia */}
+                      <path d="M44,22 C48,20 54,19 60,21 C65,22 70,18 75,21 C78,23 82,21 85,24 C83,28 78,30 75,32 C74,35 70,38 67,36 C64,38 60,35 56,36 C52,38 48,35 45,37 C43,35 42,28 44,22 Z" />
+                      {/* Southeast Asia & Australia */}
+                      <path d="M72,42 C74,40 76,43 78,45 C75,47 73,45 72,42 Z M78,55 C82,53 86,55 88,58 C86,61 82,63 78,61 C76,59 76,57 78,55 Z" />
+                    </g>
+                    
+                    {/* Curved orbital rings at an angle */}
+                    <ellipse cx="50" cy="50" rx="48" ry="12" transform="rotate(-30 50 50)" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="0.8" />
+                    <ellipse cx="50" cy="50" rx="48" ry="12" transform="rotate(30 50 50)" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="0.8" />
+                  </svg>
+
+                  {/* Globe center glow */}
+                  <div className="absolute w-24 h-24 rounded-full bg-emerald-400/20 blur-xl z-20 pointer-events-none" />
+                </div>
+
+                {/* Spinning outer rings */}
+                <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full border border-dashed border-emerald-500/20 animate-[spin_60s_linear_infinite] pointer-events-none" />
+                <div className="absolute w-80 h-80 sm:w-96 sm:h-96 rounded-full border border-dashed border-teal-500/10 animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />
+
+                {/* Floating Panels */}
+                {/* Healthcare */}
+                <motion.div 
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-[12%] left-[4%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <Heart className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Healthcare</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Better Outcomes</div>
+                  </div>
+                </motion.div>
+
+                {/* Finance */}
+                <motion.div 
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-[48%] left-[0%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <Landmark className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Finance</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Secure & Scalable</div>
+                  </div>
+                </motion.div>
+
+                {/* Logistics */}
+                <motion.div 
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute bottom-[10%] left-[8%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <Truck className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Logistics</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Supply Chain 4.0</div>
+                  </div>
+                </motion.div>
+
+                {/* Manufacturing */}
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-[8%] right-[4%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <Factory className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Manufacturing</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Smart Automation</div>
+                  </div>
+                </motion.div>
+
+                {/* Retail */}
+                <motion.div 
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-[38%] right-[0%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <ShoppingCart className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Retail & E-Commerce</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Customer Centric</div>
+                  </div>
+                </motion.div>
+
+                {/* Education */}
+                <motion.div 
+                  animate={{ y: [0, -7, 0] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute bottom-[18%] right-[8%] flex items-center gap-3 bg-zinc-950/85 border border-emerald-500/30 rounded-xl px-3.5 py-2 shadow-[0_4px_25px_rgba(0,0,0,0.4)] backdrop-blur-md z-20 hover:border-emerald-400 hover:shadow-[0_4px_30px_rgba(16,185,129,0.2)] transition-colors duration-300"
+                >
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <GraduationCap className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[10px] font-bold text-white leading-none">Education</div>
+                    <div className="text-[8px] font-semibold text-emerald-400/70 mt-0.5 leading-none">Digital Learning</div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
           </div>
         </AuroraBackground>
 
@@ -111,7 +291,7 @@ export const Industries = () => {
         <Breadcrumb />
 
         {/* Dynamic Industries Asymmetrical Grid Section with 3D Parallax Dot Background */}
-        <Spotlight3DBackground className="py-16 md:py-24">
+        <Spotlight3DBackground className="pt-6 pb-8 md:pt-8 md:pb-12">
           <div className="container-custom max-w-6xl mx-auto px-4 relative">
             <AnimatePresence mode="popLayout">
               {filteredIndustries.length > 0 ? (
@@ -121,14 +301,14 @@ export const Industries = () => {
                   {filteredIndustries.map((ind: Industry, index: number) => {
                     const Icon = ind.icon;
                     const colors = resolveSpotlightColors(ind.id);
-                    const isFeatured = index % 3 === 0;
+                    const isFeatured = index === 0 || index === 6;
 
                     return (
                       <StaggerItem
                         key={ind.id}
-                        className={isFeatured ? 'md:col-span-2' : 'md:col-span-1'}
+                        className={`${isFeatured ? 'md:col-span-2' : 'md:col-span-1'} h-full`}
                       >
-                        <GlowHover glowColor={colors.border}>
+                        <GlowHover glowColor={colors.border} className="h-full">
                           <SpotlightCard 
                             spotlightColor={colors.spotlight}
                             borderColor={colors.border}
@@ -276,36 +456,67 @@ export const Industries = () => {
           </div>
         </Spotlight3DBackground>
 
-        {/* Global Redesigned CTA Section with Aurora Background Effect */}
-        <AuroraBackground className="bg-gradient-to-br from-zinc-950 via-[#031d1b] to-zinc-950 border-t border-emerald-950/40 py-20 md:py-28">
-          <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
-            <ScaleIn>
-              <ShineEffect className="inline-block rounded-full mb-4">
-                <Badge variant="outline" className="mb-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-                  Enterprise Collaboration
-                </Badge>
-              </ShineEffect>
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight mt-3">
+        {/* Contained Redesigned CTA Card Section */}
+        <section className="px-4 sm:px-6 lg:px-8 pt-4 pb-16 md:pt-6 md:pb-24 bg-slate-50/30 border-t border-slate-100/80">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-[#10B981] to-emerald-700 border border-emerald-500/30 rounded-3xl p-8 md:p-12 text-white shadow-[0_20px_50px_rgba(16,185,129,0.15)] text-center max-w-4xl mx-auto"
+          >
+            {/* Blurred background glows */}
+            <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-emerald-300/20 blur-2xl pointer-events-none" />
+
+            {/* Grid Pattern overlay */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-10" aria-hidden="true">
+              <svg width="100%" height="100%">
+                <pattern id="cta-mesh-industries" width="16" height="16" patternUnits="userSpaceOnUse">
+                  <path d="M 16 0 L 0 0 0 16" fill="none" stroke="currentColor" strokeWidth="1" />
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#cta-mesh-industries)" />
+              </svg>
+            </div>
+
+            <div className="relative z-10 space-y-6">
+              {/* Floating badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-xs font-semibold select-none">
+                <Sparkles className="h-3 w-3 text-emerald-100 animate-pulse" />
+                <span>Let's collaborate</span>
+              </div>
+
+              <h2 className="text-2xl md:text-4xl font-black font-display tracking-tight leading-tight max-w-2xl mx-auto text-white">
                 Looking for a custom enterprise platform?
               </h2>
-              <p className="mt-6 text-slate-300 max-w-xl mx-auto text-sm sm:text-base font-semibold leading-relaxed">
+              
+              <p className="text-emerald-50/90 text-xs md:text-sm max-w-xl mx-auto leading-relaxed font-medium">
                 We collaborate closely with technical and product stakeholders to scope, design, and deploy secure, high-performance systems tailored to your vertical's specific requirements.
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Magnetic>
-                  <Button size="lg" className="w-full sm:w-auto font-bold rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 hover:scale-[1.02]" asChild>
+              
+              <div className="flex flex-wrap gap-4 justify-center pt-2">
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+                  <Button 
+                    className="bg-white text-emerald-700 hover:bg-slate-50 font-bold border-none shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_-4px_rgba(0,0,0,0.2)] px-7 py-3 rounded-xl inline-flex items-center gap-2 transition-all h-11 text-xs md:text-sm"
+                    asChild
+                  >
                     <Link to="/contact">Get in Touch</Link>
                   </Button>
-                </Magnetic>
-                <Magnetic>
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/10 bg-white/5 hover:bg-white/10 hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" asChild>
+                </motion.div>
+                
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
+                  <Button 
+                    variant="outline" 
+                    className="border-white/30 hover:border-white text-white hover:bg-white/10 font-bold px-7 py-3 rounded-xl inline-flex items-center gap-2 h-11 text-xs md:text-sm transition-all"
+                    asChild
+                  >
                     <Link to="/work">View Anonymized Portfolio</Link>
                   </Button>
-                </Magnetic>
+                </motion.div>
               </div>
-            </ScaleIn>
-          </div>
-        </AuroraBackground>
+            </div>
+          </motion.div>
+        </section>
 
         <Footer />
       </main>

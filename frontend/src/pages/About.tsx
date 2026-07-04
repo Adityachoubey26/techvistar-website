@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import aboutBg from '../assets/about-bg.png';
+import CircularText from '@/components/ui/CircularText';
+import udayImg from '@/assets/uday.jpg';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -263,15 +265,31 @@ const About = () => {
       {/* Single structured document — tight vertical rhythm */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_24px_-12px_rgba(15,23,42,0.1)]">
-          {/* Overview */}
-          <motion.section {...fadeUp} className={`${sectionPad} border-b border-slate-100`} aria-labelledby="overview-heading">
-            <h2 id="overview-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-              {ABOUT_PAGE.overview.title}
-            </h2>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-[0.9375rem]">
-              {ABOUT_PAGE.overview.paragraphs.map((p, idx) => (
-                <p key={idx}>{p}</p>
-              ))}
+          <motion.section {...fadeUp} className={`${sectionPad} border-b border-slate-100 bg-gradient-to-br from-primary/[0.02] via-emerald-50/[0.05] to-transparent`} aria-labelledby="overview-heading">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+              <div className="md:col-span-2">
+                <h2 id="overview-heading" className="font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+                  {ABOUT_PAGE.overview.title}
+                </h2>
+                <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-[0.9375rem]">
+                  {ABOUT_PAGE.overview.paragraphs.map((p, idx) => (
+                    <p key={idx}>{p}</p>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4">
+                <div className="relative flex items-center justify-center w-[120px] h-[120px] rounded-full overflow-hidden border-4 border-emerald-500/20 shadow-xl ring-4 ring-emerald-500/10">
+                  <img 
+                    src={udayImg} 
+                    alt="Uday Gedam - Founder of Veenero" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="mt-3 text-center">
+                  <h4 className="font-display text-sm font-bold text-slate-900">Uday Gedam</h4>
+                  <p className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mt-0.5">Founder, Veenero</p>
+                </div>
+              </div>
             </div>
           </motion.section>
 
@@ -290,16 +308,18 @@ const About = () => {
                 const styles = boxStyles[i % boxStyles.length];
                 const Icon = styles.icon;
                 return (
-                  <div
+                  <motion.div
                     key={area.title}
-                    className={`rounded-xl border p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${styles.bg} ${styles.border}`}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.99 }}
+                    className={`rounded-xl border-2 p-4 shadow-sm transition-all duration-300 hover:shadow-md ${styles.bg} ${styles.border}`}
                   >
                     <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${styles.iconBg} ring-1 ring-black/5`}>
                       <Icon className="h-[1.125rem] w-[1.125rem]" strokeWidth={1.75} aria-hidden />
                     </div>
                     <h3 className="mt-3 font-display text-[0.9375rem] font-semibold leading-snug text-slate-900">{area.title}</h3>
                     <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:text-sm">{area.description}</p>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -312,9 +332,11 @@ const About = () => {
             </h2>
             <div className="mt-5 grid gap-3 md:grid-cols-2 md:gap-4">
               {pillars.map((pillar) => (
-                <div
+                <motion.div
                   key={pillar.label}
-                  className={`overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${pillar.bg} ${pillar.border}`}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.99 }}
+                  className={`overflow-hidden rounded-xl border-2 transition-all duration-300 hover:shadow-md ${pillar.bg} ${pillar.border}`}
                 >
                   <div className="h-0.5 w-full bg-gradient-to-r from-primary via-emerald-500 to-teal-600" aria-hidden />
                   <div className="p-4 sm:p-5">
@@ -328,7 +350,7 @@ const About = () => {
                     </div>
                     <p className="mt-3 text-xs leading-relaxed text-slate-600 sm:text-sm">{pillar.text}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
@@ -339,46 +361,71 @@ const About = () => {
               {ABOUT_PAGE.principlesHeading}
             </h2>
             <p className="mt-2 text-sm leading-snug text-slate-600">{ABOUT_PAGE.principlesIntro}</p>
-            <ul className="mt-4 space-y-2.5 border-t border-slate-200/80 pt-4" role="list">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 border-t border-slate-200/80 pt-4">
               {ABOUT_PAGE.principles.map((line, i) => (
-                <li key={i} className="flex gap-2.5 text-sm leading-snug text-slate-700">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 text-primary ring-1 ring-primary/12">
+                <motion.div
+                  key={i}
+                  whileHover={{ scale: 1.015, y: -1 }}
+                  className="flex gap-3 p-4 rounded-xl border-2 border-emerald-500/10 bg-emerald-500/[0.01] hover:bg-emerald-500/[0.04] hover:border-emerald-500/20 transition-all duration-200"
+                >
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 text-primary ring-1 ring-primary/20">
                     <Check className="h-3 w-3 stroke-[2.5]" aria-hidden />
                   </span>
-                  <span>{line}</span>
-                </li>
+                  <span className="text-sm font-medium text-slate-700 leading-snug">{line}</span>
+                </motion.div>
               ))}
-            </ul>
+            </div>
           </motion.section>
 
           {/* Location + commitment + CTA — one block */}
-          <section className={sectionPad} aria-labelledby="location-heading">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/12 to-primary/5 text-primary ring-1 ring-primary/12">
-                <Building2 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h2 id="location-heading" className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  {ABOUT_PAGE.location.heading}
-                </h2>
-                <p className="mt-1 text-sm font-medium text-slate-800">{ABOUT_COPY.locationLine}</p>
-                <p className="mt-1 text-xs text-slate-600">{ABOUT_PAGE.location.detail}</p>
-              </div>
+          {/* Location + commitment + CTA — grid block */}
+          <section className={`${sectionPad} bg-gradient-to-br from-primary/[0.03] via-emerald-50/10 to-transparent`} aria-labelledby="location-heading">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Headquarters Card */}
+              <motion.div
+                whileHover={{ scale: 1.015, y: -2 }}
+                whileTap={{ scale: 0.995 }}
+                className="flex gap-4 p-5 rounded-2xl border-2 border-emerald-500/20 bg-white/80 shadow-sm backdrop-blur-sm"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_4px_12px_-2px_rgba(16,185,129,0.2)]">
+                  <Building2 className="h-6 w-6 animate-pulse" strokeWidth={1.75} aria-hidden />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-emerald-800 ring-1 ring-emerald-800/10">
+                    {ABOUT_PAGE.location.heading}
+                  </span>
+                  <h3 className="mt-2 text-base font-extrabold tracking-tight text-slate-900">{ABOUT_COPY.locationLine}</h3>
+                  <p className="mt-1 text-xs font-semibold text-slate-500">{ABOUT_PAGE.location.detail}</p>
+                </div>
+              </motion.div>
+
+              {/* Commitment Card */}
+              <motion.div
+                whileHover={{ scale: 1.015, y: -2 }}
+                whileTap={{ scale: 0.995 }}
+                className="flex gap-4 p-5 rounded-2xl border-2 border-teal-500/20 bg-white/80 shadow-sm backdrop-blur-sm"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-[0_4px_12px_-2px_rgba(20,184,166,0.2)]">
+                  <Sparkles className="h-6 w-6 animate-pulse" strokeWidth={1.75} aria-hidden />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100/80 px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-teal-800 ring-1 ring-teal-800/10">
+                    {ABOUT_PAGE.commitmentHeading}
+                  </span>
+                  <p className="mt-2 text-sm font-semibold text-slate-800 leading-relaxed">{ABOUT_COPY.closing}</p>
+                </div>
+              </motion.div>
             </div>
 
-            <div className="mt-5 border-t border-slate-100 pt-5">
-              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-slate-500">{ABOUT_PAGE.commitmentHeading}</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">{ABOUT_COPY.closing}</p>
-            </div>
-
-            <div className="mt-5 flex flex-col gap-3 rounded-xl bg-primary px-4 py-4 text-primary-foreground sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <p className="text-xs font-medium leading-snug sm:max-w-[70%] sm:text-sm">
+            {/* CTA Banner */}
+            <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-5 text-white sm:flex-row sm:items-center sm:justify-between sm:px-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <p className="text-xs font-bold leading-snug sm:max-w-[70%] sm:text-sm tracking-wide">
                 {ABOUT_PAGE.ctaText}
               </p>
-              <Button variant="secondary" size="default" className="shrink-0 border-0 bg-white text-primary hover:bg-slate-100 text-sm" asChild>
-                <Link to="/#contact" className="inline-flex items-center gap-2">
+              <Button variant="secondary" size="default" className="shrink-0 border-0 bg-white text-emerald-700 hover:bg-slate-50 hover:text-emerald-800 font-bold text-xs px-5 py-2.5 shadow-sm transition-all" asChild>
+                <Link to="/#contact" className="inline-flex items-center gap-2 uppercase tracking-wider">
                   {ABOUT_PAGE.ctaButtonText}
-                  <ArrowRight className="h-4 w-4" aria-hidden />
+                  <ArrowRight className="h-4 w-4 stroke-[2.5]" aria-hidden />
                 </Link>
               </Button>
             </div>
