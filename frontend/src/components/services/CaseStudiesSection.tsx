@@ -1,5 +1,7 @@
 import { Service } from '@/data/services';
-import { PROJECTS, Project } from '@/data/projects';
+import { useQuery } from '@tanstack/react-query';
+import { getActiveProjects } from '@/services/portfolio.service';
+import { decorateProject, Project } from '@/data/projects';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Briefcase, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -12,8 +14,15 @@ interface SectionProps {
 export const CaseStudiesSection = ({ service }: SectionProps) => {
   const prefersReducedMotion = useReducedMotion();
 
+  const { data: apiProjects } = useQuery({
+    queryKey: ['activeProjects'],
+    queryFn: getActiveProjects,
+  });
+
+  const projectsData = (apiProjects || []).map(decorateProject);
+
   // Query projects dynamically where serviceSlugs matches current service's slug
-  const relatedProjects = PROJECTS.filter((project: Project) => 
+  const relatedProjects = projectsData.filter((project: Project) => 
     project.serviceSlugs && project.serviceSlugs.includes(service.slug)
   );
 

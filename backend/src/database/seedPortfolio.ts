@@ -1,85 +1,25 @@
-import mobilityImg from '../assets/mobility_routing_dashboard.png';
-import sustainabilityImg from '../assets/sustainability_dashboard.png';
-import cropImg from '../assets/crop_health_analysis.png';
-import nlpImg from '../assets/sentiment_nlp_dashboard.png';
-import resumeReviewImg from '../assets/resume_review_assistant.png';
-import clinicalRiskImg from '../assets/clinical_risk_scoring.png';
-import aiTranslatorImg from '../assets/ai_translator.png';
-import aiTranslatorBatchesImg from '../assets/ai_translator_batches.png';
-import financeImg from '../assets/finance_reporting_analytics.png';
+/**
+ * @file src/database/seedPortfolio.ts
+ * @description Seeding script to populate the Portfolio Projects collection in MongoDB Atlas.
+ */
 
-export interface Project {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  thumbnail: string;
-  category: string;
-  technologies: string[];
-  liveUrl: string;
-  githubUrl: string;
-  featured: boolean;
-  date: string; // ISO 8601 Date String (YYYY-MM-DD)
-  client: string;
-  role: string;
-  longDescription: string;
-  keyFeatures: string[];
-  challenges: string[];
-  gallery: string[];
-  tags: string[];
-  status: 'Completed' | 'In Progress' | 'Coming Soon';
-  serviceSlugs: string[];
-  industry: string;
-  updatedDate: string; // ISO 8601 Date String (YYYY-MM-DD)
-}
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import path from 'path';
+import { ProjectModel } from '../models/Project';
 
-export const IMAGE_MAP: Record<string, string> = {
-  mobilityImg,
-  sustainabilityImg,
-  cropImg,
-  nlpImg,
-  resumeReviewImg,
-  clinicalRiskImg,
-  aiTranslatorImg,
-  aiTranslatorBatchesImg,
-  financeImg
-};
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-export function decorateProject(apiProject: any): Project {
-  return {
-    id: apiProject._id || apiProject.id,
-    title: apiProject.title,
-    slug: apiProject.slug,
-    description: apiProject.description,
-    thumbnail: IMAGE_MAP[apiProject.thumbnail] || apiProject.thumbnail || '',
-    category: apiProject.category,
-    technologies: apiProject.technologies || [],
-    liveUrl: apiProject.liveUrl || '#',
-    githubUrl: apiProject.githubUrl || '#',
-    featured: apiProject.featured || false,
-    date: apiProject.date || '',
-    client: apiProject.client || '',
-    role: apiProject.role || '',
-    longDescription: apiProject.longDescription || '',
-    keyFeatures: apiProject.keyFeatures || [],
-    challenges: apiProject.challenges || [],
-    gallery: (apiProject.gallery || []).map((img: string) => IMAGE_MAP[img] || img),
-    tags: apiProject.tags || [],
-    status: apiProject.status || 'Completed',
-    serviceSlugs: apiProject.serviceSlugs || [],
-    industry: apiProject.industry || '',
-    updatedDate: apiProject.updatedDate || '',
-  };
-}
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/techvistar';
 
-export const PROJECTS: readonly Project[] = [
+const PROJECTS_DATA = [
   {
-    id: 1,
     title: 'Navigation & route optimization',
     slug: 'navigation-route-optimization',
     description:
       'End-to-end planning workflow for multi-stop routes under time windows, capacity, and road constraints: geocoded inputs, solver-backed optimization (cost / time / distance objectives), and operator review before dispatch. Includes map visualisation, exception handling for failed legs, and auditable run history for operations.',
-    thumbnail: mobilityImg,
+    thumbnail: 'mobilityImg',
     category: 'Mobility & logistics',
     technologies: ['Python', 'Maps APIs', 'React', 'TypeScript'],
     liveUrl: '#',
@@ -100,20 +40,20 @@ export const PROJECTS: readonly Project[] = [
       'Handling high-latency solver runs without locking the main UI thread, solved via Web Worker offloading.',
       'Reconciling manual operator route adjustments with solver constraints through dynamic incremental checks.',
     ],
-    gallery: [mobilityImg],
+    gallery: ['mobilityImg'],
     tags: ['routing', 'logistics', 'optimization', 'maps', 'operations-research', 'dashboard'],
     status: 'Completed',
     serviceSlugs: ['web-development', 'custom-software-development', 'automation', 'product-platform-engineering'],
     industry: 'Logistics',
     updatedDate: '2025-11-20',
+    displayOrder: 1,
   },
   {
-    id: 2,
     title: 'Eco_System — environmental intelligence',
     slug: 'ecosystem-environmental-intelligence',
     description:
       'Unified dashboard for environmental indicators and programme KPIs: ingestion from sensors and third-party feeds, role-based views for field vs management users, scheduled reports, and threshold-based alerts. Designed for traceability from raw readings to consolidated scores used in review meetings.',
-    thumbnail: sustainabilityImg,
+    thumbnail: 'sustainabilityImg',
     category: 'Data & sustainability',
     technologies: ['PostgreSQL', 'React', 'Docker', 'TypeScript'],
     liveUrl: '#',
@@ -134,20 +74,20 @@ export const PROJECTS: readonly Project[] = [
       'Handling out-of-order and duplicate sensor readings, resolved by implementing idempotent database upserts and time-series bucketing.',
       'High-performance rendering of dense historic telemetry data, optimized through aggregate pre-computation and client-side charting downsampling.',
     ],
-    gallery: [sustainabilityImg],
+    gallery: ['sustainabilityImg'],
     tags: ['sustainability', 'sensors', 'iot', 'data-pipeline', 'reporting', 'analytics'],
     status: 'Completed',
     serviceSlugs: ['web-development', 'custom-software-development', 'digital-marketing', 'cloud', 'cloud-infrastructure'],
     industry: 'SaaS',
     updatedDate: '2025-10-01',
+    displayOrder: 2,
   },
   {
-    id: 3,
     title: 'Crop Hub — crop health screening',
     slug: 'crop-hub-crop-health-screening',
     description:
       'Image-based workflow for leaf uploads, model inference, and structured reporting for field teams—designed for clarity of results and auditability of predictions.',
-    thumbnail: cropImg,
+    thumbnail: 'cropImg',
     category: 'Applied ML',
     technologies: ['Python', 'TensorFlow', 'React', 'OpenAI'],
     liveUrl: '#',
@@ -168,20 +108,20 @@ export const PROJECTS: readonly Project[] = [
       'Deploying heavy Deep Learning models on cost-constrained hosting servers, solved through model quantization and conversion to ONNX format.',
       'Unreliable field connectivity, handled via LocalStorage queue synchronization once the device returns online.',
     ],
-    gallery: [cropImg],
+    gallery: ['cropImg'],
     tags: ['machine-learning', 'agriculture', 'computer-vision', 'tensorflow', 'classification', 'offline-first'],
     status: 'Completed',
     serviceSlugs: ['ai-automation', 'mobile-app-development', 'automation', 'ai'],
     industry: 'Agriculture',
     updatedDate: '2025-05-25',
+    displayOrder: 3,
   },
   {
-    id: 4,
     title: 'Sentiment classification service',
     slug: 'sentiment-classification-service',
     description:
       'Text-in / label-out service for opinion mining with reproducible training features, evaluation metrics, and a lightweight operator UI for batch runs.',
-    thumbnail: nlpImg,
+    thumbnail: 'nlpImg',
     category: 'NLP',
     technologies: ['Python', 'Docker', 'TypeScript', 'React'],
     liveUrl: '#',
@@ -202,20 +142,20 @@ export const PROJECTS: readonly Project[] = [
       'Addressing domain shift when classifying specialized terminology, resolved by incorporating custom lexicon rules into the TF-IDF feature extractor.',
       'Sustaining high throughput for batch uploads, addressed through asynchronous queueing using python multiprocessing pools.',
     ],
-    gallery: [nlpImg],
+    gallery: ['nlpImg'],
     tags: ['nlp', 'sentiment-analysis', 'text-processing', 'scikit-learn', 'api', 'dashboard'],
     status: 'Completed',
     serviceSlugs: ['ai-automation', 'custom-software-development', 'ai', 'enterprise-ai-integration'],
     industry: 'SaaS',
     updatedDate: '2025-03-15',
+    displayOrder: 4,
   },
   {
-    id: 5,
     title: 'Resume review assistant',
     slug: 'resume-review-assistant',
     description:
       'Guided scoring against role templates, ATS-oriented formatting checks, and actionable suggestions—keeping human review in the loop.',
-    thumbnail: resumeReviewImg,
+    thumbnail: 'resumeReviewImg',
     category: 'Productivity AI',
     technologies: ['Python', 'OpenAI', 'React', 'TypeScript'],
     liveUrl: '#',
@@ -236,20 +176,20 @@ export const PROJECTS: readonly Project[] = [
       'Extracting clean text from highly formatted multi-column PDF layouts, resolved by implementing structured PDF miner pipelines.',
       'Minimizing API costs and latency during large batch uploads, solved through key-value caching and prompt compaction.',
     ],
-    gallery: [resumeReviewImg],
+    gallery: ['resumeReviewImg'],
     tags: ['llm', 'resume-parsing', 'ats', 'productivity', 'recruitment', 'ai-assistant'],
     status: 'Completed',
     serviceSlugs: ['ai-automation', 'ai', 'enterprise-ai-integration', 'documentation-research', 'ui-ux-design'],
     industry: 'HRTech',
     updatedDate: '2025-02-10',
+    displayOrder: 5,
   },
   {
-    id: 6,
     title: 'Clinical risk scoring prototype',
     slug: 'clinical-risk-scoring-prototype',
     description:
       'Interpretable ML pipeline with calibrated outputs and confidence bands, focused on safe presentation of assistive—not diagnostic—information.',
-    thumbnail: clinicalRiskImg,
+    thumbnail: 'clinicalRiskImg',
     category: 'Healthcare ML',
     technologies: ['Python', 'React', 'MongoDB', 'TypeScript'],
     liveUrl: '#',
@@ -270,20 +210,20 @@ export const PROJECTS: readonly Project[] = [
       'Presenting complex mathematical explanations in an intuitive, non-overwhelming UI, solved by user testing and adopting hierarchical cards.',
       'Ensuring strict data sanitization to comply with health data standards in local sandbox environments.',
     ],
-    gallery: [clinicalRiskImg],
+    gallery: ['clinicalRiskImg'],
     tags: ['healthcare', 'risk-scoring', 'explainable-ai', 'machine-learning', 'ehr', 'analytics'],
     status: 'Completed',
     serviceSlugs: ['web-development', 'ai-automation', 'ai', 'enterprise-ai-integration', 'documentation-research'],
     industry: 'Healthcare',
     updatedDate: '2024-12-05',
+    displayOrder: 6,
   },
   {
-    id: 7,
     title: 'AI Translator',
     slug: 'ai-translator',
     description:
       'Multilingual translation service with configurable engines (neural + optional LLM assist), customer glossary and “do-not-translate” lists, segment-level confidence, and a review queue for low-confidence spans. Exposes REST/WebSocket APIs for product embeds plus an operator console for batch runs.',
-    thumbnail: aiTranslatorImg,
+    thumbnail: 'aiTranslatorImg',
     category: 'NLP / GenAI',
     technologies: ['Python', 'OpenAI', 'React', 'TypeScript', 'Express'],
     liveUrl: '#',
@@ -304,20 +244,20 @@ export const PROJECTS: readonly Project[] = [
       'Enforcing custom terminology rules without breaking grammatical structures, solved using hybrid regex alignment and post-translation LLM correction.',
       'Synchronizing multi-user review states in real-time, resolved using WebSocket pub/sub patterns.',
     ],
-    gallery: [aiTranslatorImg],
+    gallery: ['aiTranslatorImg'],
     tags: ['translation', 'nlp', 'llm', 'websockets', 'localization', 'real-time'],
     status: 'Completed',
     serviceSlugs: ['ai-automation', 'custom-software-development', 'ai', 'saas-platforms'],
     industry: 'SaaS',
     updatedDate: '2024-09-01',
+    displayOrder: 7,
   },
   {
-    id: 8,
     title: 'AI Translator — documents & batches',
     slug: 'ai-translator-documents-batches',
     description:
       'Long-form and high-volume translation pipeline: structured uploads (DOCX/PDF/HTML), layout-aware segmentation, translation memory reuse, and export that preserves headings, tables, and inline markup where feasible. Job queue with retries, per-file status, and downloadable artefacts for audit.',
-    thumbnail: aiTranslatorBatchesImg,
+    thumbnail: 'aiTranslatorBatchesImg',
     category: 'NLP / GenAI',
     technologies: ['Python', 'PostgreSQL', 'Docker', 'AWS'],
     liveUrl: '#',
@@ -338,20 +278,20 @@ export const PROJECTS: readonly Project[] = [
       'Rebuilding translated documents without corrupting strict XML schemas in DOCX structures, solved by using direct AST node replacement.',
       'Managing memory limits when processing massive documents, addressed by processing sections in chunks.',
     ],
-    gallery: [aiTranslatorBatchesImg],
+    gallery: ['aiTranslatorBatchesImg'],
     tags: ['translation-memory', 'batch-processing', 'document-parsing', 'docx', 'pdf', 'workers'],
     status: 'In Progress',
     serviceSlugs: ['devops', 'cloud', 'ai-automation', 'custom-software-development', 'saas-platforms', 'cloud-infrastructure', 'product-platform-engineering'],
     industry: 'SaaS',
     updatedDate: '2024-07-02',
+    displayOrder: 8,
   },
   {
-    id: 9,
     title: 'Finance — reporting & analytics',
     slug: 'finance-reporting-analytics',
     description:
       'Role-based financial workspace: P&L charts, transaction log views, and automated ledger checkpoints.',
-    thumbnail: financeImg,
+    thumbnail: 'financeImg',
     category: 'FinTech',
     technologies: ['React', 'TypeScript', 'PostgreSQL', 'AWS'],
     liveUrl: '#',
@@ -372,19 +312,35 @@ export const PROJECTS: readonly Project[] = [
       'Rendering dynamic tables with thousands of transactional line items without lag, resolved using row-virtualization libraries.',
       'Calculating multi-currency conversions on the fly, optimized by caching exchange rates daily and offloading calculations to backend views.',
     ],
-    gallery: [financeImg],
+    gallery: ['financeImg'],
     tags: ['finance', 'fintech', 'analytics', 'compliance', 'rbac', 'reporting'],
     status: 'Completed',
     serviceSlugs: ['web-development', 'custom-software-development', 'revenue-web-conversion-systems', 'saas-platforms', 'ui-ux-design', 'branding', 'creative-design', 'product-design'],
     industry: 'Finance',
     updatedDate: '2024-04-10',
-  },
-] as const;
+    displayOrder: 9,
+  }
+];
 
-export const SECTION_PROJECTS = {
-  tag: 'Case highlights',
-  title: 'Representative work',
-  highlight: 'across stacks',
-  description:
-    'Samples span routing, NLP/ML, finance, and internal tooling—illustrative of how we scope, integrate, and hand over production-minded software. Details anonymized where required.',
-} as const;
+async function seed() {
+  try {
+    console.log('[Seed] Connecting to MongoDB Atlas...');
+    await mongoose.connect(MONGODB_URI);
+    console.log('[Seed] Connected successfully.');
+
+    console.log('[Seed] Cleaning up existing projects...');
+    await ProjectModel.deleteMany({});
+    console.log('[Seed] Cleaned successfully.');
+
+    console.log('[Seed] Inserting 9 projects...');
+    await ProjectModel.insertMany(PROJECTS_DATA);
+    console.log('[Seed] Seeding completed successfully!');
+  } catch (error) {
+    console.error('[Seed] Seeding error:', error);
+  } finally {
+    await mongoose.disconnect();
+    console.log('[Seed] Disconnected.');
+  }
+}
+
+seed();

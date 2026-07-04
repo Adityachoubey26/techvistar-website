@@ -1,6 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import { PROJECTS, Project } from '@/data/projects';
+import { useQuery } from '@tanstack/react-query';
+import { getProjectBySlug, getActiveProjects } from '@/services/portfolio.service';
+import { decorateProject, Project } from '@/data/projects';
 import { INDUSTRIES } from '@/data/industries';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -13,8 +15,21 @@ import { Breadcrumb } from '@/components/common/Breadcrumb';
 const ProjectDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  // Find current project
-  const project = PROJECTS.find((p) => p.slug === slug);
+  const { data: apiProject, isLoading: isDetailLoading } = useQuery({
+    queryKey: ['projectDetails', slug],
+    queryFn: () => getProjectBySlug(slug || ''),
+    enabled: !!slug,
+  });
+
+  const project = apiProject ? decorateProject(apiProject) : undefined;
+
+  const { data: apiProjects } = useQuery({
+    queryKey: ['activeProjects'],
+    queryFn: getActiveProjects,
+    enabled: !!project,
+  });
+
+  const projectsData = (apiProjects || []).map(decorateProject);
 
   // Find related industries dynamically
   const matchingIndustries = project ? INDUSTRIES.filter(
@@ -34,6 +49,18 @@ const ProjectDetails = () => {
     }
     window.scrollTo(0, 0);
   }, [project]);
+
+  if (isDetailLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
+          <div className="text-slate-500 font-display">Loading project details...</div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!project) {
     return (
@@ -61,7 +88,7 @@ const ProjectDetails = () => {
   }
 
   // Get 2-3 related projects based on category or tags, excluding current
-  const relatedProjects = PROJECTS.filter((p) => p.id !== project.id)
+  const relatedProjects = projectsData.filter((p) => p.id !== project.id)
     .map((p) => {
       // Calculate relevance score
       let score = 0;
