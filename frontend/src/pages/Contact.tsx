@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { submitContactForm } from '@/services/contact.service';
+
 
 // FAQ Accordion Component
 interface FAQAccordionProps {
@@ -75,46 +77,28 @@ export const Contact = () => {
 
       const serviceInterested = serviceMapping[formData.inquiryType] || 'other';
 
-      const response = await fetch(
-        'http://localhost:5000/api/contact', 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            company: formData.company,
-            serviceInterested,
-            message: formData.message,
-            budget: '' // Optional in backend schema
-          }),
-        }
-      );
+      await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        serviceInterested,
+        message: formData.message,
+      });
 
-      if (response.ok) {
-        toast({
-          title: 'Inquiry received',
-          description: 'We will respond within one business day where possible.',
-        });
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          company: '',
-          inquiryType: 'Web Development',
-          message: '',
-        });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const description = errorData.errors && Array.isArray(errorData.errors)
-          ? errorData.errors.map((err: any) => err.message).join(', ')
-          : errorData.message || 'Please check your inputs and try again.';
+      toast({
+        title: 'Inquiry received',
+        description: 'We will respond within one business day where possible.',
+      });
 
-        throw new Error(description);
-      }
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        inquiryType: 'Web Development',
+        message: '',
+      });
     } catch (err: any) {
       toast({
         title: 'Unable to send',

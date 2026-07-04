@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { CONTACT_FORM } from '@/data';
+import { submitContactForm } from '@/services/contact.service';
 
 interface FormData {
   category: string;
@@ -48,39 +49,20 @@ export const ContactSection = () => {
 
       const serviceInterested = serviceMapping[formData.category] || 'other';
 
-      const response = await fetch(
-        'http://localhost:5000/api/contact',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            company: '', // Default to empty if not collected in this form
-            serviceInterested,
-            message: formData.message,
-            budget: ''
-          }),
-        }
-      );
+      await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: '', // Default to empty if not collected in this form
+        serviceInterested,
+        message: formData.message,
+      });
 
-      if (response.ok) {
-        toast({
-          title: CONTACT_FORM.toasts.success.title,
-          description: CONTACT_FORM.toasts.success.description,
-        });
-        setFormData(initialFormData);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const description = errorData.errors && Array.isArray(errorData.errors)
-          ? errorData.errors.map((err: any) => err.message).join(', ')
-          : errorData.message || 'Please check your inputs and try again.';
-
-        throw new Error(description);
-      }
+      toast({
+        title: CONTACT_FORM.toasts.success.title,
+        description: CONTACT_FORM.toasts.success.description,
+      });
+      setFormData(initialFormData);
     } catch (err: any) {
       toast({
         title: CONTACT_FORM.toasts.error.title,
