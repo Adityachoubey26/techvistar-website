@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { PROJECTS, Project } from '../data/projects';
+import { Project } from '../data/projects';
 
 export type SortOption = 'newest' | 'oldest' | 'a-z' | 'recently-updated';
 
@@ -13,7 +13,7 @@ export const SERVICE_MAP: Record<string, string> = {
   'cloud-devops': 'Cloud & DevOps',
 };
 
-export const useProjectFilters = () => {
+export const useProjectFilters = (projects: Project[] = []) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustry, setSelectedIndustry] = useState('All');
   const [selectedService, setSelectedService] = useState('All');
@@ -21,36 +21,36 @@ export const useProjectFilters = () => {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
 
-  // 1. Extract dynamic filter options from PROJECTS dataset
+  // 1. Extract dynamic filter options from projects dataset
   const industries = useMemo(() => {
-    const list = new Set(PROJECTS.map((p) => p.industry).filter(Boolean));
+    const list = new Set(projects.map((p) => p.industry).filter(Boolean));
     return ['All', ...Array.from(list)];
-  }, []);
+  }, [projects]);
 
   const services = useMemo(() => {
     const list = new Set<string>();
-    PROJECTS.forEach((p) => {
+    projects.forEach((p) => {
       if (p.serviceSlugs) {
         p.serviceSlugs.forEach((slug) => list.add(slug));
       }
     });
     return ['All', ...Array.from(list)];
-  }, []);
+  }, [projects]);
 
   const technologies = useMemo(() => {
     const list = new Set<string>();
-    PROJECTS.forEach((p) => {
+    projects.forEach((p) => {
       if (p.technologies) {
         p.technologies.forEach((tech) => list.add(tech));
       }
     });
     return ['All', ...Array.from(list)];
-  }, []);
+  }, [projects]);
 
   const statuses = useMemo(() => {
-    const list = new Set(PROJECTS.map((p) => p.status).filter(Boolean));
+    const list = new Set(projects.map((p) => p.status).filter(Boolean));
     return ['All', ...Array.from(list)];
-  }, []);
+  }, [projects]);
 
   // 2. Clear all active filters
   const clearAllFilters = () => {
@@ -101,7 +101,7 @@ export const useProjectFilters = () => {
 
   // 3. Perform filtering and sorting
   const filteredProjects = useMemo(() => {
-    let result = [...PROJECTS];
+    let result = [...projects];
 
     // Search filter
     if (searchQuery.trim()) {

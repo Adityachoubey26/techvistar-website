@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { submitContactForm } from '@/services/contact.service';
+
 
 // FAQ Accordion Component
 interface FAQAccordionProps {
@@ -64,43 +66,43 @@ export const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const params = new URLSearchParams();
-      params.append('name', formData.name);
-      params.append('email', formData.email);
-      params.append('subject', `${formData.inquiryType} Inquiry — ${formData.company}`);
-      params.append('message', `Phone: ${formData.phone}\nCompany: ${formData.company}\n\nMessage: ${formData.message}`);
+      // Map frontend inquiryType string to backend serviceInterested enum values
+      const serviceMapping: Record<string, string> = {
+        'Web Development': 'web-development',
+        'Mobile Development': 'mobile-development',
+        'AI Automation': 'other',
+        'Design Services': 'ui-ux',
+        'Other': 'other'
+      };
 
-      const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbyVFalUML0Mnb-S2RuoCA68d5422p5MvMWF_id4Uw-MIQyiH5PxiglxPGdHDV47QJ22/exec', 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: params.toString(),
-        }
-      );
+      const serviceInterested = serviceMapping[formData.inquiryType] || 'other';
 
-      if (response.ok) {
-        toast({
-          title: 'Inquiry received',
-          description: 'We will respond within one business day where possible.',
-        });
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          company: '',
-          inquiryType: 'Web Development',
-          message: '',
-        });
-      } else {
-        throw new Error('Failed to send message');
-      }
-    } catch {
+      await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        serviceInterested,
+        message: formData.message,
+      });
+
+      toast({
+        title: 'Inquiry received',
+        description: 'We will respond within one business day where possible.',
+      });
+
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        inquiryType: 'Web Development',
+        message: '',
+      });
+    } catch (err: any) {
       toast({
         title: 'Unable to send',
-        description: 'Please try again or email us directly.',
+        description: err.message || 'Please try again or email us directly.',
         variant: 'destructive',
       });
     } finally {

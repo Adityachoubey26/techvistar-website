@@ -42,7 +42,7 @@ A TypeScript Node/Express starter structure pre-configured for future service de
 - **Structure**: Includes dedicated folders for controllers, routes, models, middleware, schemas, database config, and services.
 
 ### 3. Docs (`docs/`)
-Administrative utilities and files (e.g. `google-apps-script.js`, `TODO.md`).
+Administrative utilities and files (e.g. `TODO.md`).
 
 ---
 

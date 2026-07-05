@@ -33,6 +33,45 @@ export interface Project {
   updatedDate: string; // ISO 8601 Date String (YYYY-MM-DD)
 }
 
+export const IMAGE_MAP: Record<string, string> = {
+  mobilityImg,
+  sustainabilityImg,
+  cropImg,
+  nlpImg,
+  resumeReviewImg,
+  clinicalRiskImg,
+  aiTranslatorImg,
+  aiTranslatorBatchesImg,
+  financeImg
+};
+
+export function decorateProject(apiProject: any): Project {
+  return {
+    id: apiProject._id || apiProject.id,
+    title: apiProject.title,
+    slug: apiProject.slug,
+    description: apiProject.description,
+    thumbnail: IMAGE_MAP[apiProject.thumbnail] || apiProject.thumbnail || '',
+    category: apiProject.category,
+    technologies: apiProject.technologies || [],
+    liveUrl: apiProject.liveUrl || '#',
+    githubUrl: apiProject.githubUrl || '#',
+    featured: apiProject.featured || false,
+    date: apiProject.date || '',
+    client: apiProject.client || '',
+    role: apiProject.role || '',
+    longDescription: apiProject.longDescription || '',
+    keyFeatures: apiProject.keyFeatures || [],
+    challenges: apiProject.challenges || [],
+    gallery: (apiProject.gallery || []).map((img: string) => IMAGE_MAP[img] || img),
+    tags: apiProject.tags || [],
+    status: apiProject.status || 'Completed',
+    serviceSlugs: apiProject.serviceSlugs || [],
+    industry: apiProject.industry || '',
+    updatedDate: apiProject.updatedDate || '',
+  };
+}
+
 export const PROJECTS: readonly Project[] = [
   {
     id: 1,

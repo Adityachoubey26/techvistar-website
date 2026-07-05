@@ -43,6 +43,45 @@ export interface SolutionDetail {
   faqs: { q: string; a: string }[];
 }
 
+export const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  Building2,
+  Brain,
+  Sparkles,
+  Cloud,
+  Target,
+  Layers,
+  Code2,
+  Cpu,
+  Repeat,
+  Settings,
+  FolderGit2,
+  Shield,
+  Clock
+};
+
+export function decorateSolution(apiSolution: any): SolutionDetail {
+  return {
+    slug: apiSolution.slug,
+    title: apiSolution.title,
+    subtitle: apiSolution.subtitle,
+    icon: ICON_MAP[apiSolution.icon] || Brain,
+    category: apiSolution.category,
+    challenges: apiSolution.challenges || { title: '', points: [], impact: '' },
+    ourSolution: apiSolution.ourSolution || { overview: '', capabilities: [] },
+    features: (apiSolution.features || []).map((f: any) => ({
+      title: f.title,
+      description: f.description,
+      icon: ICON_MAP[f.icon] || Brain,
+    })),
+    howItWorks: apiSolution.howItWorks || [],
+    benefits: apiSolution.benefits || { roi: '', efficiency: '', scalability: '', security: '' },
+    industries: apiSolution.industries || [],
+    techStack: apiSolution.techStack || [],
+    metrics: apiSolution.metrics || [],
+    faqs: apiSolution.faqs || [],
+  };
+}
+
 export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
   'enterprise-software': {
     slug: 'enterprise-software',

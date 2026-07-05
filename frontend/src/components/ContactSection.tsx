@@ -12,6 +12,7 @@ import { useAnimatedSection } from '@/hooks/useAnimatedSection';
 import { SiteSection } from '@/components/SiteSection';
 import { CONTACT_FORM } from '@/data';
 import { cn } from '@/lib/utils';
+import { submitContactForm } from '@/services/contact.service';
 
 interface FormData {
   category: string;
@@ -75,38 +76,36 @@ export const ContactSection = () => {
     setIsSubmitting(true);
 
     try {
-      const params = new URLSearchParams();
-      params.append('category', formData.category);
-      params.append('budget', formData.budget);
-      params.append('name', formData.name);
-      params.append('email', formData.email);
-      params.append('phone', formData.phone);
-      params.append('message', formData.message);
+      const serviceMapping: Record<string, string> = {
+        'web': 'web-development',
+        'mobile': 'mobile-development',
+        'design': 'ui-ux',
+        'ai': 'other',
+        'software': 'other',
+        'devops': 'other',
+        'other': 'other'
+      };
 
-      const response = await fetch(
-        CONTACT_FORM.actionUrl,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: params.toString(),
-        }
-      );
+      const serviceInterested = serviceMapping[formData.category] || 'other';
 
-      if (response.ok) {
-        toast({
-          title: CONTACT_FORM.toasts.success.title,
-          description: CONTACT_FORM.toasts.success.description,
-        });
-        setFormData(initialFormData);
-      } else {
-        throw new Error('Failed to send message');
-      }
-    } catch {
+      await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: '', // Default to empty if not collected in this form
+        serviceInterested,
+        message: formData.message,
+      });
+
+      toast({
+        title: CONTACT_FORM.toasts.success.title,
+        description: CONTACT_FORM.toasts.success.description,
+      });
+      setFormData(initialFormData);
+    } catch (err: any) {
       toast({
         title: CONTACT_FORM.toasts.error.title,
-        description: CONTACT_FORM.toasts.error.description,
+        description: err.message || CONTACT_FORM.toasts.error.description,
         variant: 'destructive',
       });
     } finally {

@@ -14,11 +14,20 @@ import {
 } from '@/components/ui/carousel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { PROJECTS, SECTION_PROJECTS } from "@/data";
+import { useQuery } from '@tanstack/react-query';
+import { getActiveProjects } from '@/services/portfolio.service';
+import { decorateProject, SECTION_PROJECTS } from '@/data/projects';
 import { Link } from 'react-router-dom';
 import { HoverCard } from '@/components/animations/HoverCard';
 
 export const ProjectsSection = () => {
+  const { data: apiProjects } = useQuery({
+    queryKey: ['activeProjects'],
+    queryFn: getActiveProjects,
+  });
+
+  const projectsData = (apiProjects || []).map(decorateProject);
+
   const { ref, isInView } = useAnimatedSection();
   const reduceMotion = useReducedMotion();
 
@@ -67,7 +76,7 @@ export const ProjectsSection = () => {
             className="w-full"
           >
             <CarouselContent className="-ml-4" role="list">
-              {PROJECTS.map((project, index) => {
+              {projectsData.map((project, index) => {
                 const isFeatured = index === 0;
                 
                 return (

@@ -19,6 +19,15 @@
 import { Router, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import healthRouter from './health.routes';
+import contactRouter from './contact.routes';
+import newsletterRouter from './newsletter.routes';
+import jobRouter from './job.routes';
+import jobApplicationRouter from './jobApplication.routes';
+import serviceRouter from './service.routes';
+import solutionRouter from './solution.routes';
+import projectRouter from './project.routes';
+import faqRouter    from './faq.routes';
+import authRouter    from './auth.routes';
 import { RATE_LIMIT } from '@/constants';
 
 const router = Router();
@@ -42,6 +51,15 @@ router.use(globalRateLimiter);
 
 // ─── Route mounts ─────────────────────────────────────────────────────────────
 router.use('/health', healthRouter);
+router.use('/contact', contactRouter);
+router.use('/newsletter', newsletterRouter);
+router.use('/careers/jobs', jobRouter);
+router.use('/careers/apply', jobApplicationRouter);
+router.use('/services', serviceRouter);
+router.use('/solutions', solutionRouter);
+router.use('/portfolio', projectRouter);
+router.use('/faqs',      faqRouter);
+router.use('/auth',      authRouter);
 
 // ─── API root info ─────────────────────────────────────────────────────────────
 // GET /api → Basic API info (not a real endpoint, just useful for developers)

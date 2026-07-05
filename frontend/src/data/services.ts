@@ -86,6 +86,82 @@ export interface Service {
   dashboardImage?: string;
 }
 
+export const ICON_MAP: Record<string, LucideIcon> = {
+  Globe,
+  Smartphone,
+  Palette,
+  Cpu,
+  Cloud,
+  PenTool,
+  Megaphone,
+  Terminal,
+  Settings,
+  Brain,
+  Repeat,
+  Layers,
+  Shield,
+  Briefcase,
+  Code2,
+  Workflow,
+  Search,
+  BookOpen,
+  LineChart,
+  HardDrive
+};
+
+export const IMAGE_MAP: Record<string, string> = {
+  serviceWebDev,
+  serviceMobileApp,
+  serviceUiUx,
+  serviceAiAutomation,
+  serviceCloudDevops,
+  serviceBranding,
+  serviceDigitalMarketing,
+  serviceCustomSoftware,
+  serviceAi,
+  serviceAutomation,
+  serviceEnterpriseAi,
+  serviceCloud,
+  serviceDevops,
+  serviceCloudInfra,
+  serviceCreativeDesign,
+  serviceProductDesign,
+  serviceSaas,
+  serviceProductEng,
+  serviceRevenueWeb,
+  serviceDocsResearch
+};
+
+export function decorateService(apiService: any): Service {
+  return {
+    id: apiService._id || apiService.id,
+    slug: apiService.slug,
+    title: apiService.title,
+    shortDescription: apiService.shortDescription,
+    longDescription: apiService.fullDescription || apiService.shortDescription,
+    category: apiService.category,
+    icon: ICON_MAP[apiService.icon] || Globe,
+    coverImage: IMAGE_MAP[apiService.coverImage] || apiService.coverImage || '',
+    thumbnail: IMAGE_MAP[apiService.thumbnail] || apiService.thumbnail || '',
+    overview: apiService.overview,
+    offerings: apiService.offerings || [],
+    process: apiService.process || [],
+    caseStudies: apiService.caseStudies || [],
+    technologies: apiService.technologies || [],
+    faqs: apiService.faqs || [],
+    benefits: apiService.benefits || [],
+    cta: apiService.cta || '',
+    featured: apiService.featured || false,
+    order: apiService.displayOrder || 0,
+    status: apiService.status || 'active',
+    industries: apiService.industries || [],
+    whyChooseUs: apiService.whyChooseUs || [],
+    stats: apiService.stats || [],
+    detailedOfferings: apiService.detailedOfferings || [],
+    dashboardImage: apiService.dashboardImage || '',
+  };
+}
+
 export const SERVICES: readonly Service[] = [
   {
     id: '1',

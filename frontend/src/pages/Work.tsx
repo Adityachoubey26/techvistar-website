@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { getActiveProjects } from '@/services/portfolio.service';
+import { decorateProject } from '@/data/projects';
 import { useProjectFilters } from '@/hooks/useProjectFilters';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -87,7 +90,14 @@ const BrandLogos = {
 };
 
 export const Work = () => {
-  const filterHook = useProjectFilters();
+  const { data: apiProjects, isLoading } = useQuery({
+    queryKey: ['activeProjects'],
+    queryFn: getActiveProjects,
+  });
+
+  const projectsData = (apiProjects || []).map(decorateProject);
+  const filterHook = useProjectFilters(projectsData);
+
   const { 
     filteredProjects, 
     selectedIndustry, 
@@ -109,6 +119,18 @@ export const Work = () => {
   } = filterHook;
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
+          <div className="text-slate-500 font-display">Loading portfolio...</div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, currentTarget } = e;

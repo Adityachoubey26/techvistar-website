@@ -10,7 +10,9 @@ import {
   ArrowRight, Sparkle, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SOLUTIONS_DATA, SolutionDetail } from '@/data/solutions';
+import { useQuery } from '@tanstack/react-query';
+import { getActiveSolutions } from '@/services/solutions.service';
+import { decorateSolution, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 
 interface SolutionCategory {
@@ -22,7 +24,13 @@ interface SolutionCategory {
 }
 
 export const Solutions = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: apiSolutions, isLoading } = useQuery({
+    queryKey: ['activeSolutions'],
+    queryFn: getActiveSolutions,
+  });
+
+  const solutionsData = (apiSolutions || []).map(decorateSolution);
+
   const [activeCategory, setActiveCategory] = useState('business-solutions');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -31,14 +39,6 @@ export const Solutions = () => {
     'ai-solutions': useRef<HTMLDivElement>(null),
     'digital-solutions': useRef<HTMLDivElement>(null),
   };
-
-  // Simulate fast dynamic CMS fetching
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1100);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Track active section on scroll
   useEffect(() => {
@@ -95,21 +95,21 @@ export const Solutions = () => {
       label: 'Business Solutions',
       tagline: 'Optimize Operations',
       desc: 'Replace fragmented tools with centralized enterprise platforms built to automate workflows and preserve database compliance.',
-      items: Object.values(SOLUTIONS_DATA).filter(s => s.category === 'Business Solutions')
+      items: solutionsData.filter(s => s.category === 'Business Solutions')
     },
     {
       id: 'ai-solutions',
       label: 'AI Solutions',
       tagline: 'Cognitive Systems',
       desc: 'Integrate autonomous intelligence agents, document classification solvers, and predictive models into your business backend.',
-      items: Object.values(SOLUTIONS_DATA).filter(s => s.category === 'AI Solutions')
+      items: solutionsData.filter(s => s.category === 'AI Solutions')
     },
     {
       id: 'digital-solutions',
       label: 'Digital Solutions',
       tagline: 'Infrastructure & Security',
       desc: 'Establish secure API endpoints, redundant container networks, and encryption compliance protocols.',
-      items: Object.values(SOLUTIONS_DATA).filter(s => s.category === 'Digital Solutions')
+      items: solutionsData.filter(s => s.category === 'Digital Solutions')
     }
   ];
 

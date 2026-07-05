@@ -88,6 +88,36 @@ export const RATE_LIMIT = {
   SKIP_SUCCESSFUL_REQUESTS: false,
 } as const;
 
+export const CONTACT_RATE_LIMIT = {
+  WINDOW_MS:    15 * 60 * 1000, // 15 minutes
+  MAX_REQUESTS: 5,              // Max 5 requests per window per IP
+} as const;
+
+export const NEWSLETTER_RATE_LIMIT = {
+  WINDOW_MS:    15 * 60 * 1000, // 15 minutes
+  MAX_REQUESTS: 3,              // Max 3 requests per window per IP
+} as const;
+
+// ─── Validation Constraints ───────────────────────────────────────────────────
+export const VALIDATION = {
+  EMAIL_REGEX: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+  // Allows optional leading '+', followed by digits, spaces, hyphens, and parentheses. Length between 7 and 25.
+  PHONE_REGEX: /^\+?[0-9\s\-()]{7,25}$/,
+  VALID_SERVICES: ['web-development', 'mobile-development', 'ui-ux', 'consulting', 'other'] as const,
+  NEWSLETTER_SOURCES: ['footer', 'blog_popup', 'contact_form', 'hero'] as const,
+  JOB_DEPARTMENTS: ['Engineering', 'Design', 'Marketing', 'Sales', 'Product', 'Operations', 'Other'] as const,
+  JOB_EMPLOYMENT_TYPES: ['Full-time', 'Part-time', 'Contract', 'Internship'] as const,
+  JOB_STATUSES: ['active', 'closed', 'draft'] as const,
+  JOB_APPLICATION_STATUSES: ['Pending', 'Shortlisted', 'Interview', 'Rejected', 'Selected'] as const,
+  LIMITS: {
+    NAME_MAX:    100,
+    PHONE_MAX:   30,
+    COMPANY_MAX: 100,
+    BUDGET_MAX:  100,
+    MESSAGE_MAX: 1000,
+  }
+} as const;
+
 // ─── Pagination Defaults ──────────────────────────────────────────────────────
 export const PAGINATION = {
   DEFAULT_PAGE:  1,
@@ -102,6 +132,8 @@ export const API_VERSION = 'v1' as const;
 // Development origins — production origins come from env.clientUrl
 export const DEV_ORIGINS = [
   'http://localhost:8080',   // Vite dev server (frontend)
+  'http://localhost:8081',   // Vite dev server — fallback port when 8080 is occupied
   'http://localhost:3000',   // Future admin panel
   'http://localhost:5173',   // Alternative Vite port
 ] as const;
+

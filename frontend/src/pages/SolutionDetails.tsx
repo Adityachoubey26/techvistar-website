@@ -10,7 +10,9 @@ import {
   ArrowRight, Sparkle, Loader2, ArrowUpRight, HelpCircle,
   Clock, ShieldCheck, Award, MessageSquare, CheckCircle2
 } from 'lucide-react';
-import { SOLUTIONS_DATA, SolutionDetail } from '@/data/solutions';
+import { useQuery } from '@tanstack/react-query';
+import { getSolutionBySlug, getActiveSolutions } from '@/services/solutions.service';
+import { decorateSolution, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import challengesImg from '../assets/ai_overview_illustration.png';
 import { cn } from '@/lib/utils';
@@ -52,30 +54,33 @@ const FAQAccordion = ({ question, answer }: FAQAccordionProps) => {
 export const SolutionDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Get active solution
-  const solution: SolutionDetail | undefined = slug ? SOLUTIONS_DATA[slug] : undefined;
+  const { data: apiSolution, isLoading: isDetailLoading } = useQuery({
+    queryKey: ['solutionDetails', slug],
+    queryFn: () => getSolutionBySlug(slug || ''),
+    enabled: !!slug,
+  });
+
+  const solution = apiSolution ? decorateSolution(apiSolution) : undefined;
+
+  const { data: apiSolutions } = useQuery({
+    queryKey: ['activeSolutions'],
+    queryFn: getActiveSolutions,
+    enabled: !!solution,
+  });
+
+  const solutionsData = (apiSolutions || []).map(decorateSolution);
 
   useEffect(() => {
-    // If slug is invalid, redirect to solutions base list
-    if (!solution && slug !== undefined) {
+    if (!isDetailLoading && !solution && slug !== undefined) {
       navigate('/solutions');
-      return;
     }
+  }, [isDetailLoading, solution, slug, navigate]);
 
-    // Fast loading simulation for CMS preparation
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 900);
-
-    // Scroll to top on load
+  useEffect(() => {
     window.scrollTo(0, 0);
-
-    return () => clearTimeout(timer);
-  }, [slug, solution, navigate]);
+  }, [slug]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, currentTarget } = e;
@@ -88,6 +93,21 @@ export const SolutionDetails = () => {
   const handleMouseLeave = () => {
     setMousePosition({ x: 0, y: 0 });
   };
+
+  if (isDetailLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
+          <div className="text-slate-500 font-display flex items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+            Loading solution details...
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!solution) return null;
 
@@ -452,7 +472,7 @@ export const SolutionDetails = () => {
                 </div>
 
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {Object.values(SOLUTIONS_DATA)
+                  {solutionsData
                     .filter((sol) => sol.slug !== solution.slug)
                     .slice(0, 3)
                     .map((relatedSol) => {
