@@ -20,6 +20,17 @@ import SolutionDetails from "./pages/SolutionDetails";
 import { JobDetails } from "./pages/JobDetails";
 import { JobApplication } from "./pages/JobApplication";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./components/admin/layout/AdminLayout";
+import AdminLogin from "./pages/admin/Login";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminServices from "./pages/admin/Services";
+import AdminSolutions from "./pages/admin/Solutions";
+import AdminPortfolio from "./pages/admin/Portfolio";
+import AdminFAQs from "./pages/admin/FAQs";
+import AdminJobs from "./pages/admin/Jobs";
+import AdminApplications from "./pages/admin/Applications";
+import AdminContacts from "./pages/admin/Contacts";
+import AdminNewsletter from "./pages/admin/Newsletter";
 
 const queryClient = new QueryClient();
 
@@ -120,6 +131,20 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/solutions/:slug" element={<SolutionDetails />} />
+
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="services" element={<AdminServices />} />
+            <Route path="solutions" element={<AdminSolutions />} />
+            <Route path="portfolio" element={<AdminPortfolio />} />
+            <Route path="faqs" element={<AdminFAQs />} />
+            <Route path="jobs" element={<AdminJobs />} />
+            <Route path="applications" element={<AdminApplications />} />
+            <Route path="contacts" element={<AdminContacts />} />
+            <Route path="newsletter" element={<AdminNewsletter />} />
+          </Route>
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
