@@ -1,16 +1,26 @@
 import { DashboardHeader } from "@/components/admin/dashboard/DashboardHeader";
 import { StatsCard } from "@/components/admin/dashboard/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Wrench,
+  Shapes,
+  Package,
+  MessageSquareText,
+  BriefcaseBusiness,
+  FileText,
+  Contact,
+  Mail,
+} from "lucide-react";
 
 const dashboardStats = [
-  { title: "Services", value: "08", description: "Published service entries" },
-  { title: "Solutions", value: "12", description: "Solution areas listed" },
-  { title: "Portfolio", value: "24", description: "Projects in showcase" },
-  { title: "FAQs", value: "16", description: "Frequently asked questions" },
-  { title: "Jobs", value: "06", description: "Open positions" },
-  { title: "Applications", value: "43", description: "Pending review" },
-  { title: "Contacts", value: "19", description: "New inquiries" },
-  { title: "Newsletter", value: "1.2K", description: "Active subscribers" },
+  { title: "Services", value: "08", description: "Published service entries", icon: Wrench },
+  { title: "Solutions", value: "12", description: "Solution areas listed", icon: Shapes },
+  { title: "Portfolio", value: "24", description: "Projects in showcase", icon: Package },
+  { title: "FAQs", value: "16", description: "Frequently asked questions", icon: MessageSquareText },
+  { title: "Jobs", value: "06", description: "Open positions", icon: BriefcaseBusiness },
+  { title: "Applications", value: "43", description: "Pending review", icon: FileText },
+  { title: "Contacts", value: "19", description: "New inquiries", icon: Contact },
+  { title: "Newsletter", value: "1.2K", description: "Active subscribers", icon: Mail },
 ];
 
 const Dashboard = () => {
@@ -21,9 +31,9 @@ const Dashboard = () => {
         description="A structured overview for internal content operations."
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         {dashboardStats.map((item) => (
-          <StatsCard key={item.title} {...item} />
+          <StatsCard key={item.title} title={item.title} value={item.value} description={item.description} Icon={item.icon} />
         ))}
       </div>
 
