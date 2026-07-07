@@ -158,9 +158,9 @@ export const InternshipProgramSection = () => {
                         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                           {phase.monthLabel}
                         </p>
-                        <h4 className="mt-1 font-display text-lg font-bold tracking-tight text-slate-900 md:text-xl">
+                        <div className="mt-1 font-display text-lg font-bold tracking-tight text-slate-900 md:text-xl">
                           {phase.title}
-                        </h4>
+                        </div>
                       </div>
                       <Badge variant="outline" className="shrink-0 border-slate-200 bg-white text-slate-700">
                         {INTERNSHIP_PROGRAM.phaseLabel} {pi + 1} {INTERNSHIP_PROGRAM.ofLabel} {phaseCount}

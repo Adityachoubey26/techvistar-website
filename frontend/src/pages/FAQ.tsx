@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { Badge } from '@/components/ui/badge';
 import { FAQs as STATIC_FAQS } from '@/data';
 import { FAQSearch, FAQCategoryTabs, FAQAccordion } from '@/components/faq';
@@ -136,9 +135,7 @@ export const FAQ = () => {
           </div>
         </section>
 
-        <Breadcrumb />
-
-        {/* Content Section */}
+                {/* Content Section */}
         <section className="py-12 sm:py-16">
           <div className="container mx-auto px-4 max-w-5xl">
             {/* Category selection tabs */}

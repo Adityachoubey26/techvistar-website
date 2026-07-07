@@ -441,7 +441,7 @@ export const TechStackSection = () => {
                   {tech.icon}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-800 leading-none">{tech.name}</h4>
+                  <div className="text-xs font-bold text-slate-800 leading-none">{tech.name}</div>
                   <p className="text-[9px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">{tech.category}</p>
                 </div>
               </div>
@@ -461,7 +461,7 @@ export const TechStackSection = () => {
                   {tech.icon}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-800 leading-none">{tech.name}</h4>
+                  <div className="text-xs font-bold text-slate-800 leading-none">{tech.name}</div>
                   <p className="text-[9px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">{tech.category}</p>
                 </div>
               </div>

@@ -279,9 +279,9 @@ export const Work = () => {
                   </div>
 
                   <div className="p-5 space-y-2.5">
-                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors font-display line-clamp-1 leading-snug">
+                    <div className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors font-display line-clamp-1 leading-snug">
                       {project.title}
-                    </h4>
+                    </div>
                     <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
                       {project.description}
                     </p>
@@ -379,9 +379,9 @@ export const Work = () => {
                     </div>
 
                     <div className="p-5 space-y-3">
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                      <div className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
                         {project.title}
-                      </h4>
+                      </div>
                       <p className="text-xs text-slate-600 font-semibold leading-relaxed line-clamp-3">
                         {project.description}
                       </p>
@@ -455,7 +455,7 @@ export const Work = () => {
                 </div>
                 <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
                   <div>
-                    <h5 className="text-xs font-extrabold text-slate-900">Chief of Operations</h5>
+                    <div className="text-xs font-extrabold text-slate-900">Chief of Operations</div>
                     <span className="text-[10px] text-slate-400 font-semibold">Logistics Fleet Management Company</span>
                   </div>
                 </div>
@@ -464,19 +464,19 @@ export const Work = () => {
 
             <div className="md:col-span-4 grid grid-cols-2 gap-4">
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">40%</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">40%</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Cloud Cost Saved</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">99.99%</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">99.99%</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">API Uptime SLA</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">A+</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">A+</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Page Speed Rank</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">2.4x</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">2.4x</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Customer Growth</span>
               </div>
             </div>
@@ -538,7 +538,7 @@ export const Work = () => {
                     <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${color.badge}`}>
                       Step 0{idx + 1}
                     </span>
-                    <h4 className="font-extrabold text-slate-800 text-xs tracking-wide pt-1">{step.title}</h4>
+                    <div className="font-extrabold text-slate-800 text-xs tracking-wide pt-1">{step.title}</div>
                     <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{step.desc}</p>
                   </motion.div>
                 );
@@ -579,7 +579,7 @@ export const Work = () => {
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className="bg-emerald-50/30 border border-emerald-100/40 rounded-2xl p-6 space-y-4 shadow-sm cursor-pointer group/ind"
               >
-                <h4 className="font-extrabold text-slate-900 text-sm group-hover/ind:text-emerald-600 transition-colors">{ind.name}</h4>
+                <div className="font-extrabold text-slate-900 text-sm group-hover/ind:text-emerald-600 transition-colors">{ind.name}</div>
                 <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{ind.desc}</p>
               </motion.div>
             ))}

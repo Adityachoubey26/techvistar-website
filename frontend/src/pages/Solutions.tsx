@@ -383,14 +383,14 @@ export const Solutions = () => {
                       <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200/60 shadow-sm">
                         <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 font-bold text-xs">01</div>
                         <div>
-                          <h4 className="text-xs font-bold text-slate-800 leading-none">Business Automation</h4>
+                          <div className="text-xs font-bold text-slate-800 leading-none">Business Automation</div>
                           <span className="text-[9px] text-slate-400 font-bold block mt-1">Consolidating monthly financial ledger files...</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200/60 shadow-sm">
                         <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center border border-teal-100 font-bold text-xs">02</div>
                         <div>
-                          <h4 className="text-xs font-bold text-slate-800 leading-none">AI Orchestration</h4>
+                          <div className="text-xs font-bold text-slate-800 leading-none">AI Orchestration</div>
                           <span className="text-[9px] text-slate-400 font-bold block mt-1">Executing classification mapping algorithms...</span>
                         </div>
                       </div>

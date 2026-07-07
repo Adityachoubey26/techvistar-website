@@ -154,35 +154,7 @@ export const ServicesSection = () => {
           </div>
         </motion.div>
 
-        {/* CTA Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-10 md:mt-12 max-w-5xl mx-auto w-full"
-        >
-          <SpotlightCard
-            className="rounded-2xl border border-slate-200/80 bg-white shadow-[0_8px_30px_-12px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.12)] hover:border-emerald-500/50 hover:bg-emerald-500/[0.04] transition-all duration-500 w-full"
-            spotlightColor="rgba(34, 197, 94, 0.03)"
-            borderColor="rgba(34, 197, 94, 0.2)"
-          >
-            <div className="flex flex-col items-center justify-between gap-5 px-6 py-6 sm:flex-row sm:px-8 w-full h-full">
-              <span className="max-w-xl text-center text-sm leading-relaxed text-slate-600 font-bold sm:text-left">
-                {SECTION_SERVICES.cta}
-              </span>
-              <motion.a
-                href="#contact"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition-colors hover:bg-primary/92"
-              >
-                Contact us
-                <ArrowUpRight className="h-4 w-4" aria-hidden />
-              </motion.a>
-            </div>
-          </SpotlightCard>
-        </motion.div>
+
       </div>
     </SiteSection>
   );

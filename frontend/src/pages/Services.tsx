@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { FAQSection } from '@/components/faq';
 import servicesBg from '../assets/services-bg.png';
 import { DotGrid } from '@/components/ui/DotGrid';
@@ -171,9 +170,7 @@ const Services = () => {
           </div>
         </motion.section>
 
-        <Breadcrumb />
-
-        {/* Category Filters */}
+                {/* Category Filters */}
         <section className="py-8 bg-slate-50 border-b border-slate-200">
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="flex flex-wrap gap-2">

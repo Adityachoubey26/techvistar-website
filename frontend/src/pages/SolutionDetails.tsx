@@ -376,7 +376,7 @@ export const SolutionDetails = () => {
                   {solution.howItWorks.map((step, idx) => (
                     <div key={idx} className="relative space-y-4 bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm">
                       <span className="text-3xl font-black font-display text-emerald-600/35 block leading-none">{step.step}</span>
-                      <h4 className="font-extrabold text-slate-900 text-base leading-tight">{step.title}</h4>
+                      <div className="font-extrabold text-slate-900 text-base leading-tight">{step.title}</div>
                       <p className="text-xs sm:text-sm text-slate-500 font-semibold leading-relaxed">{step.desc}</p>
                     </div>
                   ))}
@@ -403,7 +403,7 @@ export const SolutionDetails = () => {
                         <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 w-fit">
                           <BenefitIcon className="w-4.5 h-4.5" />
                         </div>
-                        <h4 className="font-extrabold text-slate-900 text-sm">{benefit.label}</h4>
+                        <div className="font-extrabold text-slate-900 text-sm">{benefit.label}</div>
                         <p className="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">{benefit.value}</p>
                       </div>
                     );
@@ -438,7 +438,7 @@ export const SolutionDetails = () => {
                 <div className="bg-white border border-slate-200/60 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="space-y-2">
                     <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block">Unified Platform Core</span>
-                    <h4 className="text-xl font-extrabold font-display text-slate-900">Supported Technology Stack</h4>
+                    <div className="text-xl font-extrabold font-display text-slate-900">Supported Technology Stack</div>
                     <p className="text-xs text-slate-500 font-semibold">Consolidated engineering specifications mapped to our deployments.</p>
                   </div>
                   <div className="flex flex-wrap gap-2 md:max-w-lg justify-end">
@@ -486,7 +486,7 @@ export const SolutionDetails = () => {
                               <RelatedIcon className="w-5 h-5" />
                             </div>
                             <div className="overflow-hidden">
-                              <h4 className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-sm sm:text-base leading-snug truncate">{relatedSol.title}</h4>
+                              <div className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors text-sm sm:text-base leading-snug truncate">{relatedSol.title}</div>
                               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{relatedSol.category}</p>
                             </div>
                           </motion.div>

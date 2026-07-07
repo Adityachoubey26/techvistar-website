@@ -19,10 +19,9 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import aboutBg from '../assets/about-bg.png';
 import CircularText from '@/components/ui/CircularText';
-import udayImg from '@/assets/uday.jpg';
+import logoImg from '@/assets/logo.webp';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -260,9 +259,7 @@ const About = () => {
         </div>
       </section>
 
-      <Breadcrumb />
-
-      {/* Single structured document — tight vertical rhythm */}
+            {/* Single structured document — tight vertical rhythm */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_24px_-12px_rgba(15,23,42,0.1)]">
           <motion.section {...fadeUp} className={`${sectionPad} border-b border-slate-100 bg-gradient-to-br from-primary/[0.02] via-emerald-50/[0.05] to-transparent`} aria-labelledby="overview-heading">
@@ -278,16 +275,12 @@ const About = () => {
                 </div>
               </div>
               <div className="flex flex-col items-center justify-center p-4">
-                <div className="relative flex items-center justify-center w-[120px] h-[120px] rounded-full overflow-hidden border-4 border-emerald-500/20 shadow-xl ring-4 ring-emerald-500/10">
+                <div className="relative flex items-center justify-center w-[160px] h-auto p-4 rounded-xl border-2 border-emerald-500/10 bg-white/50 shadow-lg backdrop-blur-sm">
                   <img 
-                    src={udayImg} 
-                    alt="Uday Gedam - Founder of Veenero" 
-                    className="w-full h-full object-cover"
+                    src={logoImg} 
+                    alt="TechVistar Logo" 
+                    className="w-full h-auto object-contain"
                   />
-                </div>
-                <div className="mt-3 text-center">
-                  <h4 className="font-display text-sm font-bold text-slate-900">Uday Gedam</h4>
-                  <p className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mt-0.5">Founder, Veenero</p>
                 </div>
               </div>
             </div>

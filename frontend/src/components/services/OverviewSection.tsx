@@ -55,7 +55,7 @@ export const OverviewSection = ({ service }: SectionProps) => {
               <Lightbulb className="h-5 w-5 text-emerald-600 animate-pulse" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-emerald-800 mb-0.5">Key Insight</h4>
+              <div className="text-xs font-bold text-emerald-800 mb-0.5">Key Insight</div>
               <p className="text-xs text-emerald-700/90 leading-relaxed font-medium">
                 {service.overview}
               </p>

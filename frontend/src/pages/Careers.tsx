@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, Briefcase, MapPin, Calendar, Clock, GraduationCap, Users, Cpu } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { FAQSection } from '@/components/faq';
 import careersBg from '../assets/careers-bg.png';
 import frontendImg from '../assets/mobile_phone_devloper.png';
@@ -205,9 +204,7 @@ const Careers = () => {
           </div>
         </motion.section>
 
-        <Breadcrumb />
-
-        {/* 2. Why Join Section */}
+                {/* 2. Why Join Section */}
         <section className="py-16 bg-slate-50">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-bold font-display text-slate-900 mb-10 text-center">

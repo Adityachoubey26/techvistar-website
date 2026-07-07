@@ -160,7 +160,7 @@ export const Footer = () => {
 
           {/* Column 2: Services List */}
           <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Services</h4>
+            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Services</div>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
                 { label: 'Web Development', href: '/services' },
@@ -187,7 +187,7 @@ export const Footer = () => {
 
           {/* Column 3: Industries Serve List */}
           <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Industries</h4>
+            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Industries</div>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
                 { label: 'Healthcare', href: '/industries' },
@@ -214,7 +214,7 @@ export const Footer = () => {
 
           {/* Column 4: Company Links */}
           <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Company</h4>
+            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Company</div>
             <ul className="space-y-3 font-bold text-xs sm:text-sm">
               {[
                 { label: 'About Us', href: '/about' },
@@ -242,10 +242,10 @@ export const Footer = () => {
 
           {/* Column 5: Premium Newsletter Card */}
           <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <h4 className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Newsletter</h4>
+            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Newsletter</div>
             
             <div className="space-y-3">
-              <h5 className="text-white text-xs font-bold leading-snug">Stay updated with TechVistar</h5>
+              <div className="text-white text-xs font-bold leading-snug">Stay updated with TechVistar</div>
               <p className="text-[11px] text-slate-300 font-semibold leading-relaxed">
                 Get product updates, technology insights, and engineering articles.
               </p>

@@ -158,14 +158,14 @@ export const ProcessSection = () => {
 
                   {/* Deliverables checklist */}
                   <div className="pt-2 space-y-3">
-                    <motion.h4 
+                    <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 }}
                       className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400"
                     >
                       Key Deliverables
-                    </motion.h4>
+                    </motion.div>
                     <ul className="space-y-3">
                       {currentStep.deliverables.map((item, idx) => (
                         <motion.li 

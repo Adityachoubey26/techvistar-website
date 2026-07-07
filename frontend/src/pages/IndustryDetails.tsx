@@ -28,7 +28,6 @@ import {
   HelpCircle,
   Image
 } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
 import { resolveSpotlightColors } from './Industries';
@@ -156,9 +155,7 @@ export const IndustryDetails = () => {
         </AuroraBackground>
 
         {/* Breadcrumb Navigation */}
-        <Breadcrumb />
-
-        {/* Spotlight 3D Parallax Dot Background wrapping all main sections */}
+                {/* Spotlight 3D Parallax Dot Background wrapping all main sections */}
         <Spotlight3DBackground className="py-16 md:py-24">
           <div className="container-custom max-w-5xl mx-auto px-4 space-y-16 md:space-y-24">
             
@@ -192,9 +189,9 @@ export const IndustryDetails = () => {
                           className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
                         >
                           <div>
-                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                            <div className="font-display font-black text-teal-955 text-xs sm:text-sm">
                               Enterprise Governance
-                            </h4>
+                            </div>
                             <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
                               Configured from day one to comply with vertical-specific regulatory guidelines, access logs, and data encryption.
                             </p>
@@ -208,9 +205,9 @@ export const IndustryDetails = () => {
                           className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
                         >
                           <div>
-                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                            <div className="font-display font-black text-teal-955 text-xs sm:text-sm">
                               API-First Integrations
-                            </h4>
+                            </div>
                             <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
                               Seamlessly connecting modern microservices databases with pre-existing legacy structures and third-party contracts.
                             </p>

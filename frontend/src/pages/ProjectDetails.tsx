@@ -10,8 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ExternalLink, Github, Calendar, Briefcase, User, Building2 } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
-
 const ProjectDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -163,9 +161,7 @@ const ProjectDetails = () => {
           </div>
         </section>
 
-        <Breadcrumb />
-
-        {/* Project Content Area */}
+                {/* Project Content Area */}
         <section className="container mx-auto px-4 max-w-5xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             

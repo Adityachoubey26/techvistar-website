@@ -10,6 +10,7 @@
 
 import { Contact, IContact } from '@/models/Contact';
 import { logger } from '@/utils/logger';
+import { ApiError } from '@/utils/ApiError';
 
 export interface CreateContactDTO {
   name: string;

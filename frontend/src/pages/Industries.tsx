@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers, Image, Sparkles, ArrowRight, Heart, GraduationCap, Landmark, ShoppingCart, Factory, Truck } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
 import { PremiumImage } from '@/components/common/PremiumImage';
@@ -288,9 +287,7 @@ export const Industries = () => {
         </AuroraBackground>
 
         {/* Breadcrumb Navigation */}
-        <Breadcrumb />
-
-        {/* Dynamic Industries Asymmetrical Grid Section with 3D Parallax Dot Background */}
+                {/* Dynamic Industries Asymmetrical Grid Section with 3D Parallax Dot Background */}
         <Spotlight3DBackground className="pt-6 pb-8 md:pt-8 md:pb-12">
           <div className="container-custom max-w-6xl mx-auto px-4 relative">
             <AnimatePresence mode="popLayout">

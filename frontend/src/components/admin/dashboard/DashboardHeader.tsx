@@ -21,9 +21,9 @@ export const DashboardHeader = ({ title = "Dashboard", description = "Welcome ba
           <Calendar className="w-4 h-4" />
           {currentDate}
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-display">
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-display">
           Good Morning, Admin <span className="inline-block hover:animate-bounce origin-bottom cursor-default">👋</span>
-        </h2>
+        </h1>
         <p className="text-sm font-medium text-slate-500">{description}</p>
       </motion.div>
 
