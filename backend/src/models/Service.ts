@@ -67,6 +67,11 @@ export interface IService extends BaseDocument {
   stats: IServiceStat[];
   detailedOfferings: IDetailedOffering[];
   dashboardImage?: string;
+  isDeleted?: boolean;
+  deletedAt?: Date | null;
+  deletedBy?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 const serviceSchema = new Schema<IService>(
@@ -208,6 +213,27 @@ const serviceSchema = new Schema<IService>(
     dashboardImage: {
       type: String,
       trim: true,
+      default: '',
+    },
+    // Soft Delete & Audit Fields
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+    deletedBy: {
+      type: String,
+      default: '',
+    },
+    createdBy: {
+      type: String,
+      default: '',
+    },
+    updatedBy: {
+      type: String,
       default: '',
     },
   },

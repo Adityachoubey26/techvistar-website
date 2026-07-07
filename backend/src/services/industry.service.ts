@@ -145,9 +145,7 @@ export class IndustryService {
     if (category && category !== 'All') {
       query.category = { $regex: new RegExp('^' + category + '$', 'i') };
     }
-    return Industry.find(query)
-      .select('title slug shortDescription fullDescription icon coverImage features technologies benefits displayOrder seoTitle seoDescription category')
-      .sort({ displayOrder: 1, createdAt: 1 });
+    return Industry.find(query).sort({ displayOrder: 1, createdAt: 1 });
   }
 
   /**

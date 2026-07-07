@@ -38,6 +38,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Rocket: Sprout
 };
 
+const DEFAULT_HERO_IMAGE =
+  'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1200&auto=format&fit=crop';
+
 const COLOR_MAP: Record<string, string> = {
   healthcare: 'from-emerald-500 to-teal-600',
   education: 'from-blue-500 to-indigo-600',
@@ -100,13 +103,20 @@ export function resolveImage(value: string): string {
     return IMAGE_MAP[mappedKey];
   }
   
-  // 4. Warning trigger for missing keys
-  console.warn(`[ImageAudit] Missing image mapping or reference key inside IMAGE_MAP: "${value}"`);
+  // 4. Warning trigger for missing keys (dev only — avoid production console noise)
+  if (import.meta.env.DEV) {
+    console.warn(`[ImageAudit] Missing image mapping or reference key inside IMAGE_MAP: "${value}"`);
+  }
   return value;
 }
 
 export function decorateIndustry(apiIndustry: any): any {
-  const idStr = apiIndustry.slug || apiIndustry.id || apiIndustry._id || '';
+  if (!apiIndustry || typeof apiIndustry !== 'object') {
+    return null;
+  }
+
+  const slug = typeof apiIndustry.slug === 'string' ? apiIndustry.slug : '';
+  const idStr = slug || apiIndustry.id || apiIndustry._id || '';
   const industriesColor = COLOR_MAP[idStr] || 'from-emerald-500 to-teal-600';
   
   // Resolve Lucide Icon component
@@ -120,38 +130,37 @@ export function decorateIndustry(apiIndustry: any): any {
   }
 
   // Find original static industry matching by slug for assets fallback
-  const originalInd = INDUSTRIES.find(i => i.slug === apiIndustry.slug);
+  const originalInd = slug ? INDUSTRIES.find(i => i.slug === slug) : undefined;
 
-  // Resolve cover / hero image using helper
-  const coverImage = resolveImage(apiIndustry.coverImage) || (originalInd ? originalInd.heroImage : "");
-  const thumbnail = resolveImage(apiIndustry.thumbnail) || (originalInd ? originalInd.heroImage : "");
-  const dashboardImage = resolveImage(apiIndustry.dashboardImage);
-  const heroImage = coverImage || thumbnail || (originalInd ? originalInd.heroImage : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1200&auto=format&fit=crop');
+  // Resolve cover / hero image using helper — always fall back to default hero when missing
+  const coverImage = resolveImage(apiIndustry.coverImage || '') || (originalInd ? originalInd.heroImage : '');
+  const thumbnail = resolveImage(apiIndustry.thumbnail || '') || (originalInd ? originalInd.heroImage : '');
+  const dashboardImage = resolveImage(apiIndustry.dashboardImage || '');
+  const heroImage = coverImage || thumbnail || (originalInd ? originalInd.heroImage : DEFAULT_HERO_IMAGE);
 
-  // Map challenges from whyChooseUs
-  const challenges = Array.isArray(apiIndustry.whyChooseUs) 
-    ? apiIndustry.whyChooseUs.map((w: any) => ({ title: w.title, description: w.description }))
-    : [
-        { title: 'Operational Rigor', description: 'Aligning business processes with digital transformations.' },
-        { title: 'Regulatory Guardrails', description: 'Ensuring strict compliance with localized data protection policies.' }
-      ];
-
-  // Map solutions from detailedOfferings / features
-  const solutions = Array.isArray(apiIndustry.detailedOfferings) && apiIndustry.detailedOfferings.length > 0
-    ? apiIndustry.detailedOfferings.map((d: any) => ({ title: d.title, description: d.description }))
-    : Array.isArray(apiIndustry.features)
-      ? apiIndustry.features.map((f: string) => ({ title: f, description: `High performance implementation of ${f}.` }))
-      : [];
-
-  // Map statistics
-  const statistics = Array.isArray(apiIndustry.stats)
-    ? apiIndustry.stats.map((s: any) => ({ value: s.value, label: s.label, description: '' }))
+  // Map challenges from whyChooseUs — only real CMS content, no placeholders
+  const challenges = Array.isArray(apiIndustry.whyChooseUs)
+    ? apiIndustry.whyChooseUs
+        .filter((w: any) => w?.title?.trim() && w?.description?.trim())
+        .map((w: any) => ({ title: String(w.title).trim(), description: String(w.description).trim() }))
     : [];
 
-  // Map services slugs (relational mapping)
-  const servicesSlugs = Array.isArray(apiIndustry.industries) && apiIndustry.industries.length > 0
-    ? apiIndustry.industries
-    : ['web-development', 'mobile-app-development', 'ui-ux-design'];
+  // Map solutions from detailedOfferings only — no synthetic feature blurbs
+  const solutions = Array.isArray(apiIndustry.detailedOfferings)
+    ? apiIndustry.detailedOfferings
+        .filter((d: any) => d?.title?.trim() && d?.description?.trim())
+        .map((d: any) => ({ title: String(d.title).trim(), description: String(d.description).trim() }))
+    : [];
+
+  // Map statistics — only entries with both value and label
+  const statistics = Array.isArray(apiIndustry.stats)
+    ? apiIndustry.stats
+        .filter((s: any) => s?.value?.trim() && s?.label?.trim())
+        .map((s: any) => ({ value: String(s.value).trim(), label: String(s.label).trim(), description: '' }))
+    : [];
+
+  // Map services slugs (relational mapping) — empty array is valid for CMS-created industries
+  const servicesSlugs = Array.isArray(apiIndustry.industries) ? apiIndustry.industries : [];
 
   // Map case studies from caseStudies object array
   const caseStudiesSlugs = Array.isArray(apiIndustry.caseStudies)
@@ -163,10 +172,10 @@ export function decorateIndustry(apiIndustry: any): any {
 
   return {
     id: idStr,
-    slug: apiIndustry.slug,
-    title: apiIndustry.title,
-    shortDescription: apiIndustry.shortDescription,
-    description: apiIndustry.fullDescription || apiIndustry.shortDescription,
+    slug,
+    title: apiIndustry.title || 'Untitled Industry',
+    shortDescription: apiIndustry.shortDescription || '',
+    description: apiIndustry.fullDescription || apiIndustry.shortDescription || '',
     heroImage,
     coverImage,
     thumbnail,
@@ -176,10 +185,12 @@ export function decorateIndustry(apiIndustry: any): any {
     challenges,
     solutions,
     services: servicesSlugs,
-    technologies: apiIndustry.technologies || [],
+    technologies: Array.isArray(apiIndustry.technologies) ? apiIndustry.technologies : [],
     caseStudies: caseStudiesSlugs,
     faqs,
     statistics,
+    featured: Boolean(apiIndustry.featured),
+    overviewQuote: typeof apiIndustry.overviewQuote === 'string' ? apiIndustry.overviewQuote.trim() : '',
     cta: {
       title: apiIndustry.ctaLabel || apiIndustry.cta || 'Let\'s partner up to discuss your project',
       subtitle: apiIndustry.overview || '',

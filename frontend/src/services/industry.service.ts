@@ -26,13 +26,13 @@ export async function getActiveIndustries(category?: string): Promise<any[]> {
     url.searchParams.append('category', category);
   }
 
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), { cache: 'no-store' });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch industries');
   }
   const result = await response.json();
-  return result.data || [];
+  return Array.isArray(result.data) ? result.data : [];
 }
 
 /**

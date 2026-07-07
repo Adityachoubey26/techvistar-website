@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { INDUSTRIES, Industry } from '@/data/industries';
@@ -38,14 +38,26 @@ export const resolveSpotlightColors = (id: string) => {
 export const Industries = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { data: apiIndustries } = useQuery({
+  const { data: apiIndustries, isPending, isSuccess } = useQuery({
     queryKey: ['activeIndustries'],
     queryFn: () => getActiveIndustries(),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
-  const industriesData = apiIndustries && apiIndustries.length > 0
-    ? apiIndustries.map((item: any) => decorateIndustry(item))
-    : INDUSTRIES;
+  // Only use static INDUSTRIES while the first API request is in flight.
+  // Never substitute static data after a successful fetch — CMS records exist only in MongoDB.
+  const industriesData = useMemo(() => {
+    if (isSuccess && Array.isArray(apiIndustries)) {
+      return apiIndustries
+        .map((item: any) => decorateIndustry(item))
+        .filter((item): item is Industry => item !== null);
+    }
+    if (isPending) {
+      return [];
+    }
+    return [];
+  }, [apiIndustries, isPending, isSuccess]);
 
   // Helper resolvers for relational data mapping
   const resolveServiceTitle = (slug: string) => {
@@ -58,11 +70,11 @@ export const Industries = () => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
 
-    const matchTitle = industry.title.toLowerCase().includes(query);
-    const matchDesc = industry.description.toLowerCase().includes(query) || 
-                      industry.shortDescription.toLowerCase().includes(query);
-    const matchTech = industry.technologies.some((tech: string) => tech.toLowerCase().includes(query));
-    const matchService = industry.services.some((svc: string) => svc.toLowerCase().includes(query));
+    const matchTitle = (industry.title || '').toLowerCase().includes(query);
+    const matchDesc = (industry.description || '').toLowerCase().includes(query) ||
+                      (industry.shortDescription || '').toLowerCase().includes(query);
+    const matchTech = (industry.technologies || []).some((tech: string) => tech.toLowerCase().includes(query));
+    const matchService = (industry.services || []).some((svc: string) => svc.toLowerCase().includes(query));
     
     return matchTitle || matchDesc || matchTech || matchService;
   });
@@ -310,10 +322,13 @@ export const Industries = () => {
                 <StaggerContainer 
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
                 >
-                  {filteredIndustries.map((ind: Industry, index: number) => {
+                  {filteredIndustries.map((ind: Industry) => {
                     const Icon = ind.icon;
                     const colors = resolveSpotlightColors(ind.id);
-                    const isFeatured = index === 0 || index === 6;
+                    // Wide-card layout follows CMS featured flag — NOT array index.
+                    // Index-based featured (index === 0 || index === 6) broke when new industries
+                    // were prepended: index-0 got a 2-col slot with collapsed/invisible content.
+                    const isFeatured = Boolean(ind.featured);
 
                     return (
                       <StaggerItem

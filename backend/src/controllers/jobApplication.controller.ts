@@ -141,7 +141,7 @@ export async function deleteApplication(
  * Lists all job applications.
  */
 export async function getAllApplications(
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {

@@ -81,7 +81,7 @@ export function errorHandler(
 
   // ── Case 4: MongoDB duplicate key error (unique constraint violated) ───────
   // e.g. inserting a user with an email that already exists
-  else if ((err as NodeJS.ErrnoException).code === '11000') {
+  else if (String((err as any).code) === '11000') {
     statusCode = HTTP_STATUS.CONFLICT;
     code       = ERROR_CODES.DUPLICATE_KEY;
     const field = extractDuplicateField(err.message);

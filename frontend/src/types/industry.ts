@@ -50,6 +50,7 @@ export interface Industry {
   category: string;
   thumbnail: string;
   overview: string;
+  overviewQuote?: string;
   offerings: string[];
   process: IIndustryStep[];
   caseStudies: IIndustryCaseStudy[];

@@ -54,6 +54,8 @@ export const env = {
   jwtRefreshSecret:   optional('JWT_REFRESH_SECRET', 'change_me_refresh_before_production'),
   accessTokenExpiry:  optional('ACCESS_TOKEN_EXPIRY', '15m'),
   refreshTokenExpiry: optional('REFRESH_TOKEN_EXPIRY', '7d'),
+  loginRateLimitWindow: optionalInt('LOGIN_RATE_LIMIT_WINDOW', process.env.NODE_ENV === 'development' ? 60 * 1000 : 15 * 60 * 1000),
+  loginRateLimitMax:    optionalInt('LOGIN_RATE_LIMIT_MAX', process.env.NODE_ENV === 'development' ? 100 : 5),
 
   // ── Cloudinary (Media Uploads — Phase 3) ─────────────────────────────────
   cloudinaryCloudName: optional('CLOUDINARY_CLOUD_NAME', ''),

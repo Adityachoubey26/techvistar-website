@@ -43,9 +43,11 @@ export const ServicesSection = () => {
   const { data: apiServices } = useQuery({
     queryKey: ['activeServices'],
     queryFn: getActiveServices,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
-  const activeServices = (apiServices || []).map(decorateService);
+  const activeServices = [...(apiServices || []).map(decorateService)].sort((a, b) => a.order - b.order);
 
   // Distribute services: Left Column (0, 2, 4) and Right Column (1, 3, 5)
   const leftServices = activeServices.filter((_, idx) => idx % 2 === 0);
@@ -98,7 +100,7 @@ export const ServicesSection = () => {
                             {service.title}
                           </h3>
                           <p className="text-sm leading-relaxed text-slate-500 font-medium">
-                            {service.description}
+                            {service.shortDescription}
                           </p>
                           <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 group-hover:text-emerald-700 mt-2 transition-colors">
                             Explore
@@ -138,7 +140,7 @@ export const ServicesSection = () => {
                             {service.title}
                           </h3>
                           <p className="text-sm leading-relaxed text-slate-500 font-medium">
-                            {service.description}
+                            {service.shortDescription}
                           </p>
                           <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 group-hover:text-emerald-700 mt-2 transition-colors">
                             Explore

@@ -9,7 +9,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { FAQSection } from '@/components/faq';
 import servicesBg from '../assets/services-bg.png';
@@ -31,13 +31,15 @@ const Services = () => {
     setMousePosition({ x: 0, y: 0 });
   };
 
-  const { data: apiServices, isLoading } = useQuery({
+  const { data: apiServices, isLoading, isError, error } = useQuery({
     queryKey: ['activeServices'],
-    queryFn: getActiveServices,
+    queryFn: () => getActiveServices(),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   // Filter out active services
-  const activeServices = (apiServices || []).map(decorateService);
+  const activeServices = (apiServices || []).map((item: any) => decorateService(item));
 
   // Get unique categories dynamically
   const categories = ['All', ...Array.from(new Set(activeServices.map((s) => s.category)))];
@@ -199,7 +201,39 @@ const Services = () => {
         {/* Services Grid */}
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-6xl">
-            {sortedServices.length > 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, idx) => (
+                  <div key={idx} className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between animate-pulse h-[350px]">
+                    <div>
+                      <div className="w-full h-[140px] bg-slate-200 rounded-lg mb-4"></div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-16 h-5 bg-slate-200 rounded"></div>
+                        <div className="w-8 h-8 bg-slate-200 rounded"></div>
+                      </div>
+                      <div className="h-6 bg-slate-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-slate-200 rounded w-full"></div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <div className="w-16 h-4 bg-slate-200 rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center py-16 bg-red-50/50 border border-red-100 rounded-2xl p-6 text-center max-w-lg mx-auto">
+                <div className="p-3 bg-red-100 text-red-600 rounded-xl mb-4">
+                  <AlertCircle className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-bold text-red-900 mb-1">Failed to load services</h3>
+                <p className="text-red-700 text-sm leading-relaxed mb-6">
+                  {error instanceof Error ? error.message : "An unexpected server error occurred while retrieving active services."}
+                </p>
+                <Button onClick={() => window.location.reload()} variant="outline" className="border-red-200 text-red-700 hover:bg-red-50">
+                  Reload Page
+                </Button>
+              </div>
+            ) : sortedServices.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedServices.map((service: Service) => {
                   const IconComponent = service.icon;

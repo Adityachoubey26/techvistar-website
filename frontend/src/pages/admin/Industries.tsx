@@ -83,6 +83,7 @@ const Industries = () => {
   const [icon, setIcon] = useState("Rocket");
   const [category, setCategory] = useState("Industrial");
   const [overview, setOverview] = useState("");
+  const [overviewQuote, setOverviewQuote] = useState("");
   const [status, setStatus] = useState<"draft" | "active">("draft");
   const [displayOrder, setDisplayOrder] = useState("0");
   
@@ -176,10 +177,18 @@ const Industries = () => {
   const industriesList = apiResponse?.industries || [];
   const pagination = apiResponse?.pagination || { total: 0, page: 1, limit: itemsPerPage, totalPages: 1 };
 
-  // Fetch all industries to check slug uniqueness locally
+  const refreshIndustryQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
+    queryClient.invalidateQueries({ queryKey: ["admin", "industries", "stats"] });
+    queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
+    queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+  };
+
+  // Fetch all industries to check slug uniqueness locally (only when form modal is open)
   const { data: allIndustriesRes } = useQuery({
     queryKey: ["admin", "industries", "all"],
-    queryFn: () => getAllIndustries({ page: 1, limit: 1000 })
+    queryFn: () => getAllIndustries({ page: 1, limit: 1000 }),
+    enabled: isModalOpen,
   });
   const allIndustries = allIndustriesRes?.industries || [];
 
@@ -187,9 +196,7 @@ const Industries = () => {
   const createMutation = useMutation({
     mutationFn: createIndustry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industry Created", description: "New industry listing published successfully." });
       setIsModalOpen(false);
     },
@@ -201,9 +208,7 @@ const Industries = () => {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => updateIndustry(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industry Updated", description: "Industry listing modified successfully." });
       setIsModalOpen(false);
     },
@@ -215,9 +220,7 @@ const Industries = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteIndustry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industry soft deleted", description: "The industry has been moved to Trash." });
       setDeleteConfirmId(null);
       setSelectedIds([]);
@@ -231,9 +234,7 @@ const Industries = () => {
   const restoreMutation = useMutation({
     mutationFn: restoreIndustry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industry restored", description: "The industry listing is now active." });
       setSelectedIds([]);
     },
@@ -245,7 +246,7 @@ const Industries = () => {
   const permDeleteMutation = useMutation({
     mutationFn: permanentlyDeleteIndustry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
+      refreshIndustryQueries();
       toast({ title: "Industry permanently deleted", description: "The industry listing has been removed from database." });
       setPermDeleteConfirmId(null);
       setSelectedIds([]);
@@ -260,9 +261,7 @@ const Industries = () => {
   const bulkDeleteMutation = useMutation({
     mutationFn: bulkDeleteIndustries,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industries soft-deleted", description: "Selected industries moved to Trash." });
       setSelectedIds([]);
     },
@@ -274,10 +273,24 @@ const Industries = () => {
   const bulkRestoreMutation = useMutation({
     mutationFn: bulkRestoreIndustries,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Industries restored", description: "Selected industries restored successfully." });
+      setSelectedIds([]);
+    },
+    onError: (err: any) => {
+      toast({ title: "Bulk Action Error", description: err.message, variant: "destructive" });
+    }
+  });
+
+  const bulkPermDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) {
+        await permanentlyDeleteIndustry(id);
+      }
+    },
+    onSuccess: () => {
+      refreshIndustryQueries();
+      toast({ title: "Industries permanently deleted", description: "Selected industries removed from database." });
       setSelectedIds([]);
     },
     onError: (err: any) => {
@@ -288,9 +301,7 @@ const Industries = () => {
   const bulkStatusMutation = useMutation({
     mutationFn: ({ ids, status }: { ids: string[]; status: 'draft' | 'active' }) => bulkUpdateStatus(ids, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "industries"] });
-      queryClient.invalidateQueries({ queryKey: ["activeIndustries"] });
-      queryClient.invalidateQueries({ queryKey: ["industryDetails"] });
+      refreshIndustryQueries();
       toast({ title: "Bulk Status Updated", description: "Selected industries status updated successfully." });
       setSelectedIds([]);
     },
@@ -315,7 +326,7 @@ const Industries = () => {
   // Form dirty checker logic
   const getCurrentStateString = () => {
     return JSON.stringify({
-      title, slug, shortDescription, fullDescription, icon, category, overview, status, displayOrder,
+      title, slug, shortDescription, fullDescription, icon, category, overview, overviewQuote, status, displayOrder,
       coverImage, thumbnail, seoTitle, seoDescription, cta, featured, dashboardImage,
       features, technologies, benefits, industries, offerings, processSteps, statsList
     });
@@ -336,6 +347,7 @@ const Industries = () => {
     setIcon("Rocket");
     setCategory("Industrial");
     setOverview("");
+    setOverviewQuote("");
     setStatus("draft");
     setDisplayOrder("0");
     setCoverImage("");
@@ -360,7 +372,7 @@ const Industries = () => {
     setTimeout(() => {
       setOriginalDataStr(JSON.stringify({
         title: "", slug: "", shortDescription: "", fullDescription: "", icon: "Rocket", category: "Industrial",
-        overview: "", status: "draft", displayOrder: "0", coverImage: "", thumbnail: "", seoTitle: "", seoDescription: "",
+        overview: "", overviewQuote: "", status: "draft", displayOrder: "0", coverImage: "", thumbnail: "", seoTitle: "", seoDescription: "",
         cta: "", featured: false, dashboardImage: "", features: [], technologies: [], benefits: [], industries: [], offerings: [],
         processSteps: [], statsList: []
       }));
@@ -379,6 +391,7 @@ const Industries = () => {
     setIcon(item.icon || "Rocket");
     setCategory(item.category || "Industrial");
     setOverview(item.overview || "");
+    setOverviewQuote(item.overviewQuote || "");
     setStatus(item.status || "draft");
     setDisplayOrder(String(item.displayOrder || 0));
     setCoverImage(item.coverImage || "");
@@ -413,7 +426,7 @@ const Industries = () => {
       setOriginalDataStr(JSON.stringify({
         title: item.title || "", slug: item.slug || "", shortDescription: item.shortDescription || "",
         fullDescription: item.fullDescription || "", icon: item.icon || "Rocket", category: item.category || "Industrial",
-        overview: item.overview || "", status: item.status || "draft", displayOrder: String(item.displayOrder || 0),
+        overview: item.overview || "", overviewQuote: item.overviewQuote || "", status: item.status || "draft", displayOrder: String(item.displayOrder || 0),
         coverImage: item.coverImage || "", thumbnail: item.thumbnail || "", seoTitle: item.seoTitle || "",
         seoDescription: item.seoDescription || "", cta: item.ctaLabel || item.cta || "", featured: item.featured || false,
         dashboardImage: item.dashboardImage || "", features: item.features || [], technologies: item.technologies || [],
@@ -480,8 +493,16 @@ const Industries = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const isActionPending =
+    createMutation.isPending || updateMutation.isPending ||
+    deleteMutation.isPending || restoreMutation.isPending ||
+    permDeleteMutation.isPending || bulkDeleteMutation.isPending ||
+    bulkRestoreMutation.isPending || bulkStatusMutation.isPending ||
+    bulkPermDeleteMutation.isPending;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (createMutation.isPending || updateMutation.isPending) return;
     if (!runFormValidation()) {
       toast({ title: "Validation Failed", description: "Please review the invalid fields in the tabs.", variant: "destructive" });
       return;
@@ -505,6 +526,7 @@ const Industries = () => {
       icon,
       category,
       overview,
+      overviewQuote,
       status,
       displayOrder: Number(displayOrder) || 0,
       features,
@@ -642,18 +664,25 @@ const Industries = () => {
   };
 
   const handleBulkDelete = () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0 || isActionPending) return;
     bulkDeleteMutation.mutate(selectedIds);
   };
 
   const handleBulkRestore = () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0 || isActionPending) return;
     bulkRestoreMutation.mutate(selectedIds);
   };
 
   const handleBulkStatusChange = () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0 || isActionPending) return;
     bulkStatusMutation.mutate({ ids: selectedIds, status: bulkStatusValue });
+  };
+
+  const handleBulkPermDelete = () => {
+    if (selectedIds.length === 0 || isActionPending) return;
+    if (window.confirm(`Permanently delete ${selectedIds.length} industries?`)) {
+      bulkPermDeleteMutation.mutate(selectedIds);
+    }
   };
 
   return (
@@ -745,7 +774,9 @@ const Industries = () => {
                 <option value="Industrial">Industrial</option>
                 <option value="Supply Chain">Supply Chain</option>
                 <option value="PropTech">PropTech</option>
-                <option value="Hospitality">Hospitality</option>
+                <option value="HospitalityTech">HospitalityTech</option>
+                <option value="AgriTech">AgriTech</option>
+                <option value="CleanTech">CleanTech</option>
               </select>
             </div>
 
@@ -811,25 +842,22 @@ const Industries = () => {
                       <option value="draft">Draft</option>
                       <option value="active">Active</option>
                     </select>
-                    <Button onClick={handleBulkStatusChange} variant="secondary" size="sm" className="h-8 text-xs font-bold">
+                    <Button onClick={handleBulkStatusChange} disabled={isActionPending} variant="secondary" size="sm" className="h-8 text-xs font-bold">
                       Apply Status
                     </Button>
                   </div>
-                  <Button onClick={handleBulkDelete} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500">
+                  <Button onClick={handleBulkDelete} disabled={isActionPending} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500">
                     Bulk Soft Delete
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button onClick={handleBulkRestore} variant="outline" size="sm" className="h-8 text-xs font-bold bg-white text-emerald-700 border-emerald-200">
+                  <Button onClick={handleBulkRestore} disabled={isActionPending} variant="outline" size="sm" className="h-8 text-xs font-bold bg-white text-emerald-700 border-emerald-200">
                     Bulk Restore
                   </Button>
                   <Button 
-                    onClick={() => {
-                      if (window.confirm(`Permanently delete ${selectedIds.length} industries?`)) {
-                        selectedIds.forEach(id => permDeleteMutation.mutate(id));
-                      }
-                    }} 
+                    onClick={handleBulkPermDelete}
+                    disabled={isActionPending}
                     variant="destructive" 
                     size="sm" 
                     className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500"
@@ -924,6 +952,7 @@ const Industries = () => {
                     <>
                       <Button 
                         onClick={() => restoreMutation.mutate(item._id)} 
+                        disabled={isActionPending}
                         variant="outline" 
                         size="sm" 
                         className="h-8.5 rounded-lg text-xs font-bold gap-1 border-emerald-100 text-emerald-600 hover:bg-emerald-50"
@@ -1325,6 +1354,19 @@ const Industries = () => {
                       {validationErrors.overview && (
                         <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider">{validationErrors.overview}</p>
                       )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Overview Quote</label>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{overviewQuote.length} chars</span>
+                      </div>
+                      <textarea 
+                        className="w-full min-h-[100px] p-3 rounded-lg border text-xs text-slate-800 bg-white focus:outline-none border-slate-200" 
+                        value={overviewQuote} 
+                        onChange={(e) => setOverviewQuote(e.target.value)} 
+                        placeholder="Italic quote shown under Overview on the public industry page..." 
+                      />
                     </div>
 
                     <div className="space-y-2">

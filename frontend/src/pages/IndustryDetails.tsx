@@ -1,31 +1,20 @@
 import { useParams, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { INDUSTRIES } from '@/data/industries';
-import { SERVICES } from '@/data/services';
 import { PROJECTS } from '@/data/projects';
-import { PROCESS_STEPS } from '@/data/process';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { 
-  Accordion, 
-  AccordionItem, 
-  AccordionTrigger, 
-  AccordionContent 
-} from '@/components/ui/accordion';
-import { 
   ArrowLeft, 
   ChevronRight, 
   AlertTriangle, 
   Lightbulb, 
   Check, 
-  Layers, 
   Briefcase, 
   Cpu, 
-  Workflow, 
-  HelpCircle,
   Image
 } from 'lucide-react';
 import { Breadcrumb } from '@/components/common/Breadcrumb';
@@ -39,30 +28,41 @@ import { useQuery } from '@tanstack/react-query';
 import { getIndustryBySlug } from '@/services/industry.service';
 import { decorateIndustry } from '@/data/industry.adapter';
 
+const DEFAULT_OVERVIEW_QUOTE =
+  'Adapting our VISTAR delivery frameworks to the precise requirements of target industries, securing data contracts, and scaling customer interfaces.';
+
 export const IndustryDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
   // Fetch dynamic industry details from backend CMS
-  const { data: apiIndustry } = useQuery({
+  const { data: apiIndustry, isPending } = useQuery({
     queryKey: ['industryDetails', slug],
     queryFn: () => getIndustryBySlug(slug || ''),
     enabled: !!slug,
   });
 
-  // Find dynamic industry details
+  const staticIndustry = slug ? INDUSTRIES.find((i) => i.slug === slug) : undefined;
+
+  // Prefer API data; use static fallback only when available (avoids false "Not Found" during fetch)
   const industry = apiIndustry
     ? decorateIndustry(apiIndustry)
-    : INDUSTRIES.find((i) => i.slug === slug);
+    : staticIndustry;
 
-  // Set page title & reset scroll
+  // Set page title & reset scroll (must run before any conditional return — Rules of Hooks)
   useEffect(() => {
+    if (isPending && !staticIndustry) return;
     if (industry) {
       document.title = `${industry.title} Industry Solutions | TechVistar`;
     } else {
       document.title = 'Industry Not Found | TechVistar';
     }
     window.scrollTo(0, 0);
-  }, [industry]);
+  }, [industry, isPending, staticIndustry]);
+
+  // CMS-only slugs have no static fallback — wait for API before showing not-found
+  if (isPending && !staticIndustry) {
+    return null;
+  }
 
   if (!industry) {
     return (
@@ -91,9 +91,13 @@ export const IndustryDetails = () => {
 
   const Icon = industry.icon;
   const colors = resolveSpotlightColors(industry.id);
+  const overviewQuote = industry.overviewQuote?.trim() || DEFAULT_OVERVIEW_QUOTE;
+  const hasStats = industry.statistics && industry.statistics.length > 0;
+  const hasChallenges = industry.challenges && industry.challenges.length > 0;
+  const hasSolutions = industry.solutions && industry.solutions.length > 0;
+  const hasTechnologies = industry.technologies && industry.technologies.length > 0;
 
-  // Resolve related services and projects objects
-  const relatedServicesData = SERVICES.filter((s) => industry.services.includes(s.slug) && s.status === 'active');
+  // Resolve related projects for case studies
   const relatedProjectsData = PROJECTS.filter((p) => industry.caseStudies.includes(p.slug));
 
   return (
@@ -174,71 +178,27 @@ export const IndustryDetails = () => {
         <Spotlight3DBackground className="py-16 md:py-24">
           <div className="container-custom max-w-5xl mx-auto px-4 space-y-16 md:space-y-24">
             
-            {/* Section 1: Overview & Sidebar layout grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pb-12 border-b border-slate-100">
-              {/* Left Column - Overview Focus */}
-              <div className="lg:col-span-8 space-y-4">
+            {/* Section 1: Overview */}
+            <div className={`grid grid-cols-1 ${hasStats ? 'lg:grid-cols-12' : ''} gap-10 items-start pb-12 border-b border-slate-100`}>
+              <div className={`${hasStats ? 'lg:col-span-8' : ''} space-y-4`}>
                 <ScaleIn>
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
                     Overview & Sector Focus
                   </h2>
                   <div className="border-l-4 border-emerald-500 pl-4 py-1.5 mt-4">
                     <p className="text-slate-655 text-sm sm:text-base leading-relaxed font-semibold italic">
-                      "Adapting our VISTAR delivery frameworks to the precise requirements of target industries, securing data contracts, and scaling customer interfaces."
+                      "{overviewQuote}"
                     </p>
                   </div>
                   <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3">
                     {industry.description}
                   </p>
-
-                  {/* Strategic Capabilities feature grid to fill height space */}
-                  <div className="mt-8 pt-6 border-t border-slate-100/80">
-                    <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-4">
-                      Strategic Capabilities
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <GlowHover glowColor={colors.border}>
-                        <SpotlightCard 
-                          spotlightColor={colors.spotlight} 
-                          borderColor={colors.border}
-                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
-                        >
-                          <div>
-                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
-                              Enterprise Governance
-                            </h4>
-                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
-                              Configured from day one to comply with vertical-specific regulatory guidelines, access logs, and data encryption.
-                            </p>
-                          </div>
-                        </SpotlightCard>
-                      </GlowHover>
-                      <GlowHover glowColor={colors.border}>
-                        <SpotlightCard 
-                          spotlightColor={colors.spotlight} 
-                          borderColor={colors.border}
-                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
-                        >
-                          <div>
-                            <h4 className="font-display font-black text-teal-955 text-xs sm:text-sm">
-                              API-First Integrations
-                            </h4>
-                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
-                              Seamlessly connecting modern microservices databases with pre-existing legacy structures and third-party contracts.
-                            </p>
-                          </div>
-                        </SpotlightCard>
-                      </GlowHover>
-                    </div>
-                  </div>
                 </ScaleIn>
               </div>
 
-               {/* Right Column - Sidebar Metrics & Stacks */}
+              {hasStats && (
               <div className="lg:col-span-4 space-y-6">
-                {industry.statistics && industry.statistics.length > 0 && (
                   <ScaleIn delay={0.1}>
-                    {/* Stats Card */}
                     <Card className="border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.03)]">
                       <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-5">
                         Metrics & Impact
@@ -262,13 +222,15 @@ export const IndustryDetails = () => {
                       </div>
                     </Card>
                   </ScaleIn>
-                )}
               </div>
+              )}
             </div>
 
-            {/* Section 2: Business Challenges (Full Width) */}
-            {industry.challenges && industry.challenges.length > 0 && (
-              <div className="space-y-6 pb-12 border-b border-slate-100">
+            {/* Section 2: Challenge & Solution */}
+            {(hasChallenges || hasSolutions) && (
+              <div className="space-y-16 md:space-y-24 pb-12 border-b border-slate-100">
+            {hasChallenges && (
+              <div className="space-y-6">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-rose-500 shrink-0" />
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
@@ -306,9 +268,8 @@ export const IndustryDetails = () => {
               </div>
             )}
 
-            {/* Section 3: Our Solutions (Full Width) */}
-            {industry.solutions && industry.solutions.length > 0 && (
-              <div className="space-y-6 pb-12 border-b border-slate-100">
+            {hasSolutions && (
+              <div className="space-y-6">
                 <div className="flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-emerald-500 shrink-0" />
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
@@ -350,67 +311,38 @@ export const IndustryDetails = () => {
                 </StaggerContainer>
               </div>
             )}
-
-            {/* Section 4: Related Services (Full Width) */}
-            {relatedServicesData.length > 0 && (
-              <div className="space-y-6 pb-12 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <Layers className="h-5 w-5 text-teal-900 shrink-0" />
-                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Related Services
-                  </h2>
-                </div>
-                <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
-                  Explore the core software stack and design methodologies utilized in this sector:
-                </p>
-                <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {relatedServicesData.map((svc) => {
-                    const SvcIcon = svc.icon;
-                    return (
-                      <StaggerItem key={svc.id}>
-                        <Link 
-                          to={`/services/${svc.slug}`}
-                          className="group block rounded-2xl overflow-hidden h-full"
-                        >
-                          <GlowHover glowColor={colors.border} className="h-full">
-                            <SpotlightCard
-                              spotlightColor={colors.spotlight}
-                              borderColor={colors.border}
-                              className="h-full flex flex-col justify-between border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.05)] hover:scale-[1.01] transition-all duration-300"
-                            >
-                              <div className="flex flex-col flex-grow">
-                                <div className="flex items-center gap-3 mb-4">
-                                  <span className="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-300 shadow-sm shrink-0 flex items-center justify-center">
-                                    <SvcIcon className="h-4.5 w-4.5" />
-                                  </span>
-                                  <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base leading-snug">
-                                    {svc.title}
-                                  </h3>
-                                </div>
-                                <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mb-4 flex-grow">
-                                  {svc.shortDescription}
-                                </p>
-                              </div>
-                              <span className="text-[10px] font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform mt-auto shrink-0">
-                                Explore service details <ChevronRight className="h-3 w-3" />
-                              </span>
-                            </SpotlightCard>
-                          </GlowHover>
-                        </Link>
-                      </StaggerItem>
-                    );
-                  })}
-                </StaggerContainer>
               </div>
             )}
 
-            {/* Section 5: Related Projects / Case Studies (Full Width) */}
+            {/* Section 3: Technology Stack */}
+            {hasTechnologies && (
+              <div className="space-y-6 pb-12 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Cpu className="h-5 w-5 text-teal-900 shrink-0" />
+                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
+                    Technology Stack
+                  </h2>
+                </div>
+                <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
+                  Core technologies we deploy for this industry vertical:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {industry.technologies.map((tech) => (
+                    <Badge key={tech} variant="outline" className="text-xs text-slate-600 border-slate-200 bg-white font-semibold px-3 py-1 rounded-lg">
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Section 4: Related Case Study */}
             {relatedProjectsData.length > 0 && (
               <div className="space-y-6 pb-12 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-5 w-5 text-teal-900 shrink-0" />
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Related Case Studies
+                    Related Case Study
                   </h2>
                 </div>
                 <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
@@ -478,78 +410,10 @@ export const IndustryDetails = () => {
               </div>
             )}
 
-            {/* Section 6: Delivery Process (Full Width) */}
-            <div className="space-y-6 pb-12 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <Workflow className="h-5 w-5 text-teal-900 shrink-0" />
-                <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                  Our Delivery Process
-                </h2>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-8">
-                We follow our structured, governance-first delivery framework to ensure all integrations, security layers, and data contracts remain auditable.
-              </p>
-              <StaggerContainer className="relative border-l border-slate-200/80 ml-3 pl-6 space-y-8 mt-6">
-                {PROCESS_STEPS.map((step, idx) => {
-                  return (
-                    <StaggerItem key={idx} className="relative group/timeline">
-                      {/* Dot step indicator */}
-                      <span className="absolute -left-[35px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white border-2 border-emerald-500 text-emerald-600 font-bold text-xs group-hover/timeline:scale-110 group-hover/timeline:bg-emerald-500 group-hover/timeline:text-white transition-all">
-                        {idx + 1}
-                      </span>
-                      <div>
-                        <h3 className="font-display font-extrabold text-teal-955 text-sm sm:text-base group-hover/timeline:text-primary transition-colors">
-                          {step.title}
-                        </h3>
-                        <p className="text-slate-500 text-xs font-medium mt-1 leading-relaxed max-w-2xl">
-                          {step.description}
-                        </p>
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {step.deliverables.map((deliv, dIdx) => (
-                            <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg transition-transform hover:scale-[1.03]">
-                              {deliv}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </StaggerItem>
-                  );
-                })}
-              </StaggerContainer>
-            </div>
-
-            {/* Section 7: FAQ (Full Width) */}
-            {industry.faqs.length > 0 && (
-              <ScaleIn className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-teal-900 shrink-0" />
-                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Frequently Asked Questions
-                  </h2>
-                </div>
-                <Accordion type="single" collapsible className="w-full space-y-3.5 mt-6">
-                  {industry.faqs.map((faq, index) => (
-                    <AccordionItem 
-                      key={index} 
-                      value={`item-${index}`}
-                      className="border border-slate-200/50 bg-white rounded-2xl px-5 overflow-hidden shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] transition-all"
-                    >
-                      <AccordionTrigger className="hover:no-underline font-display font-extrabold text-teal-955 text-xs sm:text-sm text-left py-4.5 transition-colors hover:text-primary">
-                        {faq.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-slate-550 text-xs sm:text-sm font-semibold leading-relaxed pt-0 pb-4.5">
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </ScaleIn>
-            )}
-
           </div>
         </Spotlight3DBackground>
 
-        {/* Dynamic CTA Section Redesigned with Aurora Background */}
+        {/* Final CTA */}
         <AuroraBackground className="bg-gradient-to-br from-zinc-950 via-[#031c19] to-zinc-950 border-t border-emerald-950/40 py-20 md:py-24">
           <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
             <ScaleIn>

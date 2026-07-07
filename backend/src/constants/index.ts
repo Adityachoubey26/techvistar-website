@@ -74,11 +74,11 @@ export const ERROR_CODES = {
 
 // ─── Database Constants ───────────────────────────────────────────────────────
 export const DB = {
-  CONNECTION_TIMEOUT_MS: 10_000,   // 10 seconds
+  CONNECTION_TIMEOUT_MS: 30_000,   // 30s — Atlas SRV DNS can be slow on some networks
   SOCKET_TIMEOUT_MS:     45_000,   // 45 seconds
   MAX_POOL_SIZE:         10,        // Max concurrent connections
   MIN_POOL_SIZE:         2,         // Keep 2 connections alive (reduce cold start latency)
-  SERVER_SELECTION_TIMEOUT_MS: 5_000,
+  SERVER_SELECTION_TIMEOUT_MS: 30_000, // 30s — default 5s often fails with querySrv ETIMEOUT
 } as const;
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────

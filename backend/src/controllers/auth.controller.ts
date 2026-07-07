@@ -25,6 +25,7 @@ class AuthController {
         secure: env.isProd,
         sameSite: env.isProd ? 'none' : 'lax',
         maxAge: parseExpiryToMs(env.accessTokenExpiry),
+        path: '/',
       });
 
       return ApiResponse.success(res, {
@@ -101,6 +102,7 @@ class AuthController {
         httpOnly: true,
         secure: env.isProd,
         sameSite: env.isProd ? 'none' : 'lax',
+        path: '/',
       });
 
       return ApiResponse.success(res, null, 'Admin logged out successfully');

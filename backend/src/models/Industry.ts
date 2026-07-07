@@ -16,6 +16,12 @@ export interface IIndustryCaseStudy {
   title: string;
   description: string;
   link?: string;
+  slug?: string;
+}
+
+export interface IIndustryFaq {
+  question: string;
+  answer: string;
 }
 
 export interface IIndustryWhyChooseUs {
@@ -57,6 +63,7 @@ export interface IIndustry extends BaseDocument {
   category: string;
   thumbnail: string;
   overview: string;
+  overviewQuote?: string;
   offerings: string[];
   process: IIndustryStep[];
   caseStudies: IIndustryCaseStudy[];
@@ -67,6 +74,7 @@ export interface IIndustry extends BaseDocument {
   stats: IIndustryStat[];
   detailedOfferings: IDetailedOffering[];
   dashboardImage?: string;
+  faqs: IIndustryFaq[];
 
   // Audit and Soft Delete
   isDeleted?: boolean;
@@ -158,6 +166,12 @@ const industrySchema = new Schema<IIndustry>(
       required: [true, 'Overview is required'],
       trim: true,
     },
+    overviewQuote: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: [500, 'Overview quote cannot exceed 500 characters'],
+    },
     offerings: {
       type: [String],
       default: [],
@@ -172,8 +186,15 @@ const industrySchema = new Schema<IIndustry>(
     caseStudies: [
       {
         title: { type: String, required: true, trim: true },
-        description: { type: String, required: true, trim: true },
-        link: { type: String, trim: true },
+        description: { type: String, trim: true, default: '' },
+        link: { type: String, trim: true, default: '' },
+        slug: { type: String, trim: true, default: '' },
+      },
+    ],
+    faqs: [
+      {
+        question: { type: String, required: true, trim: true },
+        answer: { type: String, required: true, trim: true },
       },
     ],
     cta: {
@@ -208,8 +229,8 @@ const industrySchema = new Schema<IIndustry>(
         title: { type: String, required: true, trim: true },
         description: { type: String, required: true, trim: true },
         badges: { type: [String], default: [] },
-        color: { type: String, required: true, trim: true },
-        iconName: { type: String, required: true, trim: true },
+        color: { type: String, trim: true, default: 'emerald' },
+        iconName: { type: String, trim: true, default: 'Check' },
       },
     ],
     dashboardImage: {

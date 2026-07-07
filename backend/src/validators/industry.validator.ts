@@ -24,16 +24,19 @@ interface IndustryInput {
   category?: unknown;
   thumbnail?: unknown;
   overview?: unknown;
+  overviewQuote?: unknown;
   offerings?: unknown;
   process?: unknown;
   caseStudies?: unknown;
   cta?: unknown;
+  ctaLabel?: unknown;
   featured?: unknown;
   industries?: unknown;
   whyChooseUs?: unknown;
   stats?: unknown;
   detailedOfferings?: unknown;
   dashboardImage?: unknown;
+  faqs?: unknown;
 }
 
 export function validateIndustryInput(input: IndustryInput, isUpdate = false): any {
@@ -86,6 +89,14 @@ export function validateIndustryInput(input: IndustryInput, isUpdate = false): a
   if (!isUpdate || input.overview !== undefined) {
     if (input.overview === undefined || input.overview === null || String(input.overview).trim() === '') {
       errors.push({ field: 'overview', message: 'Overview is required' });
+    }
+  }
+
+  // Overview Quote (optional — italic block on public industry details page)
+  if (input.overviewQuote !== undefined && input.overviewQuote !== null) {
+    const quote = String(input.overviewQuote).trim();
+    if (quote.length > 500) {
+      errors.push({ field: 'overviewQuote', message: 'Overview quote must be 500 characters or fewer' });
     }
   }
 
@@ -207,6 +218,25 @@ export function validateIndustryInput(input: IndustryInput, isUpdate = false): a
     }
   }
 
+  // FAQs
+  let parsedFaqs: Array<{ question: string; answer: string }> = [];
+  if (input.faqs !== undefined) {
+    if (!Array.isArray(input.faqs)) {
+      errors.push({ field: 'faqs', message: 'FAQs must be an array' });
+    } else {
+      parsedFaqs = input.faqs.map((f: any, idx: number) => {
+        if (!f || typeof f !== 'object') {
+          errors.push({ field: `faqs[${idx}]`, message: 'FAQ must be an object' });
+          return null;
+        }
+        return {
+          question: String(f.question || '').trim(),
+          answer: String(f.answer || '').trim(),
+        };
+      }).filter(Boolean) as Array<{ question: string; answer: string }>;
+    }
+  }
+
   // Display Order
   let parsedDisplayOrder = 0;
   if (input.displayOrder !== undefined && input.displayOrder !== null) {
@@ -248,15 +278,19 @@ export function validateIndustryInput(input: IndustryInput, isUpdate = false): a
     category: input.category ? String(input.category).trim() : '',
     thumbnail: input.thumbnail ? String(input.thumbnail).trim() : '',
     overview: input.overview ? String(input.overview).trim() : '',
+    ...(input.overviewQuote !== undefined && input.overviewQuote !== null && {
+      overviewQuote: String(input.overviewQuote).trim(),
+    }),
     offerings: parsedOfferings,
     ...(input.process !== undefined && { process: parsedProcess }),
     ...(input.caseStudies !== undefined && { caseStudies: parsedCaseStudies }),
-    cta: input.cta ? String(input.cta).trim() : '',
+    cta: (input.cta ?? input.ctaLabel) ? String(input.cta ?? input.ctaLabel).trim() : '',
     featured: input.featured === true || input.featured === 'true',
     industries: parsedIndustries,
     ...(input.whyChooseUs !== undefined && { whyChooseUs: parsedWhyChooseUs }),
     ...(input.stats !== undefined && { stats: parsedStats }),
     ...(input.detailedOfferings !== undefined && { detailedOfferings: parsedDetailedOfferings }),
+    ...(input.faqs !== undefined && { faqs: parsedFaqs }),
     dashboardImage: input.dashboardImage ? String(input.dashboardImage).trim() : '',
   };
 }

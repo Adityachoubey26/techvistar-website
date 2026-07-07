@@ -3,7 +3,7 @@ import { StatsCard } from "@/components/admin/dashboard/StatsCard";
 import {
   Wrench, Shapes, Package, MessageSquareText, BriefcaseBusiness,
   FileText, Contact, Mail, ArrowUpRight, Search, Filter, Database, Server, Key, Cloud, ShieldCheck,
-  FileUp, Activity, Plus, RefreshCw
+  FileUp, Activity, Plus, RefreshCw, Building
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -20,6 +20,7 @@ import { getAllFAQs } from "@/services/faq.service";
 import { getAllJobs, getAllApplications } from "@/services/job.service";
 import { getAllContacts } from "@/services/contact.service";
 import { getAllSubscribers } from "@/services/newsletter.service";
+import { getAllIndustries } from "@/services/industry.service";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -48,7 +49,16 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   // --- React Query Data Fetching ---
-  const { data: services = [] } = useQuery({ queryKey: ["admin", "services"], queryFn: getAllServices });
+  const { data: servicesResponse } = useQuery({ 
+    queryKey: ["admin", "services", { page: 1, limit: 1000 }], 
+    queryFn: () => getAllServices({ page: 1, limit: 1000 }) 
+  });
+  const services = servicesResponse?.services || [];
+  const { data: industriesResponse } = useQuery({
+    queryKey: ["admin", "industries", "stats"],
+    queryFn: () => getAllIndustries({ page: 1, limit: 1 }),
+  });
+  const industriesCount = industriesResponse?.pagination?.total ?? 0;
   const { data: solutions = [] } = useQuery({ queryKey: ["admin", "solutions"], queryFn: getAllSolutions });
   const { data: projects = [] } = useQuery({ queryKey: ["admin", "portfolio"], queryFn: getAllProjects });
   const { data: faqs = [] } = useQuery({ queryKey: ["admin", "faqs"], queryFn: getAllFAQs });
@@ -60,6 +70,7 @@ const Dashboard = () => {
   // Map live counts
   const cmsStats = [
     { title: "Total Services", value: String(services.length).padStart(2, '0'), description: "CMS Services", icon: Wrench, trend: 12.5, data: [{value:5},{value:6},{value:6},{value:7},{value:services.length}] },
+    { title: "Total Industries", value: String(industriesCount).padStart(2, '0'), description: "CMS Industries", icon: Building, trend: 6.2, data: [{value:8},{value:9},{value:9},{value:10},{value:industriesCount}] },
     { title: "Total Solutions", value: String(solutions.length).padStart(2, '0'), description: "CMS Solutions", icon: Shapes, trend: 4.8, data: [{value:8},{value:9},{value:10},{value:11},{value:solutions.length}] },
     { title: "Portfolio Projects", value: String(projects.length).padStart(2, '0'), description: "Showcased projects", icon: Package, trend: 15.2, data: [{value:15},{value:18},{value:20},{value:22},{value:projects.length}] },
     { title: "Total FAQs", value: String(faqs.length).padStart(2, '0'), description: "CMS Q&As", icon: MessageSquareText, trend: 0.0, data: [{value:16},{value:16},{value:16},{value:16},{value:faqs.length}] },

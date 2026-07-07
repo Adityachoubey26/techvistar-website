@@ -31,6 +31,8 @@ const ServiceDetails = () => {
     queryKey: ['serviceDetails', slug],
     queryFn: () => getServiceBySlug(slug || ''),
     enabled: !!slug,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   // Find current service

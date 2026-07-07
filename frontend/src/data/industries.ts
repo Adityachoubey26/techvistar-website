@@ -57,6 +57,8 @@ export interface Industry {
   faqs: IndustryFaq[];
   statistics: IndustryStatistic[];
   cta: IndustryCta;
+  featured?: boolean;
+  overviewQuote?: string;
 }
 
 export const INDUSTRIES: readonly Industry[] = [

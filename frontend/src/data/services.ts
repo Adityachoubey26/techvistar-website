@@ -21,6 +21,7 @@ import {
   HardDrive,
   LucideIcon
 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 
 import serviceWebDev from '../assets/service_webdevlopment.png';
 import serviceMobileApp from '../assets/mobile_phone_devloper.png';
@@ -42,6 +43,16 @@ import serviceSaas from '../assets/service_saas.png';
 import serviceProductEng from '../assets/service_product_eng.png';
 import serviceRevenueWeb from '../assets/service_revenue_web.png';
 import serviceDocsResearch from '../assets/service_docs_research.png';
+import sustainability_dashboard from '../assets/sustainability_dashboard.png';
+import mobility_routing_dashboard from '../assets/mobility_routing_dashboard.png';
+import sentiment_nlp_dashboard from '../assets/sentiment_nlp_dashboard.png';
+import ai_overview_illustration from '../assets/ai_overview_illustration.png';
+import ai_translator from '../assets/ai_translator.png';
+import crop_health_analysis from '../assets/crop_health_analysis.png';
+import resume_review_assistant from '../assets/resume_review_assistant.png';
+import ai_translator_batches from '../assets/ai_translator_batches.png';
+import clinical_risk_scoring from '../assets/clinical_risk_scoring.png';
+
 
 export interface ServiceStat {
   value: string;
@@ -129,20 +140,157 @@ export const IMAGE_MAP: Record<string, string> = {
   serviceSaas,
   serviceProductEng,
   serviceRevenueWeb,
-  serviceDocsResearch
+  serviceDocsResearch,
+  sustainability_dashboard,
+  mobility_routing_dashboard,
+  sentiment_nlp_dashboard,
+  ai_overview_illustration,
+  ai_translator,
+  crop_health_analysis,
+  resume_review_assistant,
+  ai_translator_batches,
+  clinical_risk_scoring,
+  // Filename aliases (legacy CMS / seed keys)
+  service_webdevlopment: serviceWebDev,
+  mobile_phone_devloper: serviceMobileApp,
+  ui_ux_designer: serviceUiUx,
+  Ai_and_atomation: serviceAiAutomation,
+  Claud_Devops: serviceCloudDevops,
+  digital_marketing: serviceDigitalMarketing,
+  custom_software_devlopment: serviceCustomSoftware,
+  service_branding: serviceBranding,
+  service_creative_design: serviceCreativeDesign,
+  service_ai: serviceAi,
+  service_automation: serviceAutomation,
+  service_cloud: serviceCloud,
+  service_devops: serviceDevops,
+  service_cloud_infra: serviceCloudInfra,
+  service_product_design: serviceProductDesign,
+  service_saas: serviceSaas,
+  service_product_eng: serviceProductEng,
+  service_revenue_web: serviceRevenueWeb,
+  service_docs_research: serviceDocsResearch,
+  service_enterprise_ai: serviceEnterpriseAi,
 };
 
+const DEFAULT_SERVICE_COVER = serviceWebDev;
+
+/** Original approved cover asset per seeded service slug */
+const SERVICE_SLUG_COVER_ASSETS: Record<string, string> = {
+  'web-development': serviceWebDev,
+  'mobile-app-development': serviceMobileApp,
+  'ui-ux-design': serviceUiUx,
+  'ai-automation': serviceAiAutomation,
+  'cloud': serviceCloud,
+  'devops': serviceDevops,
+  'ai': serviceAi,
+  'automation': serviceAutomation,
+  'branding': serviceBranding,
+  'creative-design': serviceCreativeDesign,
+  'product-design': serviceProductDesign,
+  'custom-software-development': serviceCustomSoftware,
+  'saas-platforms': serviceSaas,
+  'enterprise-ai-integration': serviceEnterpriseAi,
+  'product-platform-engineering': serviceProductEng,
+  'revenue-web-conversion-systems': serviceRevenueWeb,
+  'documentation-research': serviceDocsResearch,
+  'digital-marketing': serviceDigitalMarketing,
+  'cloud-infrastructure': serviceCloudInfra,
+  'cybersecurity-compliance': serviceCloudInfra,
+};
+
+const SERVICE_LEGACY_IMAGE_KEYS: Record<string, string> = {
+  service_web_dev: 'serviceWebDev',
+  service_mobile_app: 'serviceMobileApp',
+  service_ui_ux: 'serviceUiUx',
+  service_ai_automation: 'serviceAiAutomation',
+  service_cloud_devops: 'serviceCloudDevops',
+};
+
+function isCmsUploadedImage(value: string): boolean {
+  return (
+    value.startsWith('http://') ||
+    value.startsWith('https://') ||
+    value.startsWith('data:') ||
+    value.startsWith('/uploads') ||
+    value.includes('cloudinary.com')
+  );
+}
+
+/** Resolve a CMS image key or filename to a bundled local asset URL */
+export function resolveServiceImageKey(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  if (IMAGE_MAP[trimmed]) return IMAGE_MAP[trimmed];
+
+  const camelized = trimmed
+    .replace(/_([a-zA-Z])/g, (_, g) => g.toUpperCase())
+    .replace(/-([a-zA-Z])/g, (_, g) => g.toUpperCase());
+  if (IMAGE_MAP[camelized]) return IMAGE_MAP[camelized];
+
+  const legacyKey = SERVICE_LEGACY_IMAGE_KEYS[trimmed];
+  if (legacyKey && IMAGE_MAP[legacyKey]) return IMAGE_MAP[legacyKey];
+
+  return '';
+}
+
+/**
+ * Priority: CMS upload URL → local asset key/filename → slug-based original asset → generic fallback
+ */
+export function resolveServiceImage(
+  value: string | undefined | null,
+  slug: string,
+  field: 'cover' | 'thumbnail' = 'cover'
+): string {
+  const trimmed = String(value ?? '').trim();
+
+  if (trimmed && isCmsUploadedImage(trimmed)) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('/assets/')) {
+    return trimmed;
+  }
+
+  const fromKey = resolveServiceImageKey(trimmed);
+  if (fromKey) return fromKey;
+
+  if (slug && SERVICE_SLUG_COVER_ASSETS[slug]) {
+    return SERVICE_SLUG_COVER_ASSETS[slug];
+  }
+
+  return DEFAULT_SERVICE_COVER;
+}
+
 export function decorateService(apiService: any): Service {
+  let resolvedIcon: LucideIcon = Globe;
+  if (apiService.icon) {
+    if (ICON_MAP[apiService.icon]) {
+      resolvedIcon = ICON_MAP[apiService.icon];
+    } else if ((LucideIcons as any)[apiService.icon]) {
+      resolvedIcon = (LucideIcons as any)[apiService.icon];
+    }
+  }
+
+  const slug = typeof apiService.slug === 'string' ? apiService.slug : '';
+  const coverImage = resolveServiceImage(apiService.coverImage, slug, 'cover');
+  const thumbnailRaw = String(apiService.thumbnail ?? '').trim();
+  const thumbnail = thumbnailRaw
+    ? resolveServiceImage(apiService.thumbnail, slug, 'thumbnail')
+    : coverImage;
+  const dashboardImage = resolveServiceImageKey(String(apiService.dashboardImage ?? ''));
+
   return {
     id: apiService._id || apiService.id,
-    slug: apiService.slug,
+    slug,
     title: apiService.title,
     shortDescription: apiService.shortDescription,
     longDescription: apiService.fullDescription || apiService.shortDescription,
     category: apiService.category,
-    icon: ICON_MAP[apiService.icon] || Globe,
-    coverImage: IMAGE_MAP[apiService.coverImage] || apiService.coverImage || '',
-    thumbnail: IMAGE_MAP[apiService.thumbnail] || apiService.thumbnail || '',
+    icon: resolvedIcon,
+    coverImage,
+    thumbnail,
     overview: apiService.overview,
     offerings: apiService.offerings || [],
     process: apiService.process || [],
@@ -158,7 +306,7 @@ export function decorateService(apiService: any): Service {
     whyChooseUs: apiService.whyChooseUs || [],
     stats: apiService.stats || [],
     detailedOfferings: apiService.detailedOfferings || [],
-    dashboardImage: apiService.dashboardImage || '',
+    dashboardImage,
   };
 }
 
