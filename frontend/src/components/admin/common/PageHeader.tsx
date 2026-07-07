@@ -13,7 +13,7 @@ export const PageHeader = ({ title, description, actionLabel, onAction }: PageHe
   return (
     <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-1">
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-display">{title}</h2>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-display">{title}</h1>
         <p className="text-sm font-medium text-slate-500">{description}</p>
       </div>
 

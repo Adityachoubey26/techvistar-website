@@ -7,8 +7,6 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
-
 // Subcomponents
 import { ServiceHero } from '@/components/services/ServiceHero';
 import { ServiceSectionNavigation } from '@/components/services/ServiceSectionNavigation';
@@ -18,8 +16,8 @@ import { ProcessSection } from '@/components/services/ProcessSection';
 import { TechnologySection } from '@/components/services/TechnologySection';
 import { IndustriesSection } from '@/components/services/IndustriesSection';
 import { CaseStudiesSection } from '@/components/services/CaseStudiesSection';
-import { WhyChooseUsSection } from '@/components/services/WhyChooseUsSection';
-import { FAQSection } from '@/components/services/FAQSection';
+
+
 import { ServiceSidebar } from '@/components/services/ServiceSidebar';
 import { CTASection } from '@/components/services/CTASection';
 import { RelatedServicesSection } from '@/components/services/RelatedServicesSection';
@@ -93,9 +91,7 @@ const ServiceDetails = () => {
         {/* Hero Section */}
         <ServiceHero service={service} />
 
-        <Breadcrumb />
-
-        {/* Sticky Sub-Navbar */}
+                {/* Sticky Sub-Navbar */}
         <ServiceSectionNavigation />
 
         {/* Dynamic Detail Modules Content Area */}
@@ -110,8 +106,7 @@ const ServiceDetails = () => {
               <TechnologySection service={service} />
               <IndustriesSection service={service} />
               <CaseStudiesSection service={service} />
-              <WhyChooseUsSection service={service} />
-              <FAQSection service={service} />
+
             </div>
 
             {/* Right Column Sidebar */}

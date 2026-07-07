@@ -170,7 +170,7 @@ export const ContactSection = () => {
                 <div className="flex gap-4 items-start">
                   <span className="text-2xl font-black font-display text-emerald-600/35 mt-0.5">01</span>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-base">Share Requirements</h4>
+                    <div className="font-bold text-slate-900 text-base">Share Requirements</div>
                     <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold mt-1">
                       Tell us your goals, timeline, and budget — we'll review everything.
                     </p>
@@ -180,7 +180,7 @@ export const ContactSection = () => {
                 <div className="flex gap-4 items-start">
                   <span className="text-2xl font-black font-display text-emerald-600/35 mt-0.5">02</span>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-base">Expert Assessment</h4>
+                    <div className="font-bold text-slate-900 text-base">Expert Assessment</div>
                     <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold mt-1">
                       Our team will evaluate your project and identify the best approach.
                     </p>
@@ -190,7 +190,7 @@ export const ContactSection = () => {
                 <div className="flex gap-4 items-start">
                   <span className="text-2xl font-black font-display text-emerald-600/35 mt-0.5">03</span>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-base">Get Your Solution</h4>
+                    <div className="font-bold text-slate-900 text-base">Get Your Solution</div>
                     <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-semibold mt-1">
                       We'll reach out with a tailored proposal and next steps.
                     </p>

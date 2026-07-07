@@ -15,9 +15,9 @@ import {
   Check, 
   Briefcase, 
   Cpu, 
-  Image
+  Image,
+  Workflow
 } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
 import { resolveSpotlightColors } from './Industries';
@@ -172,9 +172,7 @@ export const IndustryDetails = () => {
         </AuroraBackground>
 
         {/* Breadcrumb Navigation */}
-        <Breadcrumb />
-
-        {/* Spotlight 3D Parallax Dot Background wrapping all main sections */}
+                {/* Spotlight 3D Parallax Dot Background wrapping all main sections */}
         <Spotlight3DBackground className="py-16 md:py-24">
           <div className="container-custom max-w-5xl mx-auto px-4 space-y-16 md:space-y-24">
             
@@ -193,6 +191,46 @@ export const IndustryDetails = () => {
                   <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3">
                     {industry.description}
                   </p>
+                  {/* Strategic Capabilities feature grid to fill height space */}
+                  <div className="mt-8 pt-6 border-t border-slate-100/80">
+                    <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-4">
+                      Strategic Capabilities
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <GlowHover glowColor={colors.border}>
+                        <SpotlightCard 
+                          spotlightColor={colors.spotlight} 
+                          borderColor={colors.border}
+                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
+                        >
+                          <div>
+                            <div className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                              Enterprise Governance
+                            </div>
+                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
+                              Configured from day one to comply with vertical-specific regulatory guidelines, access logs, and data encryption.
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
+                      <GlowHover glowColor={colors.border}>
+                        <SpotlightCard 
+                          spotlightColor={colors.spotlight} 
+                          borderColor={colors.border}
+                          className="p-4.5 rounded-xl border border-slate-200/40 bg-white shadow-sm flex flex-col justify-between h-full"
+                        >
+                          <div>
+                            <div className="font-display font-black text-teal-955 text-xs sm:text-sm">
+                              API-First Integrations
+                            </div>
+                            <p className="text-slate-500 text-[11px] font-semibold mt-2.5 leading-relaxed">
+                              Seamlessly connecting modern microservices databases with pre-existing legacy structures and third-party contracts.
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
+                    </div>
+                  </div>
                 </ScaleIn>
               </div>
 
@@ -410,6 +448,45 @@ export const IndustryDetails = () => {
               </div>
             )}
 
+            {/* Section 6: Delivery Process (Full Width) */}
+            <div className="space-y-6 pb-12 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Workflow className="h-5 w-5 text-teal-900 shrink-0" />
+                <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
+                  Our Delivery Process
+                </h2>
+              </div>
+              <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-8">
+                We follow our structured, governance-first delivery framework to ensure all integrations, security layers, and data contracts remain auditable.
+              </p>
+              <StaggerContainer className="relative border-l border-slate-200/80 ml-3 pl-6 space-y-8 mt-6">
+                {PROCESS_STEPS.map((step, idx) => {
+                  return (
+                    <StaggerItem key={idx} className="relative group/timeline">
+                      {/* Dot step indicator */}
+                      <span className="absolute -left-[35px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white border-2 border-emerald-500 text-emerald-600 font-bold text-xs group-hover/timeline:scale-110 group-hover/timeline:bg-emerald-500 group-hover/timeline:text-white transition-all">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <h3 className="font-display font-extrabold text-teal-955 text-sm sm:text-base group-hover/timeline:text-primary transition-colors">
+                          {step.title}
+                        </h3>
+                        <p className="text-slate-500 text-xs font-medium mt-1 leading-relaxed max-w-2xl">
+                          {step.description}
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {step.deliverables.map((deliv, dIdx) => (
+                             <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg transition-transform hover:scale-[1.03]">
+                              {deliv}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </StaggerItem>
+                  );
+                })}
+              </StaggerContainer>
+            </div>
           </div>
         </Spotlight3DBackground>
 

@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, Briefcase, MapPin, Calendar, Clock, GraduationCap, Users, Cpu } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
-import { FAQSection } from '@/components/faq';
+import { WhyChooseUsSection } from '@/components/services/WhyChooseUsSection';
+import { PageHeader } from '@/components/ui/PageHeader';
+
 import careersBg from '../assets/careers-bg.png';
 import frontendImg from '../assets/mobile_phone_devloper.png';
 import backendImg from '../assets/Claud_Devops.png';
@@ -71,181 +72,17 @@ const Careers = () => {
         <Navbar />
 
         {/* 1. Hero Section */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-32 md:pb-20 border-b border-zinc-900 text-white"
-        >
-          {/* Animated Mesh Waves + Mouse Parallax */}
-          <motion.div 
-            className="absolute inset-0 opacity-80 pointer-events-none z-0"
-            style={{ 
-              backgroundImage: `url(${careersBg})`,
-              backgroundSize: 'auto 100%',
-              backgroundPosition: 'right',
-              backgroundRepeat: 'no-repeat',
-            }}
-            animate={{
-              x: [0, 6, 0],
-              y: [0, -3, 0],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.div
-              className="absolute inset-0"
-              style={{ 
-                backgroundImage: `url(${careersBg})`,
-                backgroundSize: 'auto 100%',
-                backgroundPosition: 'right',
-                backgroundRepeat: 'no-repeat',
-              }}
-              animate={{
-                x: mousePosition.x * 8,
-                y: mousePosition.y * 8,
-              }}
-              transition={{ type: "tween", ease: "easeOut", duration: 0.5 }}
-            />
-          </motion.div>
+        <PageHeader 
+          title={hero.title}
+          subtitle={hero.subtitle}
+          description={hero.description}
+          backgroundImage={careersBg}
+        />
 
-          {/* Grid Pulse */}
-          <motion.div 
-            className="absolute inset-0 pointer-events-none z-0"
-            style={{
-              backgroundImage: `linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
-            }}
-            animate={{
-              opacity: [0.15, 0.25, 0.15],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Gradient Breathing (Background radial glow) */}
-          <motion.div 
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none z-0"
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.5, 0.6, 0.5],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Floating Particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-30">
-            {[...Array(6)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute bg-emerald-400/40 rounded-full blur-[0.5px]"
-                style={{
-                  width: `${3 + (i % 3)}px`,
-                  height: `${3 + (i % 3)}px`,
-                  left: `${(i * 15) + 10}%`,
-                  top: `${(i * 12) + 25}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  x: [0, 5, 0],
-                  opacity: [0.1, 0.4, 0.1],
-                }}
-                transition={{
-                  duration: 14 + (i % 3) * 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.5,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/60 to-transparent z-0 pointer-events-none" />
-
-          <div className="container mx-auto px-4 max-w-4xl text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium mb-3">
-                {hero.subtitle}
-              </Badge>
-            </motion.div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-extrabold text-white mb-4 font-display"
-            >
-              {hero.title}
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-base md:text-lg text-zinc-300 leading-relaxed max-w-2xl mx-auto"
-            >
-              {hero.description}
-            </motion.p>
-          </div>
-        </motion.section>
-
-        <Breadcrumb />
-
-        {/* 2. Why Join Section */}
+                {/* 2. Why Join Section */}
         <section className="py-16 bg-slate-50">
           <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-slate-900 mb-10 text-center">
-              Why Join TechVistar?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {whyJoin.map((item, idx) => {
-                const icons = [
-                  <Users className="h-5 w-5 text-emerald-600" />,
-                  <Briefcase className="h-5 w-5 text-blue-600" />,
-                  <Cpu className="h-5 w-5 text-indigo-600" />
-                ];
-                const iconBgColors = [
-                  'bg-emerald-50 border-emerald-100/50',
-                  'bg-blue-50 border-blue-100/50',
-                  'bg-indigo-50 border-indigo-100/50'
-                ];
-                const hoverEffects = [
-                  'hover:border-emerald-300/40 hover:shadow-[0_12px_24px_-10px_rgba(16,185,129,0.12)]',
-                  'hover:border-blue-300/40 hover:shadow-[0_12px_24px_-10px_rgba(59,130,246,0.12)]',
-                  'hover:border-indigo-300/40 hover:shadow-[0_12px_24px_-10px_rgba(99,102,241,0.12)]'
-                ];
-                return (
-                  <motion.div 
-                    key={idx} 
-                    whileHover={{ y: -6 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    className={`bg-white border border-slate-200 rounded-2xl p-6 shadow-sm transition-all duration-300 flex flex-col items-start ${hoverEffects[idx % hoverEffects.length]}`}
-                  >
-                    <div className={`h-10 w-10 rounded-xl border flex items-center justify-center mb-4 ${iconBgColors[idx % iconBgColors.length]}`}>
-                      {icons[idx % icons.length]}
-                    </div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-2">{item.title}</h3>
-                    <p className="text-[11px] sm:text-xs text-slate-600 leading-relaxed font-semibold">{item.description}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
+            <WhyChooseUsSection items={whyJoin} title="Why Join TechVistar?" />
           </div>
         </section>
 
@@ -493,8 +330,7 @@ const Careers = () => {
           </div>
         </section>
 
-        {/* 7. FAQs Section replaced with unified FAQSection */}
-        <FAQSection pageFilter="careers" title="Careers" layout="split" description="Have questions about our interview cycles, hiring timelines, and workplace culture?" />
+
 
         {/* 8. Apply CTA Banner */}
         <section className="py-16 bg-slate-50 border-t border-slate-200">

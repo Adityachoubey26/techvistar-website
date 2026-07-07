@@ -84,7 +84,7 @@ export const ServiceSidebar = () => {
             <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-emerald-400">
               <Mail className="h-3.5 w-3.5" />
             </div>
-            <h4 className="text-xs font-black uppercase tracking-wider text-slate-300 font-display">Direct Inquiries</h4>
+            <div className="text-xs font-black uppercase tracking-wider text-slate-300 font-display">Direct Inquiries</div>
           </div>
 
           <p className="text-[11px] text-slate-400 leading-relaxed font-medium">

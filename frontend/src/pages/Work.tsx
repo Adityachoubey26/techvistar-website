@@ -16,6 +16,7 @@ import {
 import workBg from '../assets/work-bg.png';
 import portfolioLaptopImg from '../assets/portfolio_laptop_mockup.jpg';
 import TextType from '@/components/ui/TextType';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // High Quality Brand SVG Logos
 const BrandLogos = {
@@ -163,11 +164,7 @@ export const Work = () => {
     { label: 'Years Experience', val: '5+', icon: <Award className="w-5 h-5 text-emerald-600" /> }
   ];
 
-  const faqList = [
-    { q: 'What is your technology handover model?', a: 'Upon project completion, we hand over full code ownership, version history, documentation, and cloud access keys.' },
-    { q: 'How do you guarantee project delivery timelines?', a: 'We employ two-week Agile sprints, providing transparent task tracking dashboards, weekly reviews, and clear milestone schedules.' },
-    { q: 'Do you offer ongoing production maintenance?', a: 'Yes. We provide structured SLA tiers covering server health checks, dependency upgrades, security patching, and scaling.' }
-  ];
+
 
   return (
     <>
@@ -176,128 +173,12 @@ export const Work = () => {
         <Navbar />
 
         {/* HERO SECTION */}
-        <section 
-          className="relative overflow-hidden bg-slate-50 pt-20 pb-6 md:pt-24 md:pb-8 border-b border-slate-100"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* Subtle grid pattern background */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000004_1px,transparent_1px),linear-gradient(to_bottom,#00000004_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 z-0 pointer-events-none" />
-          
-          <div className="container-custom max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left side: Heading and badge */}
-            <div className="lg:col-span-7 space-y-6 pb-12 md:pb-16">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Our Portfolio</span>
-              </div>
-              
-              <h1 className="text-5xl sm:text-7xl font-extrabold font-display text-slate-900 tracking-tight leading-[1.05]">
-                Our Work
-              </h1>
-              
-              <p className="text-slate-500 text-base sm:text-lg leading-relaxed font-semibold max-w-2xl">
-                Showcase production-ready digital products, enterprise platforms, AI solutions, SaaS applications and scalable software engineered for modern businesses.
-              </p>
-
-              <div className="pt-4 flex flex-wrap gap-4 items-center">
-                <a href="#projects-grid">
-                  <Button className="h-12 px-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-md flex items-center gap-2">
-                    <span>Explore Our Projects</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </a>
-              </div>
-            </div>
-
-            {/* Right side: 3D/Illustration Laptop Mockup Layout */}
-            <div className="lg:col-span-5 relative flex justify-center items-center">
-              <motion.div
-                className="relative w-full max-w-[550px] -top-8 md:-top-12"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                {/* Background glow shadow */}
-                <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-emerald-100/40 to-teal-50/20 blur-3xl opacity-75" />
-                
-                <img
-                  src={portfolioLaptopImg}
-                  alt="TechVistar SaaS Mockup Illustration"
-                  className="w-full h-auto object-contain relative z-10"
-                />
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats pill row container below hero */}
-        <div className="max-w-5xl mx-auto px-6 -mt-16 md:-mt-20 relative z-20">
-          <div className="bg-white border border-slate-200/60 rounded-[24px] shadow-lg py-4 sm:py-5 px-6 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
-            {successMetrics.map((met) => (
-              <div key={met.label} className="flex flex-col items-center text-center space-y-1">
-                <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100/50 mb-1">
-                  {met.icon}
-                </div>
-                <h3 className="text-3xl font-extrabold text-emerald-600 leading-none">
-                  {met.val}
-                </h3>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{met.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* SECTION 2 — RECENT WORK / FEATURED PROJECTS */}
-        <section className="container-custom max-w-7xl mx-auto px-6 pt-16 md:pt-20 pb-20">
-          <div className="text-center space-y-2 mb-12">
-            <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-              Recent Work
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">Featured Projects</h2>
-            <p className="text-sm text-slate-500 font-semibold">Innovative solutions that drive real business impact</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProjects.map((project) => (
-              <motion.div
-                key={project.id}
-                whileHover={{ y: -6 }}
-                className="bg-white border border-slate-200/60 hover:border-emerald-500/40 hover:shadow-[0_15px_30px_-8px_rgba(16,185,129,0.15)] transition-all duration-300 rounded-2xl overflow-hidden shadow-md flex flex-col justify-between group text-slate-900"
-              >
-                <div className="space-y-4">
-                  {/* Category Badge & Cover image */}
-                  <div className="h-44 overflow-hidden bg-slate-50 border-b border-slate-100 flex items-center justify-center relative">
-                    <img 
-                      src={project.thumbnail} 
-                      alt={project.title} 
-                      className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-103"
-                    />
-                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-bold uppercase tracking-wider z-10 shadow-md">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  <div className="p-5 space-y-2.5">
-                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors font-display line-clamp-1 leading-snug">
-                      {project.title}
-                    </h4>
-                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
-                      {project.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-5 pb-5 pt-3 border-t border-slate-100/60 flex items-center justify-between">
-                  <Link to={`/work/${project.slug}`} className="text-xs font-bold text-emerald-600 flex items-center gap-1 hover:text-emerald-700 transition-colors">
-                    View Case Study
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 duration-300" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        <PageHeader 
+          title="Our Work"
+          subtitle="Our Portfolio"
+          description="Showcase production-ready digital products, enterprise platforms, AI solutions, SaaS applications and scalable software engineered for modern businesses."
+          backgroundImage={workBg}
+        />
 
         {/* SECTION 3 — PROJECT FILTERS */}
         <section id="projects-grid" className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-y border-slate-200/80 py-4">
@@ -355,6 +236,57 @@ export const Work = () => {
           </div>
         </section>
 
+        {/* SECTION 2 — RECENT WORK / FEATURED PROJECTS */}
+        <section className="container-custom max-w-7xl mx-auto px-6 pt-16 md:pt-20 pb-20">
+          <div className="text-center space-y-2 mb-12">
+            <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+              Recent Work
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">Featured Projects</h2>
+            <p className="text-sm text-slate-500 font-semibold">Innovative solutions that drive real business impact</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                whileHover={{ y: -6 }}
+                className="bg-white border border-slate-200/60 hover:border-emerald-500/40 hover:shadow-[0_15px_30px_-8px_rgba(16,185,129,0.15)] transition-all duration-300 rounded-2xl overflow-hidden shadow-md flex flex-col justify-between group text-slate-900"
+              >
+                <div className="space-y-4">
+                  {/* Category Badge & Cover image */}
+                  <div className="h-44 overflow-hidden bg-slate-50 border-b border-slate-100 flex items-center justify-center relative">
+                    <img 
+                      src={project.thumbnail} 
+                      alt={project.title} 
+                      className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-103"
+                    />
+                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-bold uppercase tracking-wider z-10 shadow-md">
+                      {project.category}
+                    </span>
+                  </div>
+
+                  <div className="p-5 space-y-2.5">
+                    <div className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors font-display line-clamp-1 leading-snug">
+                      {project.title}
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-3">
+                      {project.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-5 pb-5 pt-3 border-t border-slate-100/60 flex items-center justify-between">
+                  <Link to={`/work/${project.slug}`} className="text-xs font-bold text-emerald-600 flex items-center gap-1 hover:text-emerald-700 transition-colors">
+                    View Case Study
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 duration-300" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* SECTION 4 — PROJECT GRID */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
           {filteredProjects.length > 0 ? (
@@ -379,9 +311,9 @@ export const Work = () => {
                     </div>
 
                     <div className="p-5 space-y-3">
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                      <div className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
                         {project.title}
-                      </h4>
+                      </div>
                       <p className="text-xs text-slate-600 font-semibold leading-relaxed line-clamp-3">
                         {project.description}
                       </p>
@@ -455,7 +387,7 @@ export const Work = () => {
                 </div>
                 <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
                   <div>
-                    <h5 className="text-xs font-extrabold text-slate-900">Chief of Operations</h5>
+                    <div className="text-xs font-extrabold text-slate-900">Chief of Operations</div>
                     <span className="text-[10px] text-slate-400 font-semibold">Logistics Fleet Management Company</span>
                   </div>
                 </div>
@@ -464,19 +396,19 @@ export const Work = () => {
 
             <div className="md:col-span-4 grid grid-cols-2 gap-4">
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">40%</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">40%</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Cloud Cost Saved</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">99.99%</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">99.99%</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">API Uptime SLA</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">A+</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">A+</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Page Speed Rank</span>
               </div>
               <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-md">
-                <h4 className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">2.4x</h4>
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-none">2.4x</div>
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 block leading-snug">Customer Growth</span>
               </div>
             </div>
@@ -538,7 +470,7 @@ export const Work = () => {
                     <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${color.badge}`}>
                       Step 0{idx + 1}
                     </span>
-                    <h4 className="font-extrabold text-slate-800 text-xs tracking-wide pt-1">{step.title}</h4>
+                    <div className="font-extrabold text-slate-800 text-xs tracking-wide pt-1">{step.title}</div>
                     <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{step.desc}</p>
                   </motion.div>
                 );
@@ -579,25 +511,14 @@ export const Work = () => {
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className="bg-emerald-50/30 border border-emerald-100/40 rounded-2xl p-6 space-y-4 shadow-sm cursor-pointer group/ind"
               >
-                <h4 className="font-extrabold text-slate-900 text-sm group-hover/ind:text-emerald-600 transition-colors">{ind.name}</h4>
+                <div className="font-extrabold text-slate-900 text-sm group-hover/ind:text-emerald-600 transition-colors">{ind.name}</div>
                 <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">{ind.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* SECTION 9 — FAQ */}
-        <section className="container-custom max-w-4xl mx-auto px-6 py-16 border-t border-slate-200/80">
-          <div className="text-center mb-10 space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Frequently Asked Questions</h2>
-            <p className="text-xs text-slate-500 font-semibold">Find quick answers regarding delivery timelines, support and ownership.</p>
-          </div>
-          <div className="bg-white border border-slate-200/60 rounded-2xl p-6 sm:p-8 shadow-md">
-            {faqList.map((faq) => (
-              <FAQAccordion key={faq.q} question={faq.q} answer={faq.a} />
-            ))}
-          </div>
-        </section>
+
 
         {/* SECTION 10 — FINAL CTA */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
@@ -647,38 +568,6 @@ export const Work = () => {
   );
 };
 
-// FAQ Accordion
-interface FAQAccordionProps {
-  question: string;
-  answer: string;
-}
 
-const FAQAccordion = ({ question, answer }: FAQAccordionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="border-b border-slate-100 py-4 last:border-0">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full text-left font-display font-extrabold text-base sm:text-lg text-slate-900 hover:text-emerald-600 transition-colors py-1"
-      >
-        <span>{question}</span>
-        <span className="text-emerald-600 font-normal text-xl ml-4">{isOpen ? "−" : "+"}</span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <p className="text-slate-500 text-sm leading-relaxed mt-2.5 font-semibold">{answer}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 export default Work;

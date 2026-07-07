@@ -42,7 +42,7 @@ export const TopNavbar = ({ onOpenSidebar }: TopNavbarProps) => {
           </button>
           
           <div className="flex items-center gap-2">
-            <h1 className="text-sm font-extrabold text-slate-800 tracking-tight hidden sm:block">Dashboard</h1>
+            <span className="text-sm font-extrabold text-slate-800 tracking-tight hidden sm:block">Dashboard</span>
             <span className="hidden sm:inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100/50 uppercase tracking-widest shadow-sm">Pro</span>
           </div>
         </div>

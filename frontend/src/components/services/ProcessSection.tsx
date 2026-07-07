@@ -84,9 +84,9 @@ export const ProcessSection = ({ service }: SectionProps) => {
                   <h3 className="text-xs font-semibold text-slate-400">Step {idx + 1}</h3>
                 </div>
                 
-                <h4 className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 transition-colors mb-1 font-display">
+                <div className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 transition-colors mb-1 font-display">
                   {step.title}
-                </h4>
+                </div>
                 
                 <p className="text-xs text-slate-500 leading-relaxed">
                   {step.description}

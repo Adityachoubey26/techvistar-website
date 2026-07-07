@@ -14,41 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { submitContactForm } from '@/services/contact.service';
 import { LogoCloud } from '@/components/LogoCloud';
-
-
-// FAQ Accordion Component
-interface FAQAccordionProps {
-  question: string;
-  answer: string;
-}
-
-const FAQAccordion = ({ question, answer }: FAQAccordionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="border-b border-slate-100 py-4">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full text-left font-display font-extrabold text-base sm:text-lg text-slate-900 hover:text-emerald-600 transition-colors py-1"
-      >
-        <span>{question}</span>
-        <span className="text-emerald-600 font-normal text-xl ml-4">{isOpen ? "−" : "+"}</span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <p className="text-slate-600 text-sm leading-relaxed mt-2.5 font-medium">{answer}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+import { FAQSection } from '@/components/faq';
+import { PageHeader } from '@/components/ui/PageHeader';
+import contactBg from '../assets/about-bg.png';
 
 export const Contact = () => {
   const { toast } = useToast();
@@ -122,29 +90,6 @@ export const Contact = () => {
     }
   };
 
-  // FAQ Data
-  const faqs = [
-    {
-      q: 'What services does TechVistar offer?',
-      a: 'We offer full-cycle digital development including Web Systems, Mobile Apps, SaaS Platforms, Cloud DevOps setup, AI Automatons, and UI/UX Design.'
-    },
-    {
-      q: 'How long does it take to start a project?',
-      a: 'After requirements scoping and alignment on a statement of work, we typically kick off projects within 5 to 7 business days.'
-    },
-    {
-      q: 'Can you work on an existing project?',
-      a: 'Yes. We perform code audits, structural compliance checks, and integration updates before onboarding ongoing projects.'
-    },
-    {
-      q: 'Do you offer support after deployment?',
-      a: 'Absolutely. We provide structured service-level agreements (SLAs) for continuous monitoring, updates, and maintenance support.'
-    },
-    {
-      q: 'How do I get a project estimate?',
-      a: 'Simply fill out the form above with your timeline, requirements, and constraints, and our practice leads will schedule a consultation.'
-    }
-  ];
 
   return (
     <>
@@ -153,28 +98,12 @@ export const Contact = () => {
       <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 pb-20 relative overflow-hidden animate-fade-in">
         
         {/* HERO HEADER SECTION - Matching Portfolio, Solutions and About */}
-        <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-36 md:pb-24 border-b border-zinc-900 text-white">
-          {/* Shifting green waves / glow effect */}
-          <div className="absolute top-0 inset-0 pointer-events-none overflow-hidden -z-10">
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/[0.05] blur-[120px]" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-emerald-600/[0.05] blur-[130px]" />
-          </div>
-
-          <div className="container-custom max-w-7xl mx-auto px-6 relative z-10 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Let's Connect</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-6xl font-extrabold font-display text-white tracking-tight leading-[1.1] max-w-3xl">
-              Let's Build Something <span className="text-emerald-500">Great</span> Together
-            </h1>
-            
-            <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed font-semibold max-w-2xl">
-              Have a project in mind or want to explore how we can help your business grow? We'd love to hear from you.
-            </p>
-          </div>
-        </section>
+        <PageHeader 
+          title={<>Let's Build Something <span className="text-emerald-500">Great</span> Together</>}
+          subtitle="Let's Connect"
+          description="Have a project in mind or want to explore how we can help your business grow? We'd love to hear from you."
+          backgroundImage={contactBg}
+        />
 
         {/* HERO GRID SECTION - FORM AND INFO CARDS */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-16 relative z-10" id="contact-form-section">
@@ -189,7 +118,7 @@ export const Contact = () => {
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-slate-900 leading-none">24 Hrs</h5>
+                    <div className="text-sm font-bold text-slate-900 leading-none">24 Hrs</div>
                     <span className="text-[10px] text-slate-500 font-semibold uppercase">Response Time</span>
                   </div>
                 </div>
@@ -198,7 +127,7 @@ export const Contact = () => {
                     <Briefcase className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-slate-900 leading-none">100+</h5>
+                    <div className="text-sm font-bold text-slate-900 leading-none">100+</div>
                     <span className="text-[10px] text-slate-500 font-semibold uppercase">Projects Delivered</span>
                   </div>
                 </div>
@@ -207,7 +136,7 @@ export const Contact = () => {
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-slate-900 leading-none">98%</h5>
+                    <div className="text-sm font-bold text-slate-900 leading-none">98%</div>
                     <span className="text-[10px] text-slate-500 font-semibold uppercase">Client Satisfaction</span>
                   </div>
                 </div>
@@ -216,7 +145,7 @@ export const Contact = () => {
                     <Building2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="text-sm font-bold text-slate-900 leading-none">10+</h5>
+                    <div className="text-sm font-bold text-slate-900 leading-none">10+</div>
                     <span className="text-[10px] text-slate-500 font-semibold uppercase">Industries Served</span>
                   </div>
                 </div>
@@ -234,7 +163,7 @@ export const Contact = () => {
                     <Phone className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold font-display text-slate-900 text-sm">Call Us</h4>
+                    <div className="font-extrabold font-display text-slate-900 text-sm">Call Us</div>
                     <p className="text-xs text-slate-600 font-bold mt-0.5">+91 9573157982</p>
                     <span className="text-[10px] text-slate-400 font-bold block mt-0.5">Mon - Sat, 9:00 AM - 7:00 PM IST</span>
                   </div>
@@ -250,7 +179,7 @@ export const Contact = () => {
                     <Mail className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold font-display text-slate-900 text-sm">Email Us</h4>
+                    <div className="font-extrabold font-display text-slate-900 text-sm">Email Us</div>
                     <p className="text-xs text-slate-600 font-bold mt-0.5">hello@techvistar.com</p>
                     <span className="text-[10px] text-slate-400 font-bold block mt-0.5">We reply within 24 hours</span>
                   </div>
@@ -265,7 +194,7 @@ export const Contact = () => {
                     <MapPin className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold font-display text-slate-900 text-sm">Visit Us</h4>
+                    <div className="font-extrabold font-display text-slate-900 text-sm">Visit Us</div>
                     <p className="text-xs text-slate-600 font-bold mt-0.5">TechVistar HQ</p>
                     <span className="text-[10px] text-slate-400 font-bold block mt-0.5">Noida, Uttar Pradesh, India</span>
                   </div>
@@ -280,7 +209,7 @@ export const Contact = () => {
                     <Clock className="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold font-display text-slate-900 text-sm">Working Hours</h4>
+                    <div className="font-extrabold font-display text-slate-900 text-sm">Working Hours</div>
                     <p className="text-xs text-slate-600 font-bold mt-0.5">Monday - Saturday</p>
                     <span className="text-[10px] text-slate-400 font-bold block mt-0.5">09:00 AM - 07:00 PM IST</span>
                   </div>
@@ -460,7 +389,7 @@ export const Contact = () => {
                 </div>
               </div>
               <div className="p-5 space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-base">India - Noida (HQ)</h4>
+                <div className="font-extrabold text-slate-900 text-base">India - Noida (HQ)</div>
                 <p className="text-xs text-slate-500 font-bold leading-relaxed">
                   A-75, Sector 4, Noida, UP 201301, India
                 </p>
@@ -486,7 +415,7 @@ export const Contact = () => {
                 </div>
               </div>
               <div className="p-5 space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-base">UAE - Dubai</h4>
+                <div className="font-extrabold text-slate-900 text-base">UAE - Dubai</div>
                 <p className="text-xs text-slate-500 font-bold leading-relaxed">
                   Business Bay, Dubai, UAE
                 </p>
@@ -512,7 +441,7 @@ export const Contact = () => {
                 </div>
               </div>
               <div className="p-5 space-y-3">
-                <h4 className="font-extrabold text-slate-900 text-base">USA - New York</h4>
+                <div className="font-extrabold text-slate-900 text-base">USA - New York</div>
                 <p className="text-xs text-slate-500 font-bold leading-relaxed">
                   Manhattan, New York, NY 10001, USA
                 </p>
@@ -559,75 +488,7 @@ export const Contact = () => {
           </div>
         </section>
 
-        {/* FAQ & CALL OUT GRID SECTION */}
-        <section className="container-custom max-w-7xl mx-auto px-6 mb-20 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
-            
-            {/* FAQ List on Left */}
-            <div className="lg:col-span-7 space-y-6">
-              <div>
-                <h3 className="text-2xl font-extrabold font-display text-slate-900">Frequently Asked Questions</h3>
-                <p className="text-xs text-slate-500 font-bold mt-1">Get quick answers regarding scope, timeline, and support SLAs.</p>
-              </div>
-
-              <div className="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-md text-slate-900">
-                {faqs.map((faq) => (
-                  <FAQAccordion key={faq.q} question={faq.q} answer={faq.a} />
-                ))}
-              </div>
-
-              <div className="pt-2">
-                <Link to="/faq">
-                  <motion.button 
-                    whileHover={{ x: 3 }}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
-                  >
-                    <span>View All FAQs</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </motion.button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Call Out Banner on Right */}
-            <div className="lg:col-span-5 h-full">
-              <div className="bg-white border border-slate-200/60 rounded-2xl p-8 flex flex-col justify-between h-full relative overflow-hidden shadow-lg text-slate-900">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
-                
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-extrabold font-display text-slate-900">Ready to start your project?</h3>
-                  <p className="text-slate-600 text-sm font-semibold leading-relaxed">
-                    Let's turn your ideas into powerful digital solutions. Connect with us to outline requirements.
-                  </p>
-
-                  {/* Customer support illustration */}
-                  <div className="w-full h-32 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-center justify-center overflow-hidden">
-                    <svg className="w-20 h-20 text-emerald-600" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3" />
-                      <rect x="35" y="42" width="30" height="20" rx="4" fill="currentColor" fillOpacity="0.05" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="42" cy="52" r="2" fill="currentColor" />
-                      <circle cx="58" cy="52" r="2" fill="currentColor" />
-                      <path d="M50 72C50 72 45 78 40 78" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="pt-6">
-                  <motion.button 
-                    onClick={scrollToForm}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-[0_4px_20px_rgba(16,185,129,0.2)] flex items-center justify-center gap-2"
-                  >
-                    <span>Talk to an Expert</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
+        <FAQSection pageFilter="all" layout="split" limit={4} showViewAll={true} />
 
         {/* TRUSTED BY CLIENT LOGOS SECTION */}
         <section className="container-custom max-w-7xl mx-auto px-6 mt-10 relative z-10 border-t border-slate-200/60">

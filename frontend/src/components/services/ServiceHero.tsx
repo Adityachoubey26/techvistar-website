@@ -171,24 +171,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
                 </div>
               )}
 
-              {/* Actions */}
-              <div className="flex flex-wrap gap-3">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-2 px-6 rounded-lg transition-all shadow-sm">
-                      <Send className="h-3.5 w-3.5" /> Request Proposal
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="border-none bg-transparent shadow-none p-0 w-[calc(100%-2rem)] sm:w-full max-w-2xl">
-                    <ConsultationForm serviceTitle={service.title} />
-                  </DialogContent>
-                </Dialog>
-                <Button variant="outline" className="border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-semibold rounded-lg transition-all" asChild>
-                  <a href="#case-studies" onClick={scrollToSection('case-studies')}>
-                    View Case Studies <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                  </a>
-                </Button>
-              </div>
+
 
             </div>
           </div>

@@ -382,7 +382,7 @@ export const Navbar = () => {
             >
               {/* Column 1: Development Services */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Development Services</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Development Services</div>
                 <div className="space-y-0.5">
                   {devServices.map((srv) => {
                     const IconComp = srv.icon;
@@ -411,7 +411,7 @@ export const Navbar = () => {
 
               {/* Column 2: Design Services */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Design Services</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Design Services</div>
                 <div className="space-y-0.5">
                   {designServices.map((srv) => {
                     const IconComp = srv.icon;
@@ -440,7 +440,7 @@ export const Navbar = () => {
 
               {/* Column 3: Cloud & AI */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Cloud & AI</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Cloud & AI</div>
                 <div className="space-y-0.5">
                   {cloudServices.map((srv) => {
                     const IconComp = srv.icon;
@@ -487,7 +487,7 @@ export const Navbar = () => {
                     </svg>
                   </div>
                   
-                  <h5 className="text-sm font-extrabold font-display">Enterprise AI Integration</h5>
+                  <div className="text-sm font-extrabold font-display">Enterprise AI Integration</div>
                   <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
                     Automate business intelligence processes and integrate responsive LLM agents into your workflow.
                   </p>
@@ -520,7 +520,7 @@ export const Navbar = () => {
             >
               {/* Column 1: Business Solutions */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Business Solutions</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Business Solutions</div>
                 <div className="space-y-0.5">
                   {bizSolutions.map((srv) => {
                     const IconComp = srv.icon;
@@ -549,7 +549,7 @@ export const Navbar = () => {
 
               {/* Column 2: AI Solutions */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">AI Solutions</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">AI Solutions</div>
                 <div className="space-y-0.5">
                   {aiSolutions.map((srv) => {
                     const IconComp = srv.icon;
@@ -578,7 +578,7 @@ export const Navbar = () => {
 
               {/* Column 3: Digital Solutions */}
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Digital Solutions</h4>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Digital Solutions</div>
                 <div className="space-y-0.5">
                   {digSolutions.map((srv) => {
                     const IconComp = srv.icon;
@@ -625,7 +625,7 @@ export const Navbar = () => {
                     </svg>
                   </div>
                   
-                  <h5 className="text-sm font-extrabold font-display">Intelligent Workflows</h5>
+                  <div className="text-sm font-extrabold font-display">Intelligent Workflows</div>
                   <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
                     Deploy autonomous digital agents to automate recurring business reporting and customer requests.
                   </p>

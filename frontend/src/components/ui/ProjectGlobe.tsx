@@ -448,9 +448,9 @@ export default function ProjectGlobe() {
               <span className="text-[8px] font-black text-emerald-600/90 uppercase tracking-widest leading-none">
                 {project.category}
               </span>
-              <h4 className="text-[10.5px] font-bold text-slate-800 tracking-tight mt-1 truncate">
+              <div className="text-[10.5px] font-bold text-slate-800 tracking-tight mt-1 truncate">
                 {project.name}
-              </h4>
+              </div>
             </div>
 
             {/* View Link */}
