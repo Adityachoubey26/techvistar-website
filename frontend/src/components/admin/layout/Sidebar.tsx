@@ -12,7 +12,8 @@ import {
   Wrench,
   X,
   LogOut,
-  Settings
+  Settings,
+  Building
 } from "lucide-react";
 import logo from "../../../assets/logo.webp";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ import { motion } from "framer-motion";
 const navItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Services", path: "/admin/services", icon: Wrench },
+  { label: "Industries", path: "/admin/industries", icon: Building },
   { label: "Solutions", path: "/admin/solutions", icon: Shapes },
   { label: "Portfolio", path: "/admin/portfolio", icon: Package },
   { label: "FAQs", path: "/admin/faqs", icon: MessageSquareText },

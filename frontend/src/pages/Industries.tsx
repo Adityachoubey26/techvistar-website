@@ -12,9 +12,12 @@ import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers
 import { Breadcrumb } from '@/components/common/Breadcrumb';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
-import { PremiumImage } from '@/components/common/PremiumImage';
 import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
 import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';
+import { useQuery } from '@tanstack/react-query';
+import { getActiveIndustries } from '@/services/industry.service';
+import { decorateIndustry } from '@/data/industry.adapter';
+
 // Shared color utility for premium spotlight rendering
 export const resolveSpotlightColors = (id: string) => {
   const colorMap: Record<string, { spotlight: string; border: string }> = {
@@ -35,6 +38,15 @@ export const resolveSpotlightColors = (id: string) => {
 export const Industries = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  const { data: apiIndustries } = useQuery({
+    queryKey: ['activeIndustries'],
+    queryFn: () => getActiveIndustries(),
+  });
+
+  const industriesData = apiIndustries && apiIndustries.length > 0
+    ? apiIndustries.map((item: any) => decorateIndustry(item))
+    : INDUSTRIES;
+
   // Helper resolvers for relational data mapping
   const resolveServiceTitle = (slug: string) => {
     const service = SERVICES.find((s) => s.slug === slug);
@@ -42,15 +54,15 @@ export const Industries = () => {
   };
 
   // Search filter implementation
-  const filteredIndustries = INDUSTRIES.filter((industry) => {
+  const filteredIndustries = industriesData.filter((industry) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
 
     const matchTitle = industry.title.toLowerCase().includes(query);
     const matchDesc = industry.description.toLowerCase().includes(query) || 
                       industry.shortDescription.toLowerCase().includes(query);
-    const matchTech = industry.technologies.some(tech => tech.toLowerCase().includes(query));
-    const matchService = industry.services.some(svc => svc.toLowerCase().includes(query));
+    const matchTech = industry.technologies.some((tech: string) => tech.toLowerCase().includes(query));
+    const matchService = industry.services.some((svc: string) => svc.toLowerCase().includes(query));
     
     return matchTitle || matchDesc || matchTech || matchService;
   });
@@ -296,7 +308,7 @@ export const Industries = () => {
             <AnimatePresence mode="popLayout">
               {filteredIndustries.length > 0 ? (
                 <StaggerContainer 
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
                 >
                   {filteredIndustries.map((ind: Industry, index: number) => {
                     const Icon = ind.icon;
@@ -306,27 +318,31 @@ export const Industries = () => {
                     return (
                       <StaggerItem
                         key={ind.id}
-                        className={`${isFeatured ? 'md:col-span-2' : 'md:col-span-1'} h-full`}
+                        className={`${isFeatured ? 'md:col-span-2' : 'md:col-span-1'} flex flex-col`}
                       >
-                        <GlowHover glowColor={colors.border} className="h-full">
+                        <GlowHover glowColor={colors.border} className="flex flex-col flex-1">
                           <SpotlightCard 
                             spotlightColor={colors.spotlight}
                             borderColor={colors.border}
-                            className="h-full flex flex-col border border-slate-200/40 bg-white shadow-[0_4px_25px_-4px_rgba(10,46,43,0.025)] hover:shadow-[0_20px_40px_-8px_rgba(10,46,43,0.08)] hover:scale-[1.005] hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
+                            className="flex flex-col flex-1 border border-slate-200/40 bg-white shadow-[0_4px_25px_-4px_rgba(10,46,43,0.025)] hover:shadow-[0_20px_40px_-8px_rgba(10,46,43,0.08)] hover:scale-[1.005] hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
                           >
-                            <div className={`flex flex-col ${isFeatured ? 'md:flex-row' : ''} h-full`}>
+                            <div className={`flex flex-col ${isFeatured ? 'md:flex-row' : ''} flex-1`}>
                               
-                              {/* Card cover image */}
-                              <div className={`relative overflow-hidden shrink-0 ${isFeatured ? 'w-full md:w-[38%] border-b md:border-b-0 md:border-r border-slate-200/40' : 'w-full border-b border-slate-200/40'}`}>
+                              {/* Card cover image — fixed aspect ratio, never causes height variation */}
+                              <div className={`relative overflow-hidden shrink-0 bg-slate-100 ${
+                                isFeatured
+                                  ? 'w-full md:w-[38%] aspect-[4/3] md:aspect-auto border-b md:border-b-0 md:border-r border-slate-200/40'
+                                  : 'w-full aspect-[16/10] border-b border-slate-200/40'
+                              }`}>
                                 {ind.heroImage ? (
-                                  <PremiumImage 
-                                    src={ind.heroImage} 
+                                  <img 
+                                    src={ind.heroImage}
                                     alt={ind.title}
-                                    aspectRatioClassName={isFeatured ? 'aspect-[4/3] md:aspect-auto md:h-full' : 'aspect-[16/10]'}
-                                    className="group-hover:scale-[1.05] transition-transform duration-500"
+                                    loading="lazy"
+                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-500"
                                   />
                                 ) : (
-                                  <div className="w-full aspect-[16/10] bg-slate-50 flex items-center justify-center">
+                                  <div className="absolute inset-0 w-full h-full bg-slate-50 flex items-center justify-center">
                                     <Image className="h-8 w-8 text-slate-300" />
                                   </div>
                                 )}
@@ -336,14 +352,15 @@ export const Industries = () => {
                                 </div>
                               </div>
 
-                              {/* Card text details */}
-                              <div className="flex-grow flex flex-col justify-between p-6">
-                                <div>
+                              {/* Card body — flex-col so CTA always pins to bottom */}
+                              <div className="flex flex-col flex-1 p-6">
+                                {/* Top content block */}
+                                <div className="flex-1">
                                   <div className="flex items-center justify-between mb-3.5">
                                     <span className="text-[9px] font-black uppercase tracking-[0.15em] text-primary">
                                       Enterprise Vertical
                                     </span>
-                                    {ind.statistics.length > 0 && (
+                                    {ind.statistics && ind.statistics.length > 0 && (
                                       <Badge className="bg-slate-50 hover:bg-slate-50 text-slate-650 font-bold border border-slate-200/60 rounded-lg text-[9px]">
                                         {ind.statistics[0].value} {ind.statistics[0].label}
                                       </Badge>
@@ -352,13 +369,14 @@ export const Industries = () => {
                                   <h2 className="font-display text-xl sm:text-2xl font-black text-teal-955 tracking-tight leading-snug">
                                     {ind.title}
                                   </h2>
-                                  <p className="text-slate-500 font-medium text-xs mt-2.5 leading-relaxed">
+                                  {/* Description clamped to 3 lines — prevents height variance across cards */}
+                                  <p className="text-slate-500 font-medium text-xs mt-2.5 leading-relaxed line-clamp-3">
                                     {ind.shortDescription}
                                   </p>
 
-                                  {/* Asymmetrical detail listing */}
-                                  <div className="space-y-3.5 mt-5">
-                                    {ind.challenges.length > 0 && (
+                                  {/* Challenge & Solution snippet — both clamped to 2 lines */}
+                                  <div className="space-y-3 mt-4">
+                                    {ind.challenges && ind.challenges.length > 0 && (
                                       <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100/80">
                                         <div className="flex items-center gap-1.5 text-[8.5px] font-black uppercase tracking-[0.1em] text-rose-600 mb-1">
                                           <AlertTriangle className="h-3 w-3" />
@@ -370,7 +388,7 @@ export const Industries = () => {
                                       </div>
                                     )}
 
-                                    {isFeatured && ind.solutions.length > 0 && (
+                                    {isFeatured && ind.solutions && ind.solutions.length > 0 && (
                                       <div className="bg-emerald-50/20 p-3 rounded-xl border border-emerald-100/30">
                                         <div className="flex items-center gap-1.5 text-[8.5px] font-black uppercase tracking-[0.1em] text-emerald-700 mb-1">
                                           <Lightbulb className="h-3 w-3" />
@@ -384,29 +402,36 @@ export const Industries = () => {
                                   </div>
                                 </div>
 
-                                {/* Tags and badges */}
-                                <div className="mt-6 space-y-4">
-                                  <div className="flex flex-wrap items-center gap-1.5">
-                                    <Layers className="h-3 w-3 text-slate-400 mr-0.5" />
-                                    {ind.services.slice(0, isFeatured ? 4 : 2).map((svcSlug) => (
-                                      <Badge key={svcSlug} variant="secondary" className="bg-teal-50/50 hover:bg-teal-55 text-[9.5px] text-teal-800 font-bold border border-teal-100/20 px-2 py-0.5 rounded-lg transition-all hover:scale-[1.03]">
-                                        {resolveServiceTitle(svcSlug)}
-                                      </Badge>
-                                    ))}
-                                  </div>
+                                {/* Footer pinned to bottom via mt-auto */}
+                                <div className="mt-auto pt-5 space-y-3">
+                                  {/* Service tags — flex-wrap, never expands card */}
+                                  {ind.services && ind.services.length > 0 && (
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                      <Layers className="h-3 w-3 text-slate-400 mr-0.5 shrink-0" />
+                                      {ind.services.slice(0, isFeatured ? 4 : 2).map((svcSlug) => (
+                                        <Badge key={svcSlug} variant="secondary" className="bg-teal-50/50 hover:bg-teal-55 text-[9.5px] text-teal-800 font-bold border border-teal-100/20 px-2 py-0.5 rounded-lg transition-all hover:scale-[1.03]">
+                                          {resolveServiceTitle(svcSlug)}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  )}
 
-                                  <div className="flex flex-wrap items-center gap-1.5">
-                                    <Cpu className="h-3 w-3 text-slate-400 mr-0.5" />
-                                    {ind.technologies.slice(0, isFeatured ? 5 : 3).map((tech) => (
-                                      <Badge key={tech} variant="outline" className="text-[9.5px] text-slate-500 border-slate-200 bg-white font-semibold px-2 py-0.5 rounded-lg transition-all hover:scale-[1.03]">
-                                        {tech}
-                                      </Badge>
-                                    ))}
-                                  </div>
+                                  {/* Tech tags — flex-wrap, never expands card */}
+                                  {ind.technologies && ind.technologies.length > 0 && (
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                      <Cpu className="h-3 w-3 text-slate-400 mr-0.5 shrink-0" />
+                                      {ind.technologies.slice(0, isFeatured ? 5 : 3).map((tech) => (
+                                        <Badge key={tech} variant="outline" className="text-[9.5px] text-slate-500 border-slate-200 bg-white font-semibold px-2 py-0.5 rounded-lg transition-all hover:scale-[1.03]">
+                                          {tech}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  )}
 
+                                  {/* CTA row always at bottom */}
                                   <div className="pt-4 border-t border-slate-100/80 flex items-center justify-between">
                                     <span className="text-[10px] font-bold text-slate-400">
-                                      {ind.caseStudies.length} Anonymized Case Study Linked
+                                      {(ind.caseStudies || []).length} Anonymized Case Study Linked
                                     </span>
                                     <Magnetic range={0.2}>
                                       <Button 
