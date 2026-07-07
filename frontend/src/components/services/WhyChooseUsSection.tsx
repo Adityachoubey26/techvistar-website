@@ -3,10 +3,12 @@ import { Star, Sparkles } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 interface SectionProps {
-  service: Service;
+  service?: Service;
+  title?: string;
+  items?: { title: string; description: string }[];
 }
 
-export const WhyChooseUsSection = ({ service }: SectionProps) => {
+export const WhyChooseUsSection = ({ service, title = "Why Choose TechVistar", items }: SectionProps) => {
   const prefersReducedMotion = useReducedMotion();
 
   const defaultWhy = [
@@ -14,7 +16,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
     { title: 'Production-Ready Code', description: 'We write fully optimized, tested, and secure components that your internal engineering teams can run easily.' }
   ];
 
-  const list = service.whyChooseUs || defaultWhy;
+  const list = items || service?.whyChooseUs || defaultWhy;
 
   // Animation variants
   const containerVariants = {
@@ -52,7 +54,7 @@ export const WhyChooseUsSection = ({ service }: SectionProps) => {
         <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center">
           <Sparkles className="h-3 w-3 text-emerald-600" />
         </div>
-        <h2 className="text-xl font-black text-slate-900 font-display tracking-tight">Why Choose TechVistar</h2>
+        <h2 className="text-xl font-black text-slate-900 font-display tracking-tight">{title}</h2>
       </div>
 
       {/* Grid of highlight cards */}

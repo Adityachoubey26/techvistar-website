@@ -72,7 +72,7 @@ const Login = () => {
         </div>
 
         {/* Left Column: Premium Illustration */}
-        <div className="w-full md:w-[45%] lg:w-1/2 p-8 pt-28 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
+        <div className="w-full md:w-[45%] lg:w-1/2 p-8 pt-28 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-white/10">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-900/20 pointer-events-none" />
           
           <motion.div 

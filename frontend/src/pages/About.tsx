@@ -22,6 +22,7 @@ import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
 import aboutBg from '../assets/about-bg.png';
 import CircularText from '@/components/ui/CircularText';
 import logoImg from '@/assets/logo.webp';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -136,128 +137,12 @@ const About = () => {
       <Navbar />
 
       {/* Page Hero with Custom Background & Animations */}
-      <section 
-        className="relative overflow-hidden bg-zinc-950 mt-12 sm:mt-14 md:mt-16 lg:mt-[4.25rem] pt-10 pb-10 md:pt-12 md:pb-12 border-b border-zinc-900"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 opacity-85 pointer-events-none"
-          style={{ 
-            backgroundImage: `url(${aboutBg})`,
-            backgroundSize: 'auto 100%',
-            backgroundPosition: 'right',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
-        {/* Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent z-0 pointer-events-none" />
-
-        {/* Tiny Floating Background Particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1.5 h-1.5 bg-emerald-400/80 rounded-full blur-[0.5px]"
-              style={{
-                left: `${(i * 14) % 100}%`,
-                top: `${(i * 23) % 100}%`,
-              }}
-              animate={{
-                y: [0, -35, 0],
-                x: [0, 8, 0],
-                opacity: [0.1, 0.6, 0.1],
-              }}
-              transition={{
-                duration: 10 + (i % 3) * 4,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.7,
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="container-custom relative z-10 max-w-6xl">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Side: Content */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="lg:col-span-7 text-left"
-            >
-              <motion.span 
-                variants={itemVariants}
-                className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20"
-              >
-                {ABOUT_PAGE.hero.eyebrow}
-              </motion.span>
-
-              <motion.h1 
-                variants={itemVariants}
-                className="mt-4 font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.1]"
-              >
-                About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span>
-              </motion.h1>
-
-              <motion.div 
-                variants={lineVariants}
-                className="mt-4 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" 
-              />
-
-              <motion.p 
-                variants={itemVariants}
-                className="mt-4 text-sm sm:text-[0.9375rem] md:text-base leading-relaxed text-zinc-300 max-w-xl"
-              >
-                {ABOUT_PAGE.hero.lead}
-              </motion.p>
-            </motion.div>
-
-            {/* Right Side: Interactive Animated Globe */}
-            <div className="lg:col-span-5 hidden md:flex relative items-center justify-center h-[150px] lg:h-[180px]">
-              {/* Soft radial glow under the globe */}
-              <div className="absolute w-28 h-28 rounded-full bg-emerald-500/10 blur-[35px] pointer-events-none" />
-
-              {/* Parallax Group (Globe + Orbits) */}
-              <motion.div
-                style={{
-                  x: mousePosition.x * 12,
-                  y: mousePosition.y * 12,
-                }}
-                className="relative w-28 h-28 lg:w-34 lg:h-34 rounded-full border border-emerald-500/20 bg-emerald-500/[0.01] flex items-center justify-center pointer-events-none opacity-40"
-                animate={{
-                  boxShadow: [
-                    '0 0 35px rgba(16,185,129,0.04)',
-                    '0 0 55px rgba(16,185,129,0.08)',
-                    '0 0 35px rgba(16,185,129,0.04)'
-                  ]
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                {/* Orbital lines & particles */}
-                <motion.div 
-                  className="absolute inset-2 rounded-full border border-teal-500/10"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-                >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-teal-400 rounded-full shadow-[0_0_8px_#14b8a6]" />
-                </motion.div>
-
-                <motion.div 
-                  className="absolute inset-8 rounded-full border border-emerald-500/10"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-                >
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]" />
-                </motion.div>
-
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        title={<>About <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">TechVistar</span></>}
+        subtitle={ABOUT_PAGE.hero.eyebrow}
+        description={ABOUT_PAGE.hero.lead}
+        backgroundImage={aboutBg}
+      />
 
             {/* Single structured document — tight vertical rhythm */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 md:py-8">

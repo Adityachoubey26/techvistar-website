@@ -497,33 +497,7 @@ export const IndustryDetails = () => {
               </StaggerContainer>
             </div>
 
-            {/* Section 7: FAQ (Full Width) */}
-            {industry.faqs.length > 0 && (
-              <ScaleIn className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-teal-900 shrink-0" />
-                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Frequently Asked Questions
-                  </h2>
-                </div>
-                <Accordion type="single" collapsible className="w-full space-y-3.5 mt-6">
-                  {industry.faqs.map((faq, index) => (
-                    <AccordionItem 
-                      key={index} 
-                      value={`item-${index}`}
-                      className="border border-slate-200/50 bg-white rounded-2xl px-5 overflow-hidden shadow-[0_4px_20px_-4px_rgba(10,46,43,0.02)] transition-all"
-                    >
-                      <AccordionTrigger className="hover:no-underline font-display font-extrabold text-teal-955 text-xs sm:text-sm text-left py-4.5 transition-colors hover:text-primary">
-                        {faq.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-slate-550 text-xs sm:text-sm font-semibold leading-relaxed pt-0 pb-4.5">
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </ScaleIn>
-            )}
+
 
           </div>
         </Spotlight3DBackground>

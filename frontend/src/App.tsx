@@ -11,7 +11,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import Services from "./pages/Services";
 import ServiceDetails from "./pages/ServiceDetails";
 import Careers from "./pages/Careers";
-import FAQ from "./pages/FAQ";
+
 import Industries from "./pages/Industries";
 import IndustryDetails from "./pages/IndustryDetails";
 import Contact from "./pages/Contact";
@@ -129,7 +129,7 @@ const App = () => (
           <Route path="/careers/:slug" element={<JobDetails />} />
           <Route path="/careers/apply/:slug" element={<JobApplication />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<FAQ />} />
+
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/solutions/:slug" element={<SolutionDetails />} />
 

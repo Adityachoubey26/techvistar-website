@@ -10,9 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight } from 'lucide-react';
-import { FAQSection } from '@/components/faq';
+
 import servicesBg from '../assets/services-bg.png';
 import { DotGrid } from '@/components/ui/DotGrid';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -58,117 +59,12 @@ const Services = () => {
         <Navbar />
 
         {/* Services Hero */}
-        <motion.section 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="relative overflow-hidden bg-zinc-950 pt-20 pb-12 md:pt-24 md:pb-16 border-b border-zinc-900"
-        >
-          {/* Interactive DotGrid Background */}
-          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-            <DotGrid
-              dotSize={5}
-              gap={24}
-              baseColor="#475569"
-              activeColor="#10b981"
-              proximity={120}
-              shockRadius={200}
-              shockStrength={3}
-              resistance={600}
-              returnDuration={1.2}
-            />
-          </div>
-
-          {/* Gradient Breathing (Background radial glow) */}
-          <motion.div 
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none z-0"
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.6, 0.65, 0.6],
-            }}
-            transition={{
-              duration: 12,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Light Sweep */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none z-0 mix-blend-overlay"
-            style={{
-              background: 'linear-gradient(105deg, transparent 30%, rgba(20, 184, 166, 0.05) 45%, rgba(20, 184, 166, 0.1) 50%, rgba(20, 184, 166, 0.05) 55%, transparent 70%)',
-              backgroundSize: '200% 100%',
-            }}
-            animate={{
-              backgroundPosition: ['200% 0%', '-200% 0%'],
-            }}
-            transition={{
-              duration: 9,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Floating Particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-40">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute bg-teal-400/40 rounded-full blur-[0.5px]"
-                style={{
-                  width: `${3 + (i % 3)}px`,
-                  height: `${3 + (i % 3)}px`,
-                  left: `${(i * 14) + 12}%`,
-                  top: `${(i * 11) + 20}%`,
-                }}
-                animate={{
-                  y: [0, -25, 0],
-                  x: [0, 6, 0],
-                  opacity: [0.1, 0.5, 0.1],
-                }}
-                transition={{
-                  duration: 16 + (i % 3) * 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.4,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Gradient Overlay for Text Readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/60 to-transparent z-0 pointer-events-none" />
-
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="text-4xl md:text-5xl font-extrabold text-white mb-6 font-display relative inline-block pb-2"
-            >
-              Our Services
-              {/* Underline Animation */}
-              <motion.div 
-                className="absolute bottom-0 left-0 h-[3px] bg-gradient-to-r from-teal-400 to-emerald-400 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              />
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-              className="text-lg text-zinc-300 max-w-2xl leading-relaxed mt-2"
-            >
-              We offer structured, productized growth services spanning full-stack delivery, revenue operations, automation, and applied artificial intelligence.
-            </motion.p>
-          </div>
-        </motion.section>
+        <PageHeader 
+          title="Our Services"
+          subtitle="What We Do"
+          description="We offer structured, productized growth services spanning full-stack delivery, revenue operations, automation, and applied artificial intelligence."
+          backgroundImage={servicesBg}
+        />
 
                 {/* Category Filters */}
         <section className="py-8 bg-slate-50 border-b border-slate-200">
@@ -270,7 +166,7 @@ const Services = () => {
           </div>
         </section>
 
-        <FAQSection pageFilter="services" title="Services FAQ" description="Have questions about our tech stack, processes, and service delivery?" />
+
         <Footer />
       </main>
     </>

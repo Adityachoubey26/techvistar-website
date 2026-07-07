@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -34,6 +34,7 @@ export const FAQSection = ({
   layout = "centered",
 }: FAQSectionProps) => {
   const { ref, isInView } = useAnimatedSection();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // ── Data source: API with static fallback ──────────────────────────────────
   const { data: apiFAQs } = useQuery({
@@ -68,12 +69,15 @@ export const FAQSection = ({
     if (categoryFilter) {
       items = items.filter((faq) => faq.category === categoryFilter);
     }
-    if (limit) {
-      items = items.slice(0, limit);
-    }
-
     return items;
-  }, [allFAQs, pageFilter, categoryFilter, featuredOnly, limit]);
+  }, [allFAQs, pageFilter, categoryFilter, featuredOnly]);
+
+  const displayedFAQs = useMemo(() => {
+    if (limit && !isExpanded) {
+      return filteredFAQs.slice(0, limit);
+    }
+    return filteredFAQs;
+  }, [filteredFAQs, limit, isExpanded]);
 
   if (filteredFAQs.length === 0) return null;
 
@@ -141,15 +145,25 @@ export const FAQSection = ({
             </div>
 
             <div className="lg:col-span-7">
-              <FAQAccordion faqs={filteredFAQs} />
+              <FAQAccordion faqs={displayedFAQs} />
 
-              {showViewAll && (
+              {showViewAll && filteredFAQs.length > (limit || 0) && !isExpanded && (
                 <div className="text-center mt-6">
-                  <Button asChild variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
-                    <Link to="/faq" className="inline-flex items-center gap-2">
-                      View All FAQs
+                  <Button onClick={() => setIsExpanded(true)} variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
+                    <span className="inline-flex items-center gap-2">
+                      View More FAQs
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
+                    </span>
+                  </Button>
+                </div>
+              )}
+              {isExpanded && !!limit && filteredFAQs.length > limit && (
+                <div className="text-center mt-6">
+                  <Button onClick={() => setIsExpanded(false)} variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
+                    <span className="inline-flex items-center gap-2">
+                      Show Less FAQs
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                    </span>
                   </Button>
                 </div>
               )}
@@ -166,15 +180,25 @@ export const FAQSection = ({
             />
 
             <div className="mx-auto max-w-3xl mt-10">
-              <FAQAccordion faqs={filteredFAQs} />
+              <FAQAccordion faqs={displayedFAQs} />
 
-              {showViewAll && (
+              {showViewAll && filteredFAQs.length > (limit || 0) && !isExpanded && (
                 <div className="text-center mt-6">
-                  <Button asChild variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
-                    <Link to="/faq" className="inline-flex items-center gap-2">
-                      View All FAQs
+                  <Button onClick={() => setIsExpanded(true)} variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
+                    <span className="inline-flex items-center gap-2">
+                      View More FAQs
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
+                    </span>
+                  </Button>
+                </div>
+              )}
+              {isExpanded && !!limit && filteredFAQs.length > limit && (
+                <div className="text-center mt-6">
+                  <Button onClick={() => setIsExpanded(false)} variant="outline" className="border-slate-200 hover:bg-slate-50 rounded-xl h-11 px-6 font-bold group">
+                    <span className="inline-flex items-center gap-2">
+                      Show Less FAQs
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                    </span>
                   </Button>
                 </div>
               )}

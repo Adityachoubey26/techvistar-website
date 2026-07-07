@@ -15,6 +15,9 @@ import { cn } from '@/lib/utils';
 import { submitContactForm } from '@/services/contact.service';
 import { LogoCloud } from '@/components/LogoCloud';
 import { FAQSection } from '@/components/faq';
+import { PageHeader } from '@/components/ui/PageHeader';
+import contactBg from '../assets/about-bg.png';
+
 export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,28 +98,12 @@ export const Contact = () => {
       <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 pb-20 relative overflow-hidden animate-fade-in">
         
         {/* HERO HEADER SECTION - Matching Portfolio, Solutions and About */}
-        <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-36 md:pb-24 border-b border-zinc-900 text-white">
-          {/* Shifting green waves / glow effect */}
-          <div className="absolute top-0 inset-0 pointer-events-none overflow-hidden -z-10">
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/[0.05] blur-[120px]" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-emerald-600/[0.05] blur-[130px]" />
-          </div>
-
-          <div className="container-custom max-w-7xl mx-auto px-6 relative z-10 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Let's Connect</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-6xl font-extrabold font-display text-white tracking-tight leading-[1.1] max-w-3xl">
-              Let's Build Something <span className="text-emerald-500">Great</span> Together
-            </h1>
-            
-            <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed font-semibold max-w-2xl">
-              Have a project in mind or want to explore how we can help your business grow? We'd love to hear from you.
-            </p>
-          </div>
-        </section>
+        <PageHeader 
+          title={<>Let's Build Something <span className="text-emerald-500">Great</span> Together</>}
+          subtitle="Let's Connect"
+          description="Have a project in mind or want to explore how we can help your business grow? We'd love to hear from you."
+          backgroundImage={contactBg}
+        />
 
         {/* HERO GRID SECTION - FORM AND INFO CARDS */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-16 relative z-10" id="contact-form-section">
@@ -501,7 +488,7 @@ export const Contact = () => {
           </div>
         </section>
 
-        <FAQSection pageFilter="contact" layout="split" />
+        <FAQSection pageFilter="all" layout="split" limit={4} showViewAll={true} />
 
         {/* TRUSTED BY CLIENT LOGOS SECTION */}
         <section className="container-custom max-w-7xl mx-auto px-6 mt-10 relative z-10 border-t border-slate-200/60">

@@ -15,6 +15,7 @@ import { getActiveSolutions } from '@/services/solutions.service';
 import { decorateSolution, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import { LogoCloud } from '@/components/LogoCloud';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface SolutionCategory {
   id: string;
@@ -139,68 +140,12 @@ export const Solutions = () => {
         <Navbar />
 
         {/* HERO SECTION */}
-        <section 
-          className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-36 md:pb-24 border-b border-zinc-900 text-white"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* Shifting green waves / glow effect */}
-          <motion.div 
-            className="absolute inset-0 pointer-events-none z-0"
-            animate={{ scale: [1, 1.02, 1] }}
-            transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-screen"
-              style={{ backgroundImage: `url(${workBg})` }}
-            />
-            {/* Mesh grid background */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px]" />
-            
-            <motion.div 
-              animate={{ 
-                x: [0, 15, -10, 0],
-                y: [0, -10, 15, 0],
-                scale: [1, 1.1, 0.95, 1]
-              }}
-              style={{ x: mousePosition.x * 35, y: mousePosition.y * 35 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/4 top-1/4 h-[350px] w-[350px] rounded-full bg-emerald-500/10 blur-[120px]" 
-            />
-            <motion.div 
-              animate={{ 
-                x: [0, -15, 10, 0],
-                y: [0, 10, -15, 0],
-                scale: [1, 0.9, 1.1, 1]
-              }}
-              style={{ x: mousePosition.x * -35, y: mousePosition.y * -35 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute right-1/4 bottom-1/4 h-[350px] w-[350px] rounded-full bg-teal-500/10 blur-[120px]" 
-            />
-          </motion.div>
-
-          <div className="container-custom max-w-7xl mx-auto px-6 relative z-10 space-y-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="max-w-3xl space-y-5"
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Our Capabilities</span>
-              </div>
-              
-              <h1 className="text-4xl sm:text-6xl font-extrabold font-display text-white tracking-tight leading-[1.1]">
-                Enterprise Solutions
-              </h1>
-              
-              <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed font-semibold max-w-2xl">
-                Deploying robust business automation, production-grade intelligence models, and highly secure cloud environments built to scale operations.
-              </p>
-            </motion.div>
-          </div>
-        </section>
+        <PageHeader 
+          title="Enterprise Solutions"
+          subtitle="Our Capabilities"
+          description="Deploying robust business automation, production-grade intelligence models, and highly secure cloud environments built to scale operations."
+          backgroundImage={workBg}
+        />
 
         {/* LOADING SKELETON LAYER */}
         <AnimatePresence mode="wait">

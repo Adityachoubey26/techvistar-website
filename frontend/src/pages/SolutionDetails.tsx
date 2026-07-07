@@ -17,39 +17,7 @@ import workBg from '../assets/work-bg.png';
 import challengesImg from '../assets/ai_overview_illustration.png';
 import { cn } from '@/lib/utils';
 
-// FAQ Accordion sub-component
-interface FAQAccordionProps {
-  question: string;
-  answer: string;
-}
 
-const FAQAccordion = ({ question, answer }: FAQAccordionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className="border-b border-slate-100 py-4">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full text-left font-display font-extrabold text-base sm:text-lg text-slate-900 hover:text-emerald-600 transition-colors py-1"
-      >
-        <span>{question}</span>
-        <span className="text-emerald-600 font-normal text-xl ml-4">{isOpen ? "−" : "+"}</span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <p className="text-slate-600 text-sm leading-relaxed mt-2.5 font-medium">{answer}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 export const SolutionDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -237,7 +205,7 @@ export const SolutionDetails = () => {
                     <div className="w-12 h-1 bg-emerald-500/50 mt-2 rounded-full" />
                     <div className="mt-8 relative rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm group">
                       <div className="absolute inset-0 bg-emerald-500/10 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-0" />
-                      <img src={challengesImg} alt="Operational Challenges" className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105" />
+                      <img src={challengesImg} alt="Operational Challenges" className="w-full h-auto object-contain transform transition-transform duration-700 group-hover:scale-105" />
                     </div>
                   </div>
 
@@ -496,22 +464,7 @@ export const SolutionDetails = () => {
                 </div>
               </section>
 
-              {/* 11. FAQs */}
-              <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/80">
-                <div className="grid lg:grid-cols-12 gap-8 items-start">
-                  <div className="lg:col-span-5 space-y-3">
-                    <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest block">Technical Queries</span>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 leading-snug">Frequently Asked Questions</h3>
-                    <p className="text-xs text-slate-500 font-semibold leading-relaxed">Scope, integration coordinates, and operational updates SLAs.</p>
-                  </div>
 
-                  <div className="lg:col-span-7 bg-white border border-slate-200/60 rounded-2xl p-6 sm:p-8 shadow-sm text-slate-900">
-                    {solution.faqs.map((faq, idx) => (
-                      <FAQAccordion key={idx} question={faq.q} answer={faq.a} />
-                    ))}
-                  </div>
-                </div>
-              </section>
 
               {/* 12. ENTERPRISE CTA */}
               <section className="container-custom max-w-7xl mx-auto px-6 py-12">

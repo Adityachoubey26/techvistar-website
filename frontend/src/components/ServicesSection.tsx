@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
 import { decorateService, SECTION_SERVICES } from '@/data/services';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
-
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 const listContainer = {
@@ -47,12 +46,12 @@ export const ServicesSection = () => {
 
   const activeServices = (apiServices || []).map(decorateService);
 
-  // Distribute services: Left Column (0, 2, 4) and Right Column (1, 3, 5)
-  const leftServices = activeServices.filter((_, idx) => idx % 2 === 0);
-  const rightServices = activeServices.filter((_, idx) => idx % 2 !== 0);
+  // If you want to limit it on the home page, you can slice here, e.g., activeServices.slice(0, 17)
+  // We'll map whatever activeServices are available, and append the "View All" card at the end.
+  const services = activeServices.slice(0, 18); // Slicing to 18 so it includes Digital Marketing, and the View All card becomes the 19th item
 
   return (
-    <SiteSection ref={ref} id="services" variant="muted" aria-labelledby="services-heading" className="relative pt-12 pb-6 md:pt-16 md:pb-8">
+    <SiteSection ref={ref} id="services" variant="muted" aria-labelledby="services-heading" className="relative pt-8 pb-4 md:pt-12 md:pb-6">
       {/* Background decoration */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -z-10 w-[500px] h-[500px] rounded-full bg-emerald-500/[0.02] blur-[120px] pointer-events-none" />
 
@@ -66,94 +65,67 @@ export const ServicesSection = () => {
           headingId="services-heading"
         />
 
-        {/* 2-Column Grid Layout */}
+        {/* Compact Grid Layout */}
         <motion.div
           variants={listContainer}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
-          className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8"
+          className="mx-auto max-w-7xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5 mt-8"
         >
-          {/* Left Column */}
-          <div className="flex flex-col gap-8">
-            {leftServices.map((service) => {
-              return (
-                <motion.div key={service.title} variants={itemVariants}>
-                  <Link to={`/services/${service.slug}`} className="block">
-                    <SpotlightCard
-                      className="group relative flex flex-col p-6 rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.05)] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1"
-                      spotlightColor="rgba(34, 197, 94, 0.03)"
-                      borderColor="rgba(34, 197, 94, 0.18)"
-                    >
-                      <div className="flex gap-4 items-start">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm bg-white ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
-                          <img
-                            src={service.coverImage}
-                            alt={service.title}
-                            className="h-full w-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-110"
-                          />
-                        </div>
-                        
-                        <div className="space-y-1.5 pt-0.5">
-                          <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">
-                            {service.title}
-                          </h3>
-                          <p className="text-sm leading-relaxed text-slate-500 font-medium">
-                            {service.description}
-                          </p>
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 group-hover:text-emerald-700 mt-2 transition-colors">
-                            Explore
-                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
-                          </span>
-                        </div>
-                      </div>
-                    </SpotlightCard>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Right Column */}
-          <div className="flex flex-col gap-8">
-            {rightServices.map((service) => {
-              return (
-                <motion.div key={service.title} variants={itemVariants}>
-                  <Link to={`/services/${service.slug}`} className="block">
-                    <SpotlightCard
-                      className="group relative flex flex-col p-6 rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.05)] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1"
-                      spotlightColor="rgba(34, 197, 94, 0.03)"
-                      borderColor="rgba(34, 197, 94, 0.18)"
-                    >
-                      <div className="flex gap-4 items-start">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full overflow-hidden border border-slate-100 shadow-sm bg-white ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
-                          <img
-                            src={service.coverImage}
-                            alt={service.title}
-                            className="h-full w-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-110"
-                          />
-                        </div>
-                        
-                        <div className="space-y-1.5 pt-0.5">
-                          <h3 className="font-display text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">
-                            {service.title}
-                          </h3>
-                          <p className="text-sm leading-relaxed text-slate-500 font-medium">
-                            {service.description}
-                          </p>
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 group-hover:text-emerald-700 mt-2 transition-colors">
-                            Explore
-                            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
-                          </span>
-                        </div>
-                      </div>
-                    </SpotlightCard>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
+          {services.map((service) => {
+            return (
+              <motion.div key={service.title} variants={itemVariants}>
+                <Link to={`/services/${service.slug}`} className="block h-full">
+                  <SpotlightCard
+                    className="group relative flex flex-col items-center justify-between p-4 md:p-5 rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.05)] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1 text-center h-full gap-3"
+                    spotlightColor="rgba(34, 197, 94, 0.03)"
+                    borderColor="rgba(34, 197, 94, 0.18)"
+                  >
+                    <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-50 ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
+                      <img
+                        src={service.coverImage}
+                        alt={service.title}
+                        className="h-full w-full object-contain p-2 sm:p-2.5 transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </div>
+                    
+                    <h3 className="font-display text-sm sm:text-base font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight">
+                      {service.title}
+                    </h3>
+                    
+                    <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 group-hover:text-emerald-700 transition-colors mt-1">
+                      Explore
+                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
+                    </span>
+                  </SpotlightCard>
+                </Link>
+              </motion.div>
+            );
+          })}
+          {/* View All Services Card */}
+          <motion.div variants={itemVariants}>
+            <Link to="/services" className="block h-full">
+              <SpotlightCard
+                className="group relative flex flex-col items-center justify-between p-4 md:p-5 rounded-2xl border border-slate-200/80 bg-slate-50/60 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.05)] hover:border-emerald-500/20 transition-all duration-300 hover:-translate-y-1 text-center h-full gap-3"
+                spotlightColor="rgba(34, 197, 94, 0.03)"
+                borderColor="rgba(34, 197, 94, 0.18)"
+              >
+                <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-emerald-100 shadow-sm bg-emerald-50 ring-1 ring-emerald-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
+                  <ArrowRight className="h-6 w-6 text-emerald-600 transition-transform duration-500 group-hover:translate-x-1" />
+                </div>
+                
+                <h3 className="font-display text-sm sm:text-base font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight">
+                  View All Services
+                </h3>
+                
+                <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 group-hover:text-emerald-700 transition-colors mt-1">
+                  Explore All
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
+                </span>
+              </SpotlightCard>
+            </Link>
+          </motion.div>
         </motion.div>
-
 
       </div>
     </SiteSection>
