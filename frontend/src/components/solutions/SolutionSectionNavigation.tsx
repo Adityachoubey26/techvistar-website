@@ -8,14 +8,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'overview', label: 'Overview' },
-  { id: 'offerings', label: 'Offerings' },
+  { id: 'features', label: 'Features' },
   { id: 'process', label: 'Process' },
-  { id: 'technology', label: 'Technology' },
-  { id: 'case-studies', label: 'Case Studies' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'benefits', label: 'Benefits' },
+  { id: 'tech-stack', label: 'Tech Stack' },
+  { id: 'faq', label: 'FAQ' },
 ];
 
-export const ServiceSectionNavigation = () => {
+export const SolutionSectionNavigation = () => {
   const [activeId, setActiveId] = useState<string>('overview');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -118,4 +118,4 @@ export const ServiceSectionNavigation = () => {
     </nav>
   );
 };
-export default ServiceSectionNavigation;
+export default SolutionSectionNavigation;

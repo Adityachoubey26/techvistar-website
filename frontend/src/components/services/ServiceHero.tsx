@@ -85,8 +85,8 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
   };
 
   return (
-    <section className="bg-[#f8fafc] border-b border-slate-200 pt-24 pb-10 md:pt-28 md:pb-14 mb-8">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <section className="bg-white border-b border-slate-200 pt-24 pb-10 md:pt-28 md:pb-14 mb-8">
+      <div className="w-full mx-auto px-6 lg:px-12 xl:px-20">
         <Link to="/services" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-6 transition-colors font-medium">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to all services
         </Link>

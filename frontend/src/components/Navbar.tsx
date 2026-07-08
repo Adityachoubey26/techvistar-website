@@ -165,7 +165,7 @@ export const Navbar = () => {
           : 'bg-white border-b border-slate-100'
       )}
     >
-      <div className="container-custom w-full max-w-7xl mx-auto flex items-center justify-between px-6 relative h-full" ref={dropdownRef}>
+      <div className="w-full mx-auto flex items-center justify-between px-6 lg:px-12 xl:px-20 relative h-full" ref={dropdownRef}>
         {/* Logo Branding */}
         <Link to="/" className="flex items-center gap-3 group shrink-0">
           <img

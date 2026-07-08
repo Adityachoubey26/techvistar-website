@@ -133,6 +133,8 @@ export const IMAGE_MAP: Record<string, string> = {
 };
 
 export function decorateService(apiService: any): Service {
+  const mockService = SERVICES.find(s => s.slug === apiService.slug);
+
   return {
     id: apiService._id || apiService.id,
     slug: apiService.slug,
@@ -144,7 +146,7 @@ export function decorateService(apiService: any): Service {
     coverImage: IMAGE_MAP[apiService.coverImage] || apiService.coverImage || '',
     thumbnail: IMAGE_MAP[apiService.thumbnail] || apiService.thumbnail || '',
     overview: apiService.overview,
-    offerings: apiService.offerings || [],
+    offerings: apiService.offerings?.length > 0 ? apiService.offerings : (mockService?.offerings || []),
     process: apiService.process || [],
     caseStudies: apiService.caseStudies || [],
     technologies: apiService.technologies || [],
@@ -157,7 +159,7 @@ export function decorateService(apiService: any): Service {
     industries: apiService.industries || [],
     whyChooseUs: apiService.whyChooseUs || [],
     stats: apiService.stats || [],
-    detailedOfferings: apiService.detailedOfferings || [],
+    detailedOfferings: apiService.detailedOfferings?.length > 0 ? apiService.detailedOfferings : (mockService?.detailedOfferings || []),
     dashboardImage: apiService.dashboardImage || '',
   };
 }

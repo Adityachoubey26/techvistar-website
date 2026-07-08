@@ -20,7 +20,6 @@ import { CaseStudiesSection } from '@/components/services/CaseStudiesSection';
 
 import { ServiceSidebar } from '@/components/services/ServiceSidebar';
 import { CTASection } from '@/components/services/CTASection';
-import { RelatedServicesSection } from '@/components/services/RelatedServicesSection';
 
 const ServiceDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -93,7 +92,7 @@ const ServiceDetails = () => {
         <ServiceSectionNavigation />
 
         {/* Dynamic Detail Modules Content Area */}
-        <section className="container mx-auto px-4 max-w-6xl mt-8 pb-16">
+        <section className="w-full mx-auto px-6 lg:px-12 xl:px-20 mt-8 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Left/Main Column for Detail Blocks */}
@@ -119,10 +118,6 @@ const ServiceDetails = () => {
             <CTASection service={service} />
           </div>
 
-          {/* Related Services Section */}
-          <div className="mt-16">
-            <RelatedServicesSection service={service} />
-          </div>
 
         </section>
 
