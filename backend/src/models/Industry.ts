@@ -51,6 +51,7 @@ export interface IIndustry extends BaseDocument {
   fullDescription: string;
   icon: string;
   coverImage?: string;
+  coverImagePublicId?: string;
   features: string[];
   technologies: string[];
   benefits: string[];
@@ -62,6 +63,7 @@ export interface IIndustry extends BaseDocument {
   // Rich CMS fields
   category: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   overview: string;
   overviewQuote?: string;
   offerings: string[];
@@ -74,6 +76,7 @@ export interface IIndustry extends BaseDocument {
   stats: IIndustryStat[];
   detailedOfferings: IDetailedOffering[];
   dashboardImage?: string;
+  dashboardImagePublicId?: string;
   faqs: IIndustryFaq[];
 
   // Audit and Soft Delete
@@ -118,6 +121,11 @@ const industrySchema = new Schema<IIndustry>(
       trim: true,
       default: '',
     },
+    coverImagePublicId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     features: {
       type: [String],
       default: [],
@@ -157,6 +165,11 @@ const industrySchema = new Schema<IIndustry>(
       trim: true,
     },
     thumbnail: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    thumbnailPublicId: {
       type: String,
       trim: true,
       default: '',
@@ -234,6 +247,11 @@ const industrySchema = new Schema<IIndustry>(
       },
     ],
     dashboardImage: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    dashboardImagePublicId: {
       type: String,
       trim: true,
       default: '',

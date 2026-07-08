@@ -9,6 +9,10 @@ import {
 } from "@/services/portfolio.service";
 import { useToast } from "@/hooks/use-toast";
 import { IMAGE_MAP } from "@/data/projects";
+import { CmsImageField, resolveCmsMediaSrc } from "@/components/admin/common/CmsImageField";
+import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
+import { normalizeRichContent } from "@/lib/sanitizeHtml";
+import { ImageUpload } from "@/components/admin/common/ImageUpload";
 import {
   Package, Trash2, Edit, Loader2, X, Plus, AlertCircle, ArrowLeft, ArrowRight,
   Search, RotateCcw, AlertTriangle, Star, ArrowUpNarrowWide, ArrowDownWideNarrow,
@@ -69,7 +73,7 @@ const Portfolio = () => {
   const [isSlugManual, setIsSlugManual] = useState(false);
   const [description, setDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
-  const [thumbnail, setThumbnail] = useState("https://placehold.co/600x400/png");
+  const [thumbnail, setThumbnail] = useState("");
   const [category, setCategory] = useState("Web App");
   const [client, setClient] = useState("Internal");
   const [role, setRole] = useState("Lead Developer");
@@ -383,7 +387,7 @@ const Portfolio = () => {
     setIsSlugManual(false);
     setDescription("");
     setLongDescription("");
-    setThumbnail("https://placehold.co/600x400/png");
+    setThumbnail("");
     setCategory("Web App");
     setClient("Internal");
     setRole("Lead Developer");
@@ -419,7 +423,7 @@ const Portfolio = () => {
     setIsSlugManual(true);
     setDescription(item.description || "");
     setLongDescription(item.longDescription || "");
-    setThumbnail(item.thumbnail || "https://placehold.co/600x400/png");
+    setThumbnail(item.thumbnail || "");
     setCategory(item.category || "Web App");
     setClient(item.client || "Internal");
     setRole(item.role || "Lead Developer");
@@ -479,7 +483,7 @@ const Portfolio = () => {
       title,
       slug,
       description,
-      longDescription: longDescription || description,
+      longDescription: normalizeRichContent(longDescription) || description,
       thumbnail,
       category,
       client,
@@ -1102,34 +1106,106 @@ const Portfolio = () => {
                       {validationErrors.description && <p className="text-[10px] font-semibold text-red-500">{validationErrors.description}</p>}
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Case Study Narrative</label>
-                      <textarea
-                        className="w-full min-h-[220px] p-4 rounded-xl border border-slate-200 text-sm focus:outline-none bg-white font-sans leading-relaxed"
-                        value={longDescription}
-                        onChange={(e) => setLongDescription(e.target.value)}
-                        placeholder="Provide details about the client's request, core technical architecture, implementation phases, and metrics achieved..."
-                      />
-                    </div>
+                    <RichTextEditor
+                      label="Full Case Study Narrative"
+                      value={longDescription}
+                      onChange={setLongDescription}
+                      placeholder="Provide details about the client's request, core technical architecture, implementation phases, and metrics achieved..."
+                      minHeightClassName="min-h-[220px]"
+                      helperText="Supports headings, lists, links, code, and more."
+                    />
                   </div>
                 )}
 
                 {/* Tab 3: Media */}
                 {activeTab === "media" && (
                   <div className="space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Cover Thumbnail URL *</label>
-                      <Input required value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} placeholder="https://..." className="h-10 rounded-lg border-slate-200 font-mono text-xs" />
-                      {validationErrors.thumbnail && <p className="text-[10px] font-semibold text-red-500">{validationErrors.thumbnail}</p>}
-                    </div>
+                    <CmsImageField
+                      label="Cover Thumbnail *"
+                      value={thumbnail}
+                      onChange={(url) => {
+                        setThumbnail(url);
+                        if (url) {
+                          setValidationErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.thumbnail;
+                            return next;
+                          });
+                        }
+                      }}
+                      helperText="Primary card image on Work / Portfolio listings and related project cards."
+                    />
+                    {validationErrors.thumbnail && (
+                      <p className="text-[10px] font-semibold text-red-500 -mt-4">{validationErrors.thumbnail}</p>
+                    )}
 
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Gallery Media Links (One URL per line)</label>
-                      <textarea
-                        className="w-full min-h-[140px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white font-mono text-xs"
-                        value={galleryText}
-                        onChange={(e) => setGalleryText(e.target.value)}
-                        placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2..."
+                    <div className="space-y-3 p-4 bg-slate-50 border border-slate-200/50 rounded-xl">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Gallery Images
+                      </label>
+                      <p className="text-[11px] font-medium text-slate-400">
+                        Shown on Project Detail. Upload additional images or keep existing Cloudinary / legacy URLs.
+                      </p>
+
+                      {galleryText
+                        .split("\n")
+                        .map((g) => g.trim())
+                        .filter(Boolean)
+                        .map((url, idx) => {
+                          const preview = resolveCmsMediaSrc(url) || url;
+                          return (
+                            <div
+                              key={`${url}-${idx}`}
+                              className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200"
+                            >
+                              <div className="h-16 w-24 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 shrink-0">
+                                <img src={preview} alt={`Gallery ${idx + 1}`} className="h-full w-full object-cover" />
+                              </div>
+                              <Input
+                                value={url}
+                                onChange={(e) => {
+                                  const lines = galleryText.split("\n");
+                                  const realIdx = lines
+                                    .map((l, i) => ({ l: l.trim(), i }))
+                                    .filter((x) => x.l)
+                                    .map((x) => x.i)[idx];
+                                  if (realIdx === undefined) return;
+                                  const next = [...lines];
+                                  next[realIdx] = e.target.value;
+                                  setGalleryText(next.join("\n"));
+                                }}
+                                className="h-9 rounded-lg bg-white border-slate-200 font-mono text-[11px] flex-1"
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const kept = galleryText
+                                    .split("\n")
+                                    .map((g) => g.trim())
+                                    .filter(Boolean)
+                                    .filter((_, i) => i !== idx);
+                                  setGalleryText(kept.join("\n"));
+                                }}
+                                className="h-8 rounded-lg text-xs font-bold gap-1.5 border-red-100 text-red-600 hover:bg-red-50 shrink-0"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Remove
+                              </Button>
+                            </div>
+                          );
+                        })}
+
+                      <ImageUpload
+                        label="Add Gallery Image"
+                        value=""
+                        helperText="Uploads append a new Cloudinary URL to the gallery list."
+                        onChange={(data) => {
+                          if (!data?.imageUrl) return;
+                          const existing = galleryText.split("\n").map((g) => g.trim()).filter(Boolean);
+                          setGalleryText([...existing, data.imageUrl].join("\n"));
+                        }}
                       />
                     </div>
                   </div>

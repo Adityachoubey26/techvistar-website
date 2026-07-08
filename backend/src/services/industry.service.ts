@@ -6,6 +6,12 @@
 import { Industry, IIndustry } from '@/models/Industry';
 import { ApiError } from '@/utils/ApiError';
 import { logger } from '@/utils/logger';
+import {
+  INDUSTRY_MEDIA_FIELDS,
+  syncScalarMediaFields,
+  collectDocumentPublicIds,
+  deleteCloudinaryPublicIds,
+} from '@/utils/mediaAsset';
 
 export class IndustryService {
   /**
@@ -31,7 +37,8 @@ export class IndustryService {
       }
     }
 
-    const industry = new Industry({ ...data, slug });
+    const { payload } = syncScalarMediaFields(null, data as Record<string, unknown>, INDUSTRY_MEDIA_FIELDS);
+    const industry = new Industry({ ...payload, slug });
     await industry.save();
 
     logger.info('[IndustryService] Industry created successfully', { id: industry._id, slug: industry.slug });
@@ -51,10 +58,23 @@ export class IndustryService {
       }
     }
 
-    const industry = await Industry.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+    const previous = await Industry.findById(id).lean();
+    if (!previous) {
+      throw ApiError.notFound('Industry listing not found');
+    }
+
+    const { payload, obsoletePublicIds } = syncScalarMediaFields(
+      previous as unknown as Record<string, unknown>,
+      data as Record<string, unknown>,
+      INDUSTRY_MEDIA_FIELDS
+    );
+
+    const industry = await Industry.findByIdAndUpdate(id, payload, { returnDocument: 'after', runValidators: true });
     if (!industry) {
       throw ApiError.notFound('Industry listing not found');
     }
+
+    await deleteCloudinaryPublicIds(obsoletePublicIds);
 
     logger.info('[IndustryService] Industry updated successfully', { id: industry._id });
     return industry;
@@ -92,10 +112,18 @@ export class IndustryService {
   }
 
   /**
-   * Permanently deletes an industry listing from MongoDB.
+   * Permanently deletes an industry listing from MongoDB after Cloudinary cleanup.
    */
   async permanentlyDeleteIndustry(id: string): Promise<void> {
     logger.info('[IndustryService] Permanently deleting industry listing', { id });
+    const existing = await Industry.findById(id).lean();
+    if (!existing) {
+      throw ApiError.notFound('Industry listing not found');
+    }
+
+    const publicIds = collectDocumentPublicIds(existing as unknown as Record<string, unknown>, INDUSTRY_MEDIA_FIELDS);
+    await deleteCloudinaryPublicIds(publicIds);
+
     const result = await Industry.findByIdAndDelete(id);
     if (!result) {
       throw ApiError.notFound('Industry listing not found');

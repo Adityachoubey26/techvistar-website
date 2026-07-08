@@ -98,6 +98,20 @@ export const NEWSLETTER_RATE_LIMIT = {
   MAX_REQUESTS: 3,              // Max 3 requests per window per IP
 } as const;
 
+// ─── Media Upload (Cloudinary — Phase 1.5) ────────────────────────────────────
+export const UPLOAD = {
+  MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024, // 10 MB
+  FIELD_NAME:          'image',
+  CLOUDINARY_FOLDER:   'techvistar/uploads',
+  ALLOWED_MIME_TYPES: [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/svg+xml',
+  ] as const,
+  ALLOWED_EXTENSIONS: ['.jpg', '.jpeg', '.png', '.webp', '.svg'] as const,
+} as const;
+
 // ─── Validation Constraints ───────────────────────────────────────────────────
 export const VALIDATION = {
   EMAIL_REGEX: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,

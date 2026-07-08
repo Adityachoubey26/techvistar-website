@@ -4,11 +4,12 @@
  */
 
 import { 
-  Heart, GraduationCap, Landmark, ShoppingCart, Factory, Home, Truck, Sprout, Utensils, Zap, HelpCircle, LucideIcon 
+  Heart, GraduationCap, Landmark, ShoppingCart, Factory, Home, Truck, Sprout, Utensils, Zap, LucideIcon 
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { IMAGE_MAP } from "./services";
 import { INDUSTRIES } from "./industries";
+import { preferCmsImage } from "@/lib/mediaFallbacks";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Heart,
@@ -41,6 +42,28 @@ const ICON_MAP: Record<string, LucideIcon> = {
 const DEFAULT_HERO_IMAGE =
   'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1200&auto=format&fit=crop';
 
+/**
+ * Industries listing / featured cards.
+ * Prefer CMS thumbnail; fall back to coverImage.
+ * Soft Unsplash seeds yield to a Cloudinary cover upload.
+ */
+export function getIndustryCardImage(industry: {
+  thumbnail?: string;
+  coverImage?: string;
+}): string {
+  return preferCmsImage(industry.thumbnail, industry.coverImage, DEFAULT_HERO_IMAGE);
+}
+
+/**
+ * Industry Detail hero — prefer CMS cover, fall back to thumbnail.
+ */
+export function getIndustryHeroImage(industry: {
+  coverImage?: string;
+  thumbnail?: string;
+}): string {
+  return preferCmsImage(industry.coverImage, industry.thumbnail, DEFAULT_HERO_IMAGE);
+}
+
 const COLOR_MAP: Record<string, string> = {
   healthcare: 'from-emerald-500 to-teal-600',
   education: 'from-blue-500 to-indigo-600',
@@ -59,7 +82,7 @@ const COLOR_MAP: Record<string, string> = {
 /**
  * Robust image key resolver conforming to Sprint 2 requirements.
  */
-export function resolveImage(value: string): string {
+function resolveImage(value: string): string {
   if (!value) return "";
   
   // Absolute URLs (Cloudinary, etc.) do NOT map through IMAGE_MAP
@@ -132,11 +155,17 @@ export function decorateIndustry(apiIndustry: any): any {
   // Find original static industry matching by slug for assets fallback
   const originalInd = slug ? INDUSTRIES.find(i => i.slug === slug) : undefined;
 
-  // Resolve cover / hero image using helper — always fall back to default hero when missing
-  const coverImage = resolveImage(apiIndustry.coverImage || '') || (originalInd ? originalInd.heroImage : '');
-  const thumbnail = resolveImage(apiIndustry.thumbnail || '') || (originalInd ? originalInd.heroImage : '');
+  // Preserve CMS fields separately. Do NOT copy seed hero into thumbnail when API thumbnail is empty —
+  // that made listing cards prefer stale Unsplash seeds over a newly uploaded Cloudinary cover.
+  const coverFromCms = resolveImage(String(apiIndustry.coverImage || '').trim());
+  const thumbFromCms = resolveImage(String(apiIndustry.thumbnail || '').trim());
+  const seedHero = originalInd?.heroImage || '';
+
+  const coverImage = coverFromCms || '';
+  const thumbnail = thumbFromCms || '';
   const dashboardImage = resolveImage(apiIndustry.dashboardImage || '');
-  const heroImage = coverImage || thumbnail || (originalInd ? originalInd.heroImage : DEFAULT_HERO_IMAGE);
+  // heroImage is the last-resort public fallback chain (detail/listing helpers apply finer rules)
+  const heroImage = coverImage || thumbnail || seedHero || DEFAULT_HERO_IMAGE;
 
   // Map challenges from whyChooseUs — only real CMS content, no placeholders
   const challenges = Array.isArray(apiIndustry.whyChooseUs)

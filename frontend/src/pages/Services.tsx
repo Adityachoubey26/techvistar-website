@@ -3,34 +3,19 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
-import { Service, decorateService } from '@/data/services';
+import { Service, decorateService, getServiceCardImage } from '@/data/services';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
-import { Breadcrumb } from '@/components/common/Breadcrumb';
+import { Check, ArrowRight, AlertCircle } from 'lucide-react';
 import { FAQSection } from '@/components/faq';
 import servicesBg from '../assets/services-bg.png';
-import { DotGrid } from '@/components/ui/DotGrid';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width - 0.5;
-    const y = (clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
 
   const { data: apiServices, isLoading, isError, error } = useQuery({
     queryKey: ['activeServices'],
@@ -136,10 +121,10 @@ const Services = () => {
                       key={service.id}
                       className="group h-full flex flex-col overflow-hidden border-slate-200 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/25 transition-all duration-[450ms] ease-in-out"
                     >
-                      {/* Service Cover Image */}
+                      {/* Service Thumbnail (falls back to coverImage) */}
                       <div className="overflow-hidden bg-white" style={{ borderRadius: '20px 20px 0 0' }}>
                         <img
-                          src={service.coverImage}
+                          src={getServiceCardImage(service)}
                           alt={service.title}
                           loading="lazy"
                           className="w-full h-[200px] md:h-[250px] object-contain p-2 transition-transform duration-[450ms] ease-in-out group-hover:scale-105"

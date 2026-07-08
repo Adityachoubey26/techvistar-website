@@ -11,6 +11,7 @@ export interface IProject extends BaseDocument {
   slug: string;
   description: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   category: string;
   technologies: string[];
   liveUrl: string;
@@ -23,6 +24,7 @@ export interface IProject extends BaseDocument {
   keyFeatures: string[];
   challenges: string[];
   gallery: string[];
+  galleryPublicIds?: string[];
   tags: string[];
   status: 'Completed' | 'In Progress' | 'Coming Soon';
   serviceSlugs: string[];
@@ -61,6 +63,11 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: [true, 'Thumbnail is required'],
       trim: true,
+    },
+    thumbnailPublicId: {
+      type: String,
+      trim: true,
+      default: '',
     },
     category: {
       type: String,
@@ -114,6 +121,10 @@ const projectSchema = new Schema<IProject>(
       default: [],
     },
     gallery: {
+      type: [String],
+      default: [],
+    },
+    galleryPublicIds: {
       type: [String],
       default: [],
     },

@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { CmsImageField } from "@/components/admin/common/CmsImageField";
+import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
+import { normalizeRichContent } from "@/lib/sanitizeHtml";
 
 const DEPARTMENTS = ["Engineering", "Design", "Marketing", "Sales", "Product", "Operations", "Other"] as const;
 const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Internship"] as const;
@@ -404,7 +407,7 @@ const Jobs = () => {
     // Pack Short, Full, Banner, Office, Team Image URLs into description
     const combinedDescription = [
       shortDescription.trim(),
-      fullDescription.trim(),
+      normalizeRichContent(fullDescription),
       bannerImage.trim(),
       officeImage.trim(),
       teamImage.trim()
@@ -951,15 +954,14 @@ const Jobs = () => {
                       {validationErrors.shortDescription && <p className="text-[10px] font-semibold text-red-500">{validationErrors.shortDescription}</p>}
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Description (Role Details)</label>
-                      <textarea
-                        className="w-full min-h-[160px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white font-sans leading-relaxed"
-                        value={fullDescription}
-                        onChange={(e) => setFullDescription(e.target.value)}
-                        placeholder="Provide details about the role, team environment, and day-to-day operations..."
-                      />
-                    </div>
+                    <RichTextEditor
+                      label="Full Description (Role Details)"
+                      value={fullDescription}
+                      onChange={setFullDescription}
+                      placeholder="Provide details about the role, team environment, and day-to-day operations..."
+                      minHeightClassName="min-h-[160px]"
+                      helperText="Supports headings, lists, links, and more."
+                    />
 
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Responsibilities (One per line)</label>
@@ -1016,20 +1018,24 @@ const Jobs = () => {
                 {/* Tab 3: Media */}
                 {activeTab === "media" && (
                   <div className="space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Hero / Banner Image URL</label>
-                      <Input value={bannerImage} onChange={(e) => setBannerImage(e.target.value)} placeholder="e.g. https://images.unsplash.com/photo-..." className="h-10 rounded-lg border-slate-200 font-mono text-xs" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Office Image URL (Optional)</label>
-                      <Input value={officeImage} onChange={(e) => setOfficeImage(e.target.value)} placeholder="e.g. https://images.unsplash.com/photo-..." className="h-10 rounded-lg border-slate-200 font-mono text-xs" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Team Collaboration Image URL (Optional)</label>
-                      <Input value={teamImage} onChange={(e) => setTeamImage(e.target.value)} placeholder="e.g. https://images.unsplash.com/photo-..." className="h-10 rounded-lg border-slate-200 font-mono text-xs" />
-                    </div>
+                    <CmsImageField
+                      label="Hero / Banner Image"
+                      value={bannerImage}
+                      onChange={setBannerImage}
+                      helperText="Shown on Careers listing cards and Job Detail hero. Falls back to a default Unsplash image if empty."
+                    />
+                    <CmsImageField
+                      label="Office Image (Optional)"
+                      value={officeImage}
+                      onChange={setOfficeImage}
+                      helperText="Shown on Job Detail culture / office section."
+                    />
+                    <CmsImageField
+                      label="Team Collaboration Image (Optional)"
+                      value={teamImage}
+                      onChange={setTeamImage}
+                      helperText="Shown on Job Detail team section."
+                    />
                   </div>
                 )}
 

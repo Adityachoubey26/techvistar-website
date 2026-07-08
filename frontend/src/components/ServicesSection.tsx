@@ -6,7 +6,7 @@ import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
-import { decorateService, SECTION_SERVICES } from '@/data/services';
+import { decorateService, SECTION_SERVICES, getServiceCardImage } from '@/data/services';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -89,7 +89,7 @@ export const ServicesSection = () => {
                   >
                     <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-50 ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
                       <img
-                        src={service.coverImage}
+                        src={getServiceCardImage(service)}
                         alt={service.title}
                         className="h-full w-full object-contain p-2 sm:p-2.5 transition-transform duration-500 group-hover:scale-110"
                       />

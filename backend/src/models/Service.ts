@@ -45,6 +45,7 @@ export interface IService extends BaseDocument {
   fullDescription: string; // maps to longDescription
   icon: string;
   coverImage?: string;
+  coverImagePublicId?: string;
   features: string[];
   technologies: string[];
   benefits: string[];
@@ -56,6 +57,7 @@ export interface IService extends BaseDocument {
   // Rich CMS fields
   category: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   overview: string;
   offerings: string[];
   process: IServiceStep[];
@@ -67,6 +69,7 @@ export interface IService extends BaseDocument {
   stats: IServiceStat[];
   detailedOfferings: IDetailedOffering[];
   dashboardImage?: string;
+  dashboardImagePublicId?: string;
   isDeleted?: boolean;
   deletedAt?: Date | null;
   deletedBy?: string;
@@ -104,6 +107,11 @@ const serviceSchema = new Schema<IService>(
       trim: true,
     },
     coverImage: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    coverImagePublicId: {
       type: String,
       trim: true,
       default: '',
@@ -147,6 +155,11 @@ const serviceSchema = new Schema<IService>(
       trim: true,
     },
     thumbnail: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    thumbnailPublicId: {
       type: String,
       trim: true,
       default: '',
@@ -211,6 +224,11 @@ const serviceSchema = new Schema<IService>(
       },
     ],
     dashboardImage: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    dashboardImagePublicId: {
       type: String,
       trim: true,
       default: '',

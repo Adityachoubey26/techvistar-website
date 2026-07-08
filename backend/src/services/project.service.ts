@@ -6,6 +6,13 @@
 import { ProjectModel, IProject } from '@/models/Project';
 import { ApiError } from '@/utils/ApiError';
 import { logger } from '@/utils/logger';
+import {
+  PROJECT_MEDIA_FIELDS,
+  syncScalarMediaFields,
+  syncGalleryMedia,
+  collectDocumentPublicIds,
+  deleteCloudinaryPublicIds,
+} from '@/utils/mediaAsset';
 
 export type ProjectStatus = 'Completed' | 'In Progress' | 'Coming Soon';
 
@@ -33,7 +40,12 @@ export class ProjectService {
       }
     }
 
-    const project = new ProjectModel({ ...data, slug });
+    const { payload } = syncScalarMediaFields(null, data as Record<string, unknown>, PROJECT_MEDIA_FIELDS);
+    const gallerySync = syncGalleryMedia(undefined, undefined, data.gallery ?? []);
+    payload.gallery = gallerySync.gallery;
+    payload.galleryPublicIds = gallerySync.galleryPublicIds;
+
+    const project = new ProjectModel({ ...payload, slug });
     await project.save();
 
     logger.info('[ProjectService] Project created successfully', { id: project._id, slug: project.slug });
@@ -53,10 +65,36 @@ export class ProjectService {
       }
     }
 
-    const project = await ProjectModel.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+    const previous = await ProjectModel.findById(id).lean();
+    if (!previous) {
+      throw ApiError.notFound('Project not found');
+    }
+
+    const obsoletePublicIds: string[] = [];
+    const { payload, obsoletePublicIds: scalarObsolete } = syncScalarMediaFields(
+      previous as unknown as Record<string, unknown>,
+      data as Record<string, unknown>,
+      PROJECT_MEDIA_FIELDS
+    );
+    obsoletePublicIds.push(...scalarObsolete);
+
+    if ('gallery' in data) {
+      const gallerySync = syncGalleryMedia(
+        previous.gallery,
+        previous.galleryPublicIds,
+        data.gallery
+      );
+      payload.gallery = gallerySync.gallery;
+      payload.galleryPublicIds = gallerySync.galleryPublicIds;
+      obsoletePublicIds.push(...gallerySync.obsoletePublicIds);
+    }
+
+    const project = await ProjectModel.findByIdAndUpdate(id, payload, { returnDocument: 'after', runValidators: true });
     if (!project) {
       throw ApiError.notFound('Project not found');
     }
+
+    await deleteCloudinaryPublicIds(obsoletePublicIds);
 
     logger.info('[ProjectService] Project updated successfully', { id: project._id });
     return project;
@@ -94,10 +132,22 @@ export class ProjectService {
   }
 
   /**
-   * Permanently deletes a Project listing from MongoDB.
+   * Permanently deletes a Project listing from MongoDB after Cloudinary cleanup.
    */
   async permanentlyDeleteProject(id: string): Promise<void> {
     logger.info('[ProjectService] Permanently deleting project', { id });
+    const existing = await ProjectModel.findById(id).lean();
+    if (!existing) {
+      throw ApiError.notFound('Project not found');
+    }
+
+    const publicIds = collectDocumentPublicIds(
+      existing as unknown as Record<string, unknown>,
+      PROJECT_MEDIA_FIELDS,
+      { urlsKey: 'gallery', publicIdsKey: 'galleryPublicIds' }
+    );
+    await deleteCloudinaryPublicIds(publicIds);
+
     const result = await ProjectModel.findByIdAndDelete(id);
     if (!result) {
       throw ApiError.notFound('Project not found');

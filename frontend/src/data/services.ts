@@ -22,6 +22,7 @@ import {
   LucideIcon
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
+import { preferCmsImage } from '@/lib/mediaFallbacks';
 
 import serviceWebDev from '../assets/service_webdevlopment.png';
 import serviceMobileApp from '../assets/mobile_phone_devloper.png';
@@ -218,7 +219,7 @@ function isCmsUploadedImage(value: string): boolean {
 }
 
 /** Resolve a CMS image key or filename to a bundled local asset URL */
-export function resolveServiceImageKey(value: string): string {
+function resolveServiceImageKey(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return '';
 
@@ -238,10 +239,9 @@ export function resolveServiceImageKey(value: string): string {
 /**
  * Priority: CMS upload URL → local asset key/filename → slug-based original asset → generic fallback
  */
-export function resolveServiceImage(
+function resolveServiceImage(
   value: string | undefined | null,
   slug: string,
-  field: 'cover' | 'thumbnail' = 'cover'
 ): string {
   const trimmed = String(value ?? '').trim();
 
@@ -263,6 +263,23 @@ export function resolveServiceImage(
   return DEFAULT_SERVICE_COVER;
 }
 
+/**
+ * Image for Service Detail hero only — prefer cover, fall back to thumbnail.
+ * Soft-placeholders yield to a Cloudinary sibling field when present.
+ */
+export function getServiceHeroImage(service: Pick<Service, 'coverImage' | 'thumbnail'>): string {
+  return preferCmsImage(service.coverImage, service.thumbnail, DEFAULT_SERVICE_COVER);
+}
+
+/**
+ * Image for service cards (Home, Services listing, Related, Featured).
+ * Prefer CMS `thumbnail`; fall back to `coverImage`.
+ * Soft Unsplash / placeholder seeds yield to a real cover upload.
+ */
+export function getServiceCardImage(service: Pick<Service, 'thumbnail' | 'coverImage'>): string {
+  return preferCmsImage(service.thumbnail, service.coverImage, DEFAULT_SERVICE_COVER);
+}
+
 export function decorateService(apiService: any): Service {
   let resolvedIcon: LucideIcon = Globe;
   if (apiService.icon) {
@@ -274,12 +291,22 @@ export function decorateService(apiService: any): Service {
   }
 
   const slug = typeof apiService.slug === 'string' ? apiService.slug : '';
-  const coverImage = resolveServiceImage(apiService.coverImage, slug, 'cover');
-  const thumbnailRaw = String(apiService.thumbnail ?? '').trim();
+  // Preserve CMS fields separately — listing/detail helpers apply thumb ↔ cover fallback.
+  // Do not copy cover into thumbnail here (same soft-placeholder bug as industries).
+  const coverRaw = String(apiService.coverImage ?? '').trim();
+  const coverImage = coverRaw
+    ? resolveServiceImage(coverRaw, slug)
+    : '';
+  const thumbnailRaw = String(apiService.thumbnail ?? apiService.thumbnailImage ?? '').trim();
   const thumbnail = thumbnailRaw
-    ? resolveServiceImage(apiService.thumbnail, slug, 'thumbnail')
-    : coverImage;
-  const dashboardImage = resolveServiceImageKey(String(apiService.dashboardImage ?? ''));
+    ? resolveServiceImage(thumbnailRaw, slug)
+    : '';
+  const dashboardRaw = String(apiService.dashboardImage ?? '').trim();
+  const dashboardImage = dashboardRaw
+    ? (isCmsUploadedImage(dashboardRaw)
+        ? dashboardRaw
+        : resolveServiceImageKey(dashboardRaw) || dashboardRaw)
+    : '';
 
   return {
     id: apiService._id || apiService.id,

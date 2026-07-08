@@ -13,9 +13,10 @@ import {
   Shield,
   Star
 } from 'lucide-react';
-import { Service } from '@/data/services';
+import { Service, getServiceHeroImage } from '@/data/services';
 import { ConsultationForm } from './ConsultationForm';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 interface ServiceHeroProps {
   service: Service;
@@ -115,9 +116,10 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
                   Accelerate your digital footprint with custom {service.title.toLowerCase()} configurations.
                 </p>
                 
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  {service.longDescription}
-                </p>
+                <RichTextContent
+                  content={service.longDescription}
+                  className="text-slate-600 text-sm leading-relaxed"
+                />
 
                 {/* Key Highlights */}
                 <div className="space-y-3 pt-2">
@@ -140,7 +142,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
               {/* Cover Image / Illustration Area */}
               <div className="md:col-span-5 flex items-center justify-center py-4 md:py-0">
                 <img
-                  src={service.coverImage}
+                  src={getServiceHeroImage(service)}
                   alt={service.title}
                   className="w-full max-w-[280px] md:max-w-full h-auto object-contain"
                 />

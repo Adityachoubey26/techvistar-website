@@ -16,6 +16,8 @@ import * as LucideIcons from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
+import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
 
 const FAQ_CATEGORIES = ["General", "Services", "Work", "Careers", "Contact", "AI", "Backend", "Frontend"] as const;
 const FAQ_PAGES = ["all", "home", "services", "work", "careers", "contact"] as const;
@@ -350,7 +352,7 @@ const FAQs = () => {
     const errors: Record<string, string> = {};
     if (!editingId && !faqId.trim()) errors.faqId = "FAQ ID is required.";
     if (!question.trim()) errors.question = "Question is required.";
-    if (!answer.trim()) errors.answer = "Answer is required.";
+    if (!stripHtmlToText(answer)) errors.answer = "Answer is required.";
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -381,7 +383,7 @@ const FAQs = () => {
 
     const payload: Record<string, unknown> = {
       question,
-      answer,
+      answer: normalizeRichContent(answer),
       category,
       page,
       status,
@@ -813,11 +815,15 @@ const FAQs = () => {
                   {validationErrors.question && <p className="text-[10px] text-red-500 font-bold">{validationErrors.question}</p>}
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Answer Text *</label>
-                  <textarea required className={`w-full min-h-[120px] p-3 rounded-lg border text-sm focus-visible:outline-none ${validationErrors.answer ? "border-red-500" : "border-slate-200"}`} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Answer statement..." />
-                  {validationErrors.answer && <p className="text-[10px] text-red-500 font-bold">{validationErrors.answer}</p>}
-                </div>
+                <RichTextEditor
+                  label="Answer Text"
+                  required
+                  value={answer}
+                  onChange={setAnswer}
+                  placeholder="Answer statement..."
+                  minHeightClassName="min-h-[140px]"
+                  error={validationErrors.answer}
+                />
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">

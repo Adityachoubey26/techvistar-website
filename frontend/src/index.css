@@ -213,3 +213,56 @@
     @apply rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
+
+/* CMS rich text — restore list markers & links (Tailwind Preflight zeroes them) */
+@layer components {
+  .rich-text ul:not(.rich-task-list) {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin: 0.5rem 0;
+  }
+
+  .rich-text ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin: 0.5rem 0;
+  }
+
+  .rich-text li {
+    margin: 0.15rem 0;
+  }
+
+  .rich-text li > p {
+    margin: 0;
+  }
+
+  .rich-text a {
+    color: #047857;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .rich-text a:hover {
+    color: #065f46;
+  }
+
+  .ProseMirror ul:not([data-type='taskList']) {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+  }
+
+  .ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+  }
+
+  .ProseMirror li > p {
+    margin: 0;
+  }
+
+  .ProseMirror a {
+    color: #047857;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

@@ -8,9 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   MapPin, Clock, Briefcase, DollarSign, Calendar, 
-  ArrowLeft, CheckCircle2, ChevronRight, Users, OfficeChair, Building2
+  ArrowLeft, CheckCircle2, ChevronRight, Users, Building2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 export const JobDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -171,9 +172,10 @@ export const JobDetails = () => {
                       className="space-y-4"
                     >
                       <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">Job Details</h2>
-                      <p className="text-sm text-slate-655 leading-relaxed font-semibold whitespace-pre-line">
-                        {fullDesc}
-                      </p>
+                      <RichTextContent
+                        content={fullDesc}
+                        className="text-sm text-slate-655 leading-relaxed font-semibold"
+                      />
                     </motion.div>
                   )}
 

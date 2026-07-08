@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveProjects } from '@/services/portfolio.service';
 import { decorateProject } from '@/data/projects';
@@ -11,10 +10,9 @@ import { TechStackSection } from '@/components/TechStackSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
-  Search, ArrowRight, Sparkles, Star, Briefcase, Building2, Smile, Award
+  Search, ArrowRight, Star, Briefcase, Building2, Smile, Award
 } from 'lucide-react';
 import workBg from '../assets/work-bg.png';
-import portfolioLaptopImg from '../assets/portfolio_laptop_mockup.jpg';
 import TextType from '@/components/ui/TextType';
 import { PageHeader } from '@/components/ui/PageHeader';
 
@@ -119,12 +117,6 @@ export const Work = () => {
     setSortBy
   } = filterHook;
 
-  console.log("raw API response:", apiProjects);
-  console.log("projects.length:", projectsData.length);
-  console.log("filteredProjects.length:", filteredProjects?.length);
-
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
   if (isLoading) {
     return (
       <>
@@ -136,18 +128,6 @@ export const Work = () => {
       </>
     );
   }
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width - 0.5;
-    const y = (clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
 
   const featuredProjects = projectsData.filter((p) => p.featured === true);
   const normalProjects = filteredProjects.filter((p) => p.featured !== true);

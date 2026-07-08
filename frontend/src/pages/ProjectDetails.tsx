@@ -8,8 +8,9 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ExternalLink, Github, Calendar, Briefcase, User, Building2 } from 'lucide-react';
+import { RichTextContent } from '@/components/common/RichTextContent';
 const ProjectDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -171,9 +172,10 @@ const ProjectDetails = () => {
               {/* Overview / Description */}
               <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8">
                 <h2 className="text-xl font-bold text-slate-900 mb-4 font-display">Project Overview</h2>
-                <p className="text-slate-600 text-base leading-relaxed whitespace-pre-line">
-                  {project.longDescription}
-                </p>
+                <RichTextContent
+                  content={project.longDescription}
+                  className="text-slate-600 text-base leading-relaxed"
+                />
               </div>
 
               {/* Key Features */}

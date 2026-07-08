@@ -10,7 +10,7 @@ import { ApiResponse } from '@/utils/ApiResponse';
 import { authService } from '@/services/auth.service';
 import { validateAdminLoginInput } from '@/validators/auth.validator';
 import { JwtPayload } from '@/types/common';
-import { parseExpiryToMs } from '@/utils/auth.utils';
+import { getAccessTokenCookieOptions, extractBearerToken } from '@/utils/auth.utils';
 
 const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
 
@@ -20,16 +20,11 @@ class AuthController {
       const { email, password } = validateAdminLoginInput(req.body);
       const result = await authService.login({ email, password });
 
-      res.cookie(ACCESS_TOKEN_COOKIE_NAME, result.accessToken, {
-        httpOnly: true,
-        secure: true, // Set to true to allow SameSite=None on localhost
-        sameSite: 'none', // Allow cross-port cookies in development
-        maxAge: parseExpiryToMs(env.accessTokenExpiry),
-        path: '/',
-      });
+      res.cookie(ACCESS_TOKEN_COOKIE_NAME, result.accessToken, getAccessTokenCookieOptions());
 
       return ApiResponse.success(res, {
         admin: result.admin,
+        token: result.accessToken,
       }, 'Admin logged in successfully');
     } catch (err) {
       return next(err);
@@ -38,7 +33,9 @@ class AuthController {
 
   async me(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const token = req.cookies?.accessToken;
+      const token =
+        req.cookies?.accessToken ??
+        extractBearerToken(req.header('Authorization'));
 
       if (!token) {
         return ApiResponse.success(res, { admin: null }, 'No authenticated admin');
@@ -98,12 +95,7 @@ class AuthController {
         await authService.logout(adminId);
       }
 
-      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
+      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, getAccessTokenCookieOptions());
 
       return ApiResponse.success(res, null, 'Admin logged out successfully');
     } catch (err) {

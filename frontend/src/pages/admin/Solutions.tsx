@@ -17,7 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
+import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
 
 const SOLUTION_CATEGORIES = ["Business Solutions", "AI Solutions", "Digital Solutions"];
 
@@ -475,7 +477,7 @@ const Solutions = () => {
     if (!slug.trim()) errors.slug = "Slug URL is required.";
     if (!subtitle.trim()) errors.subtitle = "Subtitle is required.";
     if (!challengeTitle.trim()) errors.challengeTitle = "Challenge overview title is required.";
-    if (!ourSolutionOverview.trim()) errors.ourSolutionOverview = "Our solution overview is required.";
+    if (!stripHtmlToText(ourSolutionOverview)) errors.ourSolutionOverview = "Our solution overview is required.";
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -502,7 +504,7 @@ const Solutions = () => {
         impact: challengeImpact
       },
       ourSolution: {
-        overview: ourSolutionOverview,
+        overview: normalizeRichContent(ourSolutionOverview),
         capabilities: ourSolutionCapabilitiesText.split("\n").map(c => c.trim()).filter(Boolean)
       },
       benefits: {
@@ -1117,16 +1119,15 @@ const Solutions = () => {
                     <div className="p-4 bg-emerald-50/30 rounded-xl border border-emerald-100 space-y-4">
                       <h4 className="text-xs font-extrabold uppercase text-emerald-800 tracking-wider">Our Solution Outline</h4>
 
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Solution Overview Narrative *</label>
-                        <textarea
-                          required
-                          className="w-full min-h-[80px] p-3 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none"
-                          value={ourSolutionOverview}
-                          onChange={(e) => setOurSolutionOverview(e.target.value)}
-                          placeholder="Describe how this offering resolves challenges..."
-                        />
-                      </div>
+                      <RichTextEditor
+                        label="Solution Overview Narrative"
+                        required
+                        value={ourSolutionOverview}
+                        onChange={setOurSolutionOverview}
+                        placeholder="Describe how this offering resolves challenges..."
+                        minHeightClassName="min-h-[120px]"
+                        error={validationErrors.ourSolutionOverview}
+                      />
 
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Key Capabilities (One per line)</label>

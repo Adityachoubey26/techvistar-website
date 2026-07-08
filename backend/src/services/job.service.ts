@@ -7,6 +7,11 @@ import { Job, IJob } from '@/models/Job';
 import { ApiError } from '@/utils/ApiError';
 import { logger } from '@/utils/logger';
 import { VALIDATION } from '@/constants';
+import {
+  collectJobMediaPublicIds,
+  obsoleteJobMediaPublicIds,
+  deleteCloudinaryPublicIds,
+} from '@/utils/mediaAsset';
 
 type JobStatus = typeof VALIDATION.JOB_STATUSES[number];
 
@@ -54,9 +59,20 @@ export class JobService {
       }
     }
 
+    const previous = await Job.findById(id).lean();
+    if (!previous) {
+      throw ApiError.notFound('Job listing not found');
+    }
+
     const job = await Job.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
     if (!job) {
       throw ApiError.notFound('Job listing not found');
+    }
+
+    if (typeof data.description === 'string') {
+      await deleteCloudinaryPublicIds(
+        obsoleteJobMediaPublicIds(previous.description, data.description)
+      );
     }
 
     logger.info('[JobService] Job updated successfully', { id: job._id });
@@ -95,10 +111,17 @@ export class JobService {
   }
 
   /**
-   * Permanently deletes a job listing from MongoDB.
+   * Permanently deletes a job listing from MongoDB after Cloudinary cleanup.
    */
   async permanentlyDeleteJob(id: string): Promise<void> {
     logger.info('[JobService] Permanently deleting job listing', { id });
+    const existing = await Job.findById(id).lean();
+    if (!existing) {
+      throw ApiError.notFound('Job listing not found');
+    }
+
+    await deleteCloudinaryPublicIds(collectJobMediaPublicIds(existing.description));
+
     const result = await Job.findByIdAndDelete(id);
     if (!result) {
       throw ApiError.notFound('Job listing not found');

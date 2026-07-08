@@ -6,12 +6,10 @@ import { getActiveJobs, Job } from '@/services/job.service';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Briefcase, MapPin, Clock, Star, Search, SlidersHorizontal, 
-  Home, GraduationCap, Flame, Cpu, Users, Heart, Award, Lightbulb,
-  ArrowRight, CheckCircle2, ChevronRight, RotateCcw, HelpCircle, Mail, MessageSquare, Code, UserCheck, ShieldCheck
+  Briefcase, MapPin, Clock, Search, Users,
+  ArrowRight, ChevronRight, RotateCcw, HelpCircle, Mail, MessageSquare, Code, UserCheck
 } from 'lucide-react';
 
 const HERO_BG = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop";

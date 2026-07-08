@@ -68,19 +68,6 @@ export async function getAllFAQs(params: QueryParams = {}): Promise<{ faqs: any[
 }
 
 /**
- * Fetches a single FAQ by its faqId string.
- */
-export async function getFAQById(faqId: string): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/api/faqs/${faqId}`);
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Failed to fetch FAQ details');
-  }
-  const result = await response.json();
-  return result.data;
-}
-
-/**
  * Creates a new FAQ entry (admin).
  */
 export async function createFAQ(data: any): Promise<any> {

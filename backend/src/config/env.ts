@@ -14,7 +14,7 @@
 // ─── Helper: Validate required variables ─────────────────────────────────────
 // Exported for use by feature configs that require mandatory env vars (e.g. JWT in production)
 export function required(key: string): string {
-  const value = process.env[key];
+  const value = process.env[key]?.trim();
   if (!value) {
     throw new Error(`[Config] Missing required environment variable: ${key}`);
   }
@@ -57,10 +57,11 @@ export const env = {
   loginRateLimitWindow: optionalInt('LOGIN_RATE_LIMIT_WINDOW', process.env.NODE_ENV === 'development' ? 60 * 1000 : 15 * 60 * 1000),
   loginRateLimitMax:    optionalInt('LOGIN_RATE_LIMIT_MAX', process.env.NODE_ENV === 'development' ? 100 : 5),
 
-  // ── Cloudinary (Media Uploads — Phase 3) ─────────────────────────────────
-  cloudinaryCloudName: optional('CLOUDINARY_CLOUD_NAME', ''),
-  cloudinaryApiKey:    optional('CLOUDINARY_API_KEY', ''),
-  cloudinaryApiSecret: optional('CLOUDINARY_API_SECRET', ''),
+  // ── Cloudinary (Media Uploads — Phase 1.5) ───────────────────────────────
+  // Required — server refuses to start without a valid Cloudinary account.
+  cloudinaryCloudName: required('CLOUDINARY_CLOUD_NAME'),
+  cloudinaryApiKey:    required('CLOUDINARY_API_KEY'),
+  cloudinaryApiSecret: required('CLOUDINARY_API_SECRET'),
 
   // ── Email (Nodemailer — Phase 3) ──────────────────────────────────────────
   mailHost:    optional('MAIL_HOST', 'smtp.gmail.com'),

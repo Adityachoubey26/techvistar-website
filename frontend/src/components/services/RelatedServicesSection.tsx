@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
-import { Service, decorateService } from '@/data/services';
+import { Service, decorateService, getServiceCardImage } from '@/data/services';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -116,7 +116,7 @@ export const RelatedServicesSection = ({ service }: SectionProps) => {
                   {/* Thumbnail Image Header */}
                   <div className="relative aspect-video w-full overflow-hidden bg-transparent border-b border-slate-100/50">
                     <img 
-                      src={rs.coverImage} 
+                      src={getServiceCardImage(rs)} 
                       alt={rs.title} 
                       className="w-full h-full object-contain p-3 transition-transform duration-500 group-hover/card:scale-105 mix-blend-multiply contrast-115 brightness-102"
                     />

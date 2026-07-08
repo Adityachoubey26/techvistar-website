@@ -3,6 +3,8 @@
  * @description Shared utilities for auth token handling.
  */
 
+import { env } from '@/config/env';
+
 export function parseExpiryToMs(expiry: string): number {
   const match = expiry.match(/^(\d+)([smhd])$/i);
 
@@ -25,4 +27,22 @@ export function parseExpiryToMs(expiry: string): number {
     default:
       return 15 * 60 * 1000;
   }
+}
+
+/** Cookie options for the HttpOnly access token — dev uses lax/non-secure for localhost HTTP. */
+export function getAccessTokenCookieOptions() {
+  return {
+    httpOnly: true,
+    secure:   env.isProd,
+    sameSite: env.isProd ? 'none' as const : 'lax' as const,
+    maxAge:   parseExpiryToMs(env.accessTokenExpiry),
+    path:     '/',
+  };
+}
+
+/** Extract Bearer token from Authorization header or return undefined. */
+export function extractBearerToken(authHeader?: string): string | undefined {
+  if (!authHeader) return undefined;
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || undefined;
 }

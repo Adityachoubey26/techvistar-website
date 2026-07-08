@@ -2,6 +2,7 @@ import { Service } from '@/data/services';
 import { Brain, Lightbulb } from 'lucide-react';
 import '../ui/GlassIcons.css';
 import { OverviewIllustration } from './OverviewIllustration';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 interface SectionProps {
   service: Service;
@@ -45,9 +46,10 @@ export const OverviewSection = ({ service }: SectionProps) => {
           <div className="w-12 h-1 bg-emerald-500 rounded-full" />
 
           {/* Description */}
-          <p className="text-slate-600 text-sm md:text-sm leading-relaxed">
-            {service.longDescription}
-          </p>
+          <RichTextContent
+            content={service.longDescription}
+            className="text-slate-600 text-sm md:text-sm leading-relaxed"
+          />
 
           {/* Key Insight callout box */}
           <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-2xl p-4 flex gap-4 items-start transition-all duration-300 hover:bg-emerald-50/80">
@@ -56,9 +58,10 @@ export const OverviewSection = ({ service }: SectionProps) => {
             </div>
             <div>
               <div className="text-xs font-bold text-emerald-800 mb-0.5">Key Insight</div>
-              <p className="text-xs text-emerald-700/90 leading-relaxed font-medium">
-                {service.overview}
-              </p>
+              <RichTextContent
+                content={service.overview}
+                className="text-xs text-emerald-700/90 leading-relaxed font-medium"
+              />
             </div>
           </div>
         </div>

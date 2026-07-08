@@ -5,9 +5,8 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { 
-  Building2, Brain, Sparkles, Cloud, Target, 
-  Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, 
-  ArrowRight, Sparkle, Loader2, ArrowUpRight, HelpCircle,
+  Layers,
+  ArrowRight, Loader2, ArrowUpRight,
   Clock, ShieldCheck, Award, MessageSquare, CheckCircle2
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +15,7 @@ import { decorateSolution, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import challengesImg from '../assets/ai_overview_illustration.png';
 import { cn } from '@/lib/utils';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 
 
@@ -241,9 +241,10 @@ export const SolutionDetails = () => {
                     <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
                       Our Tailored Approach
                     </h2>
-                    <p className="text-slate-600 font-semibold text-sm sm:text-base leading-relaxed">
-                      {solution.ourSolution.overview}
-                    </p>
+                    <RichTextContent
+                      content={solution.ourSolution.overview}
+                      className="text-slate-600 font-semibold text-sm sm:text-base leading-relaxed"
+                    />
 
                     <div className="space-y-4 font-bold text-xs sm:text-sm text-slate-700">
                       {solution.ourSolution.capabilities.map((cap, index) => (

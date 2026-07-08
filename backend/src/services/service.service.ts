@@ -6,6 +6,12 @@
 import { Service, IService } from '@/models/Service';
 import { ApiError } from '@/utils/ApiError';
 import { logger } from '@/utils/logger';
+import {
+  SERVICE_MEDIA_FIELDS,
+  syncScalarMediaFields,
+  collectDocumentPublicIds,
+  deleteCloudinaryPublicIds,
+} from '@/utils/mediaAsset';
 
 const FALLBACK_SERVICES: Record<string, unknown>[] = [
   {
@@ -91,7 +97,8 @@ export class ServiceService {
       }
     }
 
-    const service = new Service({ ...data, slug });
+    const { payload } = syncScalarMediaFields(null, data as Record<string, unknown>, SERVICE_MEDIA_FIELDS);
+    const service = new Service({ ...payload, slug });
     await service.save();
 
     logger.info('[ServiceService] Service created successfully', { id: service._id, slug: service.slug });
@@ -111,10 +118,23 @@ export class ServiceService {
       }
     }
 
-    const service = await Service.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+    const previous = await Service.findById(id).lean();
+    if (!previous) {
+      throw ApiError.notFound('Service listing not found');
+    }
+
+    const { payload, obsoletePublicIds } = syncScalarMediaFields(
+      previous as unknown as Record<string, unknown>,
+      data as Record<string, unknown>,
+      SERVICE_MEDIA_FIELDS
+    );
+
+    const service = await Service.findByIdAndUpdate(id, payload, { returnDocument: 'after', runValidators: true });
     if (!service) {
       throw ApiError.notFound('Service listing not found');
     }
+
+    await deleteCloudinaryPublicIds(obsoletePublicIds);
 
     logger.info('[ServiceService] Service updated successfully', { id: service._id });
     return service;
@@ -152,10 +172,18 @@ export class ServiceService {
   }
 
   /**
-   * Permanently deletes a service listing from MongoDB.
+   * Permanently deletes a service listing from MongoDB after Cloudinary cleanup.
    */
   async permanentlyDeleteService(id: string): Promise<void> {
     logger.info('[ServiceService] Permanently deleting service listing', { id });
+    const existing = await Service.findById(id).lean();
+    if (!existing) {
+      throw ApiError.notFound('Service listing not found');
+    }
+
+    const publicIds = collectDocumentPublicIds(existing as unknown as Record<string, unknown>, SERVICE_MEDIA_FIELDS);
+    await deleteCloudinaryPublicIds(publicIds);
+
     const result = await Service.findByIdAndDelete(id);
     if (!result) {
       throw ApiError.notFound('Service listing not found');
@@ -227,7 +255,7 @@ export class ServiceService {
       query.category = { $regex: new RegExp('^' + category + '$', 'i') };
     }
     return Service.find(query)
-      .select('title slug shortDescription fullDescription icon coverImage features technologies benefits offerings displayOrder seoTitle seoDescription category featured')
+      .select('title slug shortDescription fullDescription icon coverImage thumbnail dashboardImage features technologies benefits offerings displayOrder seoTitle seoDescription category featured')
       .sort({ displayOrder: 1, createdAt: 1 });
   }
 

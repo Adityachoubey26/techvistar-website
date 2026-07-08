@@ -1,26 +1,24 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { INDUSTRIES, Industry } from '@/data/industries';
+import { Industry } from '@/data/industries';
 import { SERVICES } from '@/data/services';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers, Image, Sparkles, ArrowRight, Heart, GraduationCap, Landmark, ShoppingCart, Factory, Truck } from 'lucide-react';
+import { ChevronRight, HelpCircle, Lightbulb, AlertTriangle, Cpu, Layers, Image, Sparkles } from 'lucide-react';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
-import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
+import { Spotlight3DBackground } from '@/components/animations/PremiumBackground';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { PremiumImage } from '@/components/common/PremiumImage';
-import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
-import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';
+import { StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
+import { Magnetic, GlowHover } from '@/components/animations/MicroInteractions';
 import workBg from '../assets/work-bg.png';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveIndustries } from '@/services/industry.service';
-import { decorateIndustry } from '@/data/industry.adapter';
-// Shared color utility for premium spotlight rendering
-export const resolveSpotlightColors = (id: string) => {
+import { decorateIndustry, getIndustryCardImage } from '@/data/industry.adapter';
+
+const resolveSpotlightColors = (id: string) => {
   const colorMap: Record<string, { spotlight: string; border: string }> = {
     healthcare: { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' },
     education: { spotlight: 'rgba(59, 130, 246, 0.06)', border: 'rgba(59, 130, 246, 0.25)' },
@@ -37,8 +35,6 @@ export const resolveSpotlightColors = (id: string) => {
 };
 
 export const Industries = () => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
   const { data: apiIndustries, isPending, isSuccess } = useQuery({
     queryKey: ['activeIndustries'],
     queryFn: () => getActiveIndustries(),
@@ -46,7 +42,6 @@ export const Industries = () => {
     refetchOnMount: 'always',
   });
 
-  // Only use static INDUSTRIES while the first API request is in flight.
   // Never substitute static data after a successful fetch — CMS records exist only in MongoDB.
   const industriesData = useMemo(() => {
     if (isSuccess && Array.isArray(apiIndustries)) {
@@ -60,25 +55,10 @@ export const Industries = () => {
     return [];
   }, [apiIndustries, isPending, isSuccess]);
 
-  // Helper resolvers for relational data mapping
   const resolveServiceTitle = (slug: string) => {
     const service = SERVICES.find((s) => s.slug === slug);
     return service ? service.title : slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
-
-  // Search filter implementation
-  const filteredIndustries = industriesData.filter((industry) => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-
-    const matchTitle = (industry.title || '').toLowerCase().includes(query);
-    const matchDesc = (industry.description || '').toLowerCase().includes(query) ||
-                      (industry.shortDescription || '').toLowerCase().includes(query);
-    const matchTech = (industry.technologies || []).some((tech: string) => tech.toLowerCase().includes(query));
-    const matchService = (industry.services || []).some((svc: string) => svc.toLowerCase().includes(query));
-    
-    return matchTitle || matchDesc || matchTech || matchService;
-  });
 
   return (
     <>
@@ -101,11 +81,11 @@ export const Industries = () => {
         <Spotlight3DBackground className="pt-6 pb-8 md:pt-8 md:pb-12">
           <div className="container-custom max-w-6xl mx-auto px-4 relative">
             <AnimatePresence mode="popLayout">
-              {filteredIndustries.length > 0 ? (
+              {industriesData.length > 0 ? (
                 <StaggerContainer 
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
                 >
-                  {filteredIndustries.map((ind: Industry) => {
+                  {industriesData.map((ind: Industry) => {
                     const Icon = ind.icon;
                     const colors = resolveSpotlightColors(ind.id);
                     // Wide-card layout follows CMS featured flag — NOT array index.
@@ -132,9 +112,9 @@ export const Industries = () => {
                                   ? 'w-full md:w-[38%] aspect-[4/3] md:aspect-auto border-b md:border-b-0 md:border-r border-slate-200/40'
                                   : 'w-full aspect-[16/10] border-b border-slate-200/40'
                               }`}>
-                                {ind.heroImage ? (
+                                {getIndustryCardImage(ind) ? (
                                   <img 
-                                    src={ind.heroImage}
+                                    src={getIndustryCardImage(ind)}
                                     alt={ind.title}
                                     loading="lazy"
                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-500"
@@ -262,17 +242,14 @@ export const Industries = () => {
                   className="text-center py-20"
                 >
                   <HelpCircle className="h-12 w-12 text-slate-355 mx-auto mb-4" />
-                  <h3 className="text-lg font-bold text-slate-900">No industries match your search</h3>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {isPending ? 'Loading industries…' : 'No industries available'}
+                  </h3>
                   <p className="text-slate-500 text-sm mt-2 max-w-xs mx-auto">
-                    Try tweaking your keywords or searching for general technologies like React, Python, or API.
+                    {isPending
+                      ? 'Fetching the latest industry solutions from our CMS.'
+                      : 'Check back soon for new industry solutions from TechVistar.'}
                   </p>
-                  <Button 
-                    onClick={() => setSearchQuery('')}
-                    variant="outline" 
-                    className="mt-6 border-slate-200 rounded-xl"
-                  >
-                    Reset search filters
-                  </Button>
                 </motion.div>
               )}
             </AnimatePresence>

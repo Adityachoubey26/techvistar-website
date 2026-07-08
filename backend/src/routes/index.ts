@@ -29,6 +29,7 @@ import projectRouter from './project.routes';
 import faqRouter    from './faq.routes';
 import authRouter    from './auth.routes';
 import industryRouter from './industry.routes';
+import uploadRouter   from './upload.routes';
 import { RATE_LIMIT } from '@/constants';
 
 const router = Router();
@@ -62,6 +63,7 @@ router.use('/portfolio', projectRouter);
 router.use('/faqs',      faqRouter);
 router.use('/auth',      authRouter);
 router.use('/industries', industryRouter);
+router.use('/upload',     uploadRouter);
 
 // ─── API root info ─────────────────────────────────────────────────────────────
 // GET /api → Basic API info (not a real endpoint, just useful for developers)

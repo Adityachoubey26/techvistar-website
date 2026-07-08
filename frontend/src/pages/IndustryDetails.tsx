@@ -42,7 +42,8 @@ import { PremiumImage } from '@/components/common/PremiumImage';
 import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';
 import { useQuery } from '@tanstack/react-query';
 import { getIndustryBySlug } from '@/services/industry.service';
-import { decorateIndustry } from '@/data/industry.adapter';
+import { decorateIndustry, getIndustryHeroImage } from '@/data/industry.adapter';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 const DEFAULT_OVERVIEW_QUOTE =
   'Adapting our VISTAR delivery frameworks to the precise requirements of target industries, securing data contracts, and scaling customer interfaces.';
@@ -163,9 +164,9 @@ export const IndustryDetails = () => {
                 <BlurReveal duration={0.6} delay={0.15} className="w-full max-w-sm">
                   {/* Dynamically renders cover image inside rounded container */}
                   <div className="relative group/cover rounded-3xl overflow-hidden border border-white/15 shadow-2xl w-full aspect-[4/3] bg-slate-800">
-                    {industry.heroImage ? (
+                    {getIndustryHeroImage(industry) ? (
                       <PremiumImage 
-                        src={industry.heroImage} 
+                        src={getIndustryHeroImage(industry)} 
                         alt={industry.title}
                         aspectRatioClassName="aspect-[4/3]"
                         className="group-hover/cover:scale-[1.05] transition-transform duration-500"
@@ -200,13 +201,15 @@ export const IndustryDetails = () => {
                     Overview & Sector Focus
                   </h2>
                   <div className="border-l-4 border-emerald-500 pl-4 py-1.5 mt-4">
-                    <p className="text-slate-655 text-sm sm:text-base leading-relaxed font-semibold italic">
-                      "{overviewQuote}"
-                    </p>
+                    <RichTextContent
+                      content={overviewQuote}
+                      className="text-slate-655 text-sm sm:text-base leading-relaxed font-semibold italic"
+                    />
                   </div>
-                  <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3">
-                    {industry.description}
-                  </p>
+                  <RichTextContent
+                    content={industry.description}
+                    className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3"
+                  />
                   {/* Strategic Capabilities feature grid to fill height space */}
                   <div className="mt-8 pt-6 border-t border-slate-100/80">
                     <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-4">
@@ -519,9 +522,10 @@ export const IndustryDetails = () => {
                 {industry.cta.title}
               </h2>
               {industry.cta.subtitle && (
-                <p className="mt-5 text-slate-300 max-w-xl mx-auto text-xs sm:text-sm font-semibold leading-relaxed">
-                  {industry.cta.subtitle}
-                </p>
+                <RichTextContent
+                  content={industry.cta.subtitle}
+                  className="mt-5 text-slate-300 max-w-xl mx-auto text-xs sm:text-sm font-semibold leading-relaxed"
+                />
               )}
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Magnetic>

@@ -10,15 +10,18 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import * as LucideIcons from "lucide-react";
 import { 
-  Wrench, Trash2, Edit, CheckCircle, HelpCircle, Eye, EyeOff, Loader2, X, Plus, AlertCircle, Trash, ArrowLeft, ArrowRight,
+  Trash2, Edit, Loader2, X, Plus, AlertCircle, Trash, ArrowLeft, ArrowRight,
   ChevronDown, ChevronUp, Image as ImageIcon, Sparkles, BookOpen, BarChart3, Globe, Settings, Tag, ShieldCheck, Check,
-  CornerDownRight, Layers, ArrowUpRight, Search, SlidersHorizontal, RotateCcw, AlertTriangle, Info, Calendar, User, ToggleLeft, ToggleRight
+  ArrowUpRight, Search, RotateCcw, AlertTriangle, Info, Calendar, User
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { motion, AnimatePresence } from "framer-motion";
-import { decorateService, IMAGE_MAP } from "@/data/services";
+import { motion } from "framer-motion";
+import { IMAGE_MAP } from "@/data/services";
+import { CmsImageField } from "@/components/admin/common/CmsImageField";
+import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
+import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
 
 type TabName = "general" | "content" | "media" | "features" | "stats" | "process" | "seo" | "preview";
 
@@ -548,8 +551,8 @@ const Services = () => {
     if (!slug.trim()) errors.slug = "Slug URL is required.";
     if (!category.trim()) errors.category = "Category is required.";
     if (!shortDescription.trim()) errors.shortDescription = "Short description is required.";
-    if (!overview.trim()) errors.overview = "Overview narrative is required.";
-    if (!fullDescription.trim()) errors.fullDescription = "Full markdown description is required.";
+    if (!stripHtmlToText(overview)) errors.overview = "Overview narrative is required.";
+    if (!stripHtmlToText(fullDescription)) errors.fullDescription = "Full description is required.";
 
     // Check duplicate stats
     const statLabels = statsList.map(s => s.label.trim().toLowerCase());
@@ -596,10 +599,10 @@ const Services = () => {
       title,
       slug,
       shortDescription,
-      fullDescription,
+      fullDescription: normalizeRichContent(fullDescription),
       icon,
       category,
-      overview,
+      overview: normalizeRichContent(overview),
       status,
       displayOrder: Number(displayOrder) || 0,
       features,
@@ -1427,103 +1430,58 @@ const Services = () => {
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Overview / Introduction *</label>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{overview.length} chars</span>
-                      </div>
-                      <textarea 
-                        required 
-                        className={`w-full min-h-[100px] p-3 rounded-lg border text-xs text-slate-800 bg-white focus:outline-none ${validationErrors.overview ? "border-red-500" : "border-slate-200"}`} 
-                        value={overview} 
-                        onChange={(e) => setOverview(e.target.value)} 
-                        placeholder="Overview narrative block..." 
-                      />
-                      {validationErrors.overview && (
-                        <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider">{validationErrors.overview}</p>
-                      )}
-                    </div>
+                    <RichTextEditor
+                      label="Overview / Introduction"
+                      required
+                      value={overview}
+                      onChange={setOverview}
+                      placeholder="Overview narrative block..."
+                      minHeightClassName="min-h-[120px]"
+                      error={validationErrors.overview}
+                    />
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Description * (Markdown Supported)</label>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{fullDescription.length} chars</span>
-                      </div>
-                      <textarea 
-                        required 
-                        className={`w-full min-h-[180px] p-3 rounded-lg border text-xs text-slate-800 bg-white focus:outline-none font-mono leading-relaxed ${validationErrors.fullDescription ? "border-red-500" : "border-slate-200"}`} 
-                        value={fullDescription} 
-                        onChange={(e) => setFullDescription(e.target.value)} 
-                        placeholder="Detailed service description in Markdown..." 
-                      />
-                      {validationErrors.fullDescription && (
-                        <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider">{validationErrors.fullDescription}</p>
-                      )}
-                    </div>
+                    <RichTextEditor
+                      label="Full Description"
+                      required
+                      value={fullDescription}
+                      onChange={setFullDescription}
+                      placeholder="Detailed service description..."
+                      helperText="Supports headings, lists, links, code, and more."
+                      minHeightClassName="min-h-[200px]"
+                      error={validationErrors.fullDescription}
+                    />
                   </div>
                 )}
 
                 {/* Tab 3: Media */}
                 {activeTab === "media" && (
                   <div className="bg-white rounded-2xl border border-slate-200/60 p-6 space-y-6 shadow-sm">
-                    {([
-                      { label: "Cover Image", value: coverImage, setter: setCoverImage, placeholder: "e.g. serviceWebDev" },
-                      { label: "Thumbnail Image", value: thumbnail, setter: setThumbnail, placeholder: "e.g. serviceWebDev" },
-                      { label: "Dashboard Mock Image", value: dashboardImage, setter: setDashboardImage, placeholder: "e.g. sustainability_dashboard" }
-                    ] as const).map((field, idx) => {
-                      const resolved = resolveImageSrc(field.value);
-                      return (
-                        <div key={idx} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center p-4 bg-slate-50 border border-slate-200/50 rounded-xl">
-                          <div className="lg:col-span-2 space-y-3">
-                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{field.label}</label>
-                            
-                            <div className="flex gap-2">
-                              <Input 
-                                value={field.value} 
-                                onChange={(e) => field.setter(e.target.value)} 
-                                placeholder={field.placeholder} 
-                                className="h-10 rounded-lg bg-white border-slate-200 text-xs" 
-                              />
-                              <Button type="button" disabled variant="outline" className="h-10 rounded-lg shrink-0 opacity-60 text-xs border-slate-200 bg-white">
-                                Upload
-                              </Button>
-                            </div>
-
-                            <div className="flex gap-2">
-                              <Button 
-                                type="button"
-                                onClick={() => field.setter("")}
-                                variant="outline" 
-                                size="sm" 
-                                className="h-7.5 rounded text-[10px] font-bold text-red-600 border-red-100 hover:bg-red-50"
-                              >
-                                Remove Image
-                              </Button>
-                              <Button 
-                                type="button"
-                                onClick={() => field.setter(field.placeholder)}
-                                variant="outline" 
-                                size="sm" 
-                                className="h-7.5 rounded text-[10px] font-bold border-slate-200 bg-white"
-                              >
-                                Reset Default URL
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="flex flex-col items-center justify-center border border-slate-200 bg-white rounded-lg h-[110px] w-full overflow-hidden p-2">
-                            {resolved ? (
-                              <img src={resolved} alt="Preview" className="h-full w-full object-contain rounded" />
-                            ) : (
-                              <div className="flex flex-col items-center text-slate-400 gap-1 select-none">
-                                <ImageIcon className="w-6 h-6" />
-                                <span className="text-[9px] font-extrabold uppercase tracking-wider">Placeholder</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                    <CmsImageField
+                      label="Cover Image"
+                      value={coverImage}
+                      onChange={(url) => {
+                        setCoverImage(url);
+                        if (
+                          url.includes('cloudinary.com') &&
+                          (thumbnail.includes('images.unsplash.com') || thumbnail.includes('placehold.co'))
+                        ) {
+                          setThumbnail('');
+                        }
+                      }}
+                      helperText="Hero image on Service Detail. Also used on listing cards when Thumbnail is empty or still a seed placeholder."
+                    />
+                    <CmsImageField
+                      label="Thumbnail Image"
+                      value={thumbnail}
+                      onChange={setThumbnail}
+                      helperText="Preferred card image on Home / Services listing / Related. Leave empty to use Cover Image."
+                    />
+                    <CmsImageField
+                      label="Dashboard Mock Image"
+                      value={dashboardImage}
+                      onChange={setDashboardImage}
+                      helperText="Optional dashboard / mockup image for service detail sections."
+                    />
                   </div>
                 )}
 
