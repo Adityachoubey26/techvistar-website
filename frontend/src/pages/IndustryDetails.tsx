@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { INDUSTRIES } from '@/data/industries';
 import { PROJECTS } from '@/data/projects';
+import { PROCESS_STEPS } from '@/data/process';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,22 @@ import {
 } from 'lucide-react';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
-import { resolveSpotlightColors } from './Industries';
+// Shared color utility for premium spotlight rendering
+const resolveSpotlightColors = (id: string) => {
+  const colorMap: Record<string, { spotlight: string; border: string }> = {
+    healthcare: { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' },
+    education: { spotlight: 'rgba(59, 130, 246, 0.06)', border: 'rgba(59, 130, 246, 0.25)' },
+    finance: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'retail-ecommerce': { spotlight: 'rgba(244, 63, 94, 0.06)', border: 'rgba(244, 63, 94, 0.25)' },
+    manufacturing: { spotlight: 'rgba(249, 115, 22, 0.06)', border: 'rgba(249, 115, 22, 0.25)' },
+    'real-estate': { spotlight: 'rgba(6, 182, 212, 0.06)', border: 'rgba(6, 182, 212, 0.25)' },
+    logistics: { spotlight: 'rgba(139, 92, 246, 0.06)', border: 'rgba(139, 92, 246, 0.25)' },
+    agriculture: { spotlight: 'rgba(34, 197, 94, 0.06)', border: 'rgba(34, 197, 94, 0.25)' },
+    hospitality: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'energy-utilities': { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+  };
+  return colorMap[id] || { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' };
+};
 import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
 import { PremiumImage } from '@/components/common/PremiumImage';
 import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';

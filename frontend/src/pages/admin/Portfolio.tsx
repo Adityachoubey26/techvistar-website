@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/admin/common/PageHeader";
 import { EmptyState } from "@/components/admin/common/EmptyState";
@@ -7,12 +8,15 @@ import {
   restoreProject, permanentlyDeleteProject, bulkDeleteProjects, bulkRestoreProjects, bulkUpdateStatus
 } from "@/services/portfolio.service";
 import { useToast } from "@/hooks/use-toast";
+import { IMAGE_MAP } from "@/data/projects";
 import {
   Package, Trash2, Edit, Loader2, X, Plus, AlertCircle, ArrowLeft, ArrowRight,
-  Search, RotateCcw, AlertTriangle, Star, ArrowUpNarrowWide, ArrowDownWideNarrow
+  Search, RotateCcw, AlertTriangle, Star, ArrowUpNarrowWide, ArrowDownWideNarrow,
+  Settings, BookOpen, ImageIcon, Tag, Sparkles, BarChart3, Globe, ShieldCheck, Check, Trash
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 
 const PORTFOLIO_CATEGORIES = [
@@ -28,11 +32,13 @@ const PORTFOLIO_CATEGORIES = [
 ];
 
 type ProjectStatus = "Completed" | "In Progress" | "Coming Soon";
+type TabName = "general" | "content" | "media" | "caseStudy" | "tech" | "seo" | "preview";
 
 const Portfolio = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Filters & State
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -44,16 +50,23 @@ const Portfolio = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  // Selection & Bulk Status
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkStatusValue, setBulkStatusValue] = useState<ProjectStatus>("Completed");
 
+  // Modals & Confirmation Dialogs
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [deleteConfirmTitle, setDeleteConfirmTitle] = useState("");
   const [permDeleteConfirmId, setPermDeleteConfirmId] = useState<string | null>(null);
+  const [showUnsavedConfirm, setShowUnsavedConfirm] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabName>("general");
 
+  // Form Fields
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [isSlugManual, setIsSlugManual] = useState(false);
   const [description, setDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
   const [thumbnail, setThumbnail] = useState("https://placehold.co/600x400/png");
@@ -64,7 +77,25 @@ const Portfolio = () => {
   const [status, setStatus] = useState<ProjectStatus>("Completed");
   const [displayOrder, setDisplayOrder] = useState("0");
   const [featured, setFeatured] = useState(false);
+  
+  const [liveUrl, setLiveUrl] = useState("#");
+  const [githubUrl, setGithubUrl] = useState("#");
   const [technologiesText, setTechnologiesText] = useState("");
+  const [tagsText, setTagsText] = useState("");
+  const [serviceSlugsText, setServiceSlugsText] = useState("");
+  
+  // Case Study Lists
+  const [challengesText, setChallengesText] = useState("");
+  const [keyFeaturesText, setKeyFeaturesText] = useState("");
+  const [galleryText, setGalleryText] = useState("");
+
+  // SEO Fields
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+
+  // Validation
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [originalDataStr, setOriginalDataStr] = useState("");
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -112,7 +143,7 @@ const Portfolio = () => {
     onSuccess: () => {
       refreshPortfolioQueries();
       toast({ title: "Project Created", description: "New portfolio project published successfully." });
-      closeModal();
+      setIsModalOpen(false);
     },
     onError: (err: any) => {
       toast({ title: "Error creating project", description: err.message, variant: "destructive" });
@@ -124,11 +155,94 @@ const Portfolio = () => {
     onSuccess: () => {
       refreshPortfolioQueries();
       toast({ title: "Project Updated", description: "Portfolio project modified successfully." });
-      closeModal();
+      setIsModalOpen(false);
     },
     onError: (err: any) => {
       toast({ title: "Error updating project", description: err.message, variant: "destructive" });
     },
+  });
+
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: ({ item, featured }: { item: any; featured: boolean }) => updateProject(item._id, { ...item, featured }),
+    onMutate: async ({ item, featured }) => {
+      const id = item._id;
+      await queryClient.cancelQueries({ queryKey: ["admin", "portfolio"] });
+      const previousApiResponse = queryClient.getQueryData(["admin", "portfolio", {
+        page: currentPage,
+        search: debouncedSearch,
+        status: statusFilter,
+        category: categoryFilter,
+        trash: viewMode === "trash",
+        featured: featuredFilter,
+        sortBy,
+        sortOrder
+      }]);
+
+      queryClient.setQueryData(
+        ["admin", "portfolio", {
+          page: currentPage,
+          search: debouncedSearch,
+          status: statusFilter,
+          category: categoryFilter,
+          trash: viewMode === "trash",
+          featured: featuredFilter,
+          sortBy,
+          sortOrder
+        }],
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            projects: old.projects.map((p: any) =>
+              p._id === id ? { ...p, featured } : p
+            )
+          };
+        }
+      );
+
+      return { previousApiResponse };
+    },
+    onError: (err, newTodo, context: any) => {
+      if (context?.previousApiResponse) {
+        queryClient.setQueryData(
+          ["admin", "portfolio", {
+            page: currentPage,
+            search: debouncedSearch,
+            status: statusFilter,
+            category: categoryFilter,
+            trash: viewMode === "trash",
+            featured: featuredFilter,
+            sortBy,
+            sortOrder
+          }],
+          context.previousApiResponse
+        );
+      }
+      toast({ title: "Error updating featured status", description: err.message, variant: "destructive" });
+    },
+    onSuccess: () => {
+      refreshPortfolioQueries();
+      toast({ title: "Featured Status Updated", description: "Project featured status updated successfully." });
+    }
+  });
+
+  const bulkFeaturedMutation = useMutation({
+    mutationFn: async ({ ids, featured }: { ids: string[]; featured: boolean }) => {
+      const promises = ids.map(id => {
+        const item = projects.find((p: any) => p._id === id);
+        if (!item) return Promise.resolve();
+        return updateProject(id, { ...item, featured });
+      });
+      return Promise.all(promises);
+    },
+    onSuccess: () => {
+      refreshPortfolioQueries();
+      toast({ title: "Bulk Featured Updated", description: "Selected projects updated successfully." });
+      setSelectedIds([]);
+    },
+    onError: (err: any) => {
+      toast({ title: "Bulk Action Error", description: err.message, variant: "destructive" });
+    }
   });
 
   const deleteMutation = useMutation({
@@ -207,9 +321,66 @@ const Portfolio = () => {
     },
   });
 
+  // Slug Autogen
+  useEffect(() => {
+    if (!isSlugManual && title && !editingId) {
+      const generated = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+      setSlug(generated);
+    }
+  }, [title, isSlugManual, editingId]);
+
+  // Scroll lock
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showUnsavedConfirm) {
+          setShowUnsavedConfirm(false);
+        } else if (deleteConfirmId) {
+          setDeleteConfirmId(null);
+        } else if (permDeleteConfirmId) {
+          setPermDeleteConfirmId(null);
+        } else if (isModalOpen) {
+          handleCloseAttempt();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, showUnsavedConfirm, deleteConfirmId, permDeleteConfirmId]);
+
+  const getCurrentStateString = () => {
+    return JSON.stringify({
+      title, slug, description, longDescription, thumbnail, category, client, role, industry, status, displayOrder, featured,
+      liveUrl, githubUrl, technologiesText, tagsText, serviceSlugsText, challengesText, keyFeaturesText, galleryText, seoTitle, seoDescription
+    });
+  };
+
+  const isFormDirty = () => {
+    if (!isModalOpen) return false;
+    return getCurrentStateString() !== originalDataStr;
+  };
+
   const handleOpenCreate = () => {
     setEditingId(null);
     setTitle("");
+    setSlug("");
+    setIsSlugManual(false);
     setDescription("");
     setLongDescription("");
     setThumbnail("https://placehold.co/600x400/png");
@@ -220,13 +391,32 @@ const Portfolio = () => {
     setStatus("Completed");
     setDisplayOrder("0");
     setFeatured(false);
-    setTechnologiesText("");
+    setLiveUrl("#");
+    setGithubUrl("#");
+    setTechnologiesText("React, Node.js");
+    setTagsText("Enterprise, Web App");
+    setServiceSlugsText("custom-web-development");
+    setChallengesText("High cloud costs\nInconsistent server scaling");
+    setKeyFeaturesText("Auto-scaling node clusters\nLive analytics telemetry");
+    setGalleryText("");
+    setSeoTitle("");
+    setSeoDescription("");
+    
+    setValidationErrors({});
+    setActiveTab("general");
+
+    setTimeout(() => {
+      setOriginalDataStr(getCurrentStateString());
+    }, 50);
+
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (item: any) => {
     setEditingId(item._id);
     setTitle(item.title || "");
+    setSlug(item.slug || "");
+    setIsSlugManual(true);
     setDescription(item.description || "");
     setLongDescription(item.longDescription || "");
     setThumbnail(item.thumbnail || "https://placehold.co/600x400/png");
@@ -237,20 +427,57 @@ const Portfolio = () => {
     setStatus(item.status || "Completed");
     setDisplayOrder(String(item.displayOrder || 0));
     setFeatured(item.featured || false);
+    
+    setLiveUrl(item.liveUrl || "#");
+    setGithubUrl(item.githubUrl || "#");
     setTechnologiesText((item.technologies || []).join(", "));
+    setTagsText((item.tags || []).join(", "));
+    setServiceSlugsText((item.serviceSlugs || []).join(", "));
+    setChallengesText((item.challenges || []).join("\n"));
+    setKeyFeaturesText((item.keyFeatures || []).join("\n"));
+    setGalleryText((item.gallery || []).join("\n"));
+    setSeoTitle(item.seoTitle || "");
+    setSeoDescription(item.seoDescription || "");
+
+    setValidationErrors({});
+    setActiveTab("general");
+
+    setTimeout(() => {
+      setOriginalDataStr(getCurrentStateString());
+    }, 50);
+
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingId(null);
+  const handleCloseAttempt = () => {
+    if (isFormDirty()) {
+      setShowUnsavedConfirm(true);
+    } else {
+      setIsModalOpen(false);
+    }
+  };
+
+  const runFormValidation = (): boolean => {
+    const errors: Record<string, string> = {};
+    if (!title.trim()) errors.title = "Title is required.";
+    if (!slug.trim()) errors.slug = "Slug path is required.";
+    if (!description.trim()) errors.description = "Short description is required.";
+    if (!thumbnail.trim()) errors.thumbnail = "Thumbnail URL is required.";
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    if (!runFormValidation()) {
+      toast({ title: "Validation Error", description: "Please complete required fields on all tabs.", variant: "destructive" });
+      return;
+    }
+
     const currentDateStr = new Date().toISOString().split("T")[0];
     const payload = {
       title,
+      slug,
       description,
       longDescription: longDescription || description,
       thumbnail,
@@ -263,7 +490,16 @@ const Portfolio = () => {
       updatedDate: currentDateStr,
       displayOrder: Number(displayOrder) || 0,
       featured,
-      technologies: technologiesText.split(",").map((s) => s.trim()).filter(Boolean),
+      liveUrl,
+      githubUrl,
+      technologies: technologiesText.split(",").map(t => t.trim()).filter(Boolean),
+      tags: tagsText.split(",").map(t => t.trim()).filter(Boolean),
+      serviceSlugs: serviceSlugsText.split(",").map(s => s.trim()).filter(Boolean),
+      challenges: challengesText.split("\n").map(c => c.trim()).filter(Boolean),
+      keyFeatures: keyFeaturesText.split("\n").map(k => k.trim()).filter(Boolean),
+      gallery: galleryText.split("\n").map(g => g.trim()).filter(Boolean),
+      seoTitle,
+      seoDescription
     };
 
     if (editingId) {
@@ -303,8 +539,8 @@ const Portfolio = () => {
   return (
     <div className="space-y-6 pb-12">
       <PageHeader
-        title={viewMode === "trash" ? "CMS Trash Bin" : "Portfolio CMS"}
-        description={viewMode === "trash" ? "Restore or permanently delete removed portfolio projects." : "Manage case studies and showcase projects for marketing presentation."}
+        title={viewMode === "trash" ? "CMS Trash Bin" : "Portfolio Projects CMS"}
+        description={viewMode === "trash" ? "Restore or permanently delete removed portfolio projects." : "Manage case studies and platform project highlights."}
         actionLabel={viewMode === "trash" ? undefined : "Add Project"}
         onAction={viewMode === "trash" ? undefined : handleOpenCreate}
       />
@@ -314,7 +550,7 @@ const Portfolio = () => {
           <div className="flex-1 max-w-md relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <Input
-              placeholder="Search by Title, Category, Client, Technology..."
+              placeholder="Search by Title, Category, Technologies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="h-10 pl-10 rounded-xl"
@@ -327,7 +563,7 @@ const Portfolio = () => {
                 onClick={() => { setViewMode("active"); setSelectedIds([]); }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider ${viewMode === "active" ? "bg-white text-slate-800 shadow-sm" : "text-slate-400"}`}
               >
-                All Listings
+                All Projects
               </button>
               <button
                 onClick={() => { setViewMode("trash"); setSelectedIds([]); }}
@@ -345,8 +581,8 @@ const Portfolio = () => {
               >
                 <option value="displayOrder">Sort: Order</option>
                 <option value="title">Sort: Title</option>
+                <option value="date">Sort: Date</option>
                 <option value="createdAt">Sort: Created Date</option>
-                <option value="updatedAt">Sort: Updated Date</option>
                 <option value="status">Sort: Status</option>
               </select>
               <button
@@ -443,7 +679,25 @@ const Portfolio = () => {
                       Apply Status
                     </Button>
                   </div>
-                  <Button onClick={() => bulkDeleteMutation.mutate(selectedIds)} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-650 hover:bg-red-500">
+                  <Button 
+                    onClick={() => bulkFeaturedMutation.mutate({ ids: selectedIds, featured: true })} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 text-xs font-bold border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100"
+                    disabled={bulkFeaturedMutation.isPending}
+                  >
+                    Mark Featured
+                  </Button>
+                  <Button 
+                    onClick={() => bulkFeaturedMutation.mutate({ ids: selectedIds, featured: false })} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 text-xs font-bold border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
+                    disabled={bulkFeaturedMutation.isPending}
+                  >
+                    Remove Featured
+                  </Button>
+                  <Button onClick={() => bulkDeleteMutation.mutate(selectedIds)} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500">
                     Bulk Soft Delete
                   </Button>
                 </>
@@ -460,7 +714,7 @@ const Portfolio = () => {
                     }}
                     variant="destructive"
                     size="sm"
-                    className="h-8 text-xs font-bold bg-red-650 hover:bg-red-500"
+                    className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500"
                   >
                     Bulk Permanent Delete
                   </Button>
@@ -483,7 +737,7 @@ const Portfolio = () => {
       ) : isError ? (
         <div className="flex flex-col items-center justify-center py-16 bg-red-50/50 border border-red-100 rounded-2xl p-6 text-center max-w-lg mx-auto">
           <AlertCircle className="w-8 h-8 text-red-600 mb-4" />
-          <h3 className="text-lg font-bold text-red-900 mb-1">Failed to load portfolio projects</h3>
+          <h3 className="text-lg font-bold text-red-900 mb-1">Failed to load projects</h3>
           <p className="text-red-700 text-sm mb-6">{(error as Error)?.message}</p>
         </div>
       ) : projects.length > 0 ? (
@@ -500,26 +754,48 @@ const Portfolio = () => {
 
                 <div className="pr-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                      <Package className="w-5 h-5" />
+                    <div className="w-16 h-10 bg-slate-100 rounded-lg overflow-hidden border border-slate-200/50 flex items-center justify-center">
+                      {item.thumbnail ? (
+                        <img src={IMAGE_MAP[item.thumbnail] || item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <Package className="w-5 h-5 text-slate-400" />
+                      )}
                     </div>
                     <span className={`px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider ${statusBadgeClass(item.status)}`}>
                       {item.status}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{item.title}</h3>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mt-1">{item.category}</span>
-                  <p className="text-slate-500 text-sm mt-3 line-clamp-3">{item.description}</p>
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {item.featured && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
-                        <Star className="w-3 h-3" /> Featured
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors leading-snug">{item.title}</h3>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mt-1">{item.category}</span>
+                  <p className="text-slate-500 text-xs mt-3 line-clamp-3 leading-relaxed">{item.description}</p>
+                  
+                  {/* Toggle & Badges */}
+                  <div className="flex items-center justify-between mt-3 gap-2 flex-wrap pt-2 border-t border-slate-50">
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.featured && (
+                        <span className="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded text-[9px] font-bold uppercase tracking-wider">
+                          Featured
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-50 text-slate-500 border border-slate-100">
+                        Order: {item.displayOrder ?? 0}
                       </span>
+                    </div>
+
+                    {viewMode === "active" && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Featured</span>
+                        <Switch 
+                          checked={item.featured || false} 
+                          disabled={toggleFeaturedMutation.isPending}
+                          onCheckedChange={(checked) => {
+                            toggleFeaturedMutation.mutate({ item, featured: checked });
+                          }}
+                        />
+                      </div>
                     )}
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-50 text-slate-500 border border-slate-100">
-                      Order: {item.displayOrder ?? 0}
-                    </span>
                   </div>
+                  
                   {viewMode === "trash" && (
                     <p className="text-[10px] text-red-500 font-bold mt-2 uppercase tracking-wider">
                       Deleted {item.deletedAt ? new Date(item.deletedAt).toLocaleDateString() : ""}
@@ -591,7 +867,7 @@ const Portfolio = () => {
         </>
       ) : (
         <EmptyState
-          title={viewMode === "trash" ? "Trash is empty" : "No portfolio projects found"}
+          title={viewMode === "trash" ? "Trash is empty" : "No project entries found"}
           description="Click Add Project or modify your search filters to get started."
           actionLabel={viewMode === "trash" ? undefined : "Create Project"}
           onAction={viewMode === "trash" ? undefined : handleOpenCreate}
@@ -601,7 +877,7 @@ const Portfolio = () => {
       {deleteConfirmId && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Delete portfolio project?</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Delete Project?</h3>
             <p className="text-slate-500 text-sm leading-relaxed mb-6">
               Are you sure you want to delete <strong className="text-slate-800">"{deleteConfirmTitle}"</strong>? It will be moved to the Trash Bin where you can restore it anytime.
             </p>
@@ -610,7 +886,7 @@ const Portfolio = () => {
               <Button
                 onClick={() => deleteMutation.mutate(deleteConfirmId)}
                 disabled={deleteMutation.isPending}
-                className="bg-red-650 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
+                className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
               >
                 {deleteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                 Move to Trash
@@ -635,7 +911,7 @@ const Portfolio = () => {
               <Button
                 onClick={() => permDeleteMutation.mutate(permDeleteConfirmId)}
                 disabled={permDeleteMutation.isPending}
-                className="bg-red-650 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
+                className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
               >
                 {permDeleteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                 Permanently Delete
@@ -645,100 +921,370 @@ const Portfolio = () => {
         </div>
       )}
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[2rem] border border-slate-200 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar p-8">
-            <div className="flex items-center justify-between pb-6 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900">{editingId ? "Modify Portfolio Project" : "Add Portfolio Project"}</h2>
-              <button onClick={closeModal} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all"><X className="w-5 h-5" /></button>
+      {isModalOpen && createPortal(
+        <>
+          <div 
+            onClick={handleCloseAttempt}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 md:p-6 cursor-pointer"
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-[24px] border border-slate-200 shadow-2xl w-full max-w-[1400px] w-[min(95vw,1400px)] h-[90vh] max-h-[90vh] flex flex-col overflow-hidden text-slate-900 cursor-default"
+            >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-200/60 bg-white shrink-0">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">{editingId ? "Modify Portfolio Project" : "Add Portfolio Project"}</h2>
+                <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider mt-0.5">Enterprise Content Management</p>
+              </div>
+              <button type="button" onClick={handleCloseAttempt} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all"><X className="w-5 h-5" /></button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5 pt-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Project Title</label>
-                  <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Cloud Sync Platform" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Category</label>
-                  <Input required value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Web App" list="portfolio-categories" />
-                  <datalist id="portfolio-categories">
-                    {PORTFOLIO_CATEGORIES.map((cat) => <option key={cat} value={cat} />)}
-                  </datalist>
-                </div>
-              </div>
+            {/* Sticky Tabs Navigation */}
+            <div className="flex bg-white px-8 border-b border-slate-200/60 overflow-x-auto gap-2 py-2.5 shrink-0 scrollbar-none">
+              {([
+                { name: "general", label: "General", icon: Settings },
+                { name: "content", label: "Content", icon: BookOpen },
+                { name: "media", label: "Media Assets", icon: ImageIcon },
+                { name: "caseStudy", label: "Case Study Details", icon: Sparkles },
+                { name: "tech", label: "Tech Stack & Tags", icon: Tag },
+                { name: "seo", label: "SEO Config", icon: Globe },
+                { name: "preview", label: "Preview", icon: ShieldCheck }
+              ] as { name: TabName, label: string, icon: any }[]).map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.name;
+                const hasError = activeTab !== tab.name && (
+                  (tab.name === "general" && (validationErrors.title || validationErrors.slug)) ||
+                  (tab.name === "content" && validationErrors.description) ||
+                  (tab.name === "media" && validationErrors.thumbnail)
+                );
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Client Name</label>
-                  <Input required value={client} onChange={(e) => setClient(e.target.value)} placeholder="e.g. Internal, Acme Corp" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Team Role</label>
-                  <Input required value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g. Lead Architect" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Industry</label>
-                  <Input required value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. HealthCare" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Display Order</label>
-                  <Input type="number" value={displayOrder} onChange={(e) => setDisplayOrder(e.target.value)} />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Status</label>
-                  <select className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm font-semibold focus-visible:outline-none bg-white" value={status} onChange={(e: any) => setStatus(e.target.value)}>
-                    <option value="Completed">Completed</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Coming Soon">Coming Soon</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Featured</label>
+                return (
                   <button
+                    key={tab.name}
                     type="button"
-                    onClick={() => setFeatured(!featured)}
-                    className={`w-full h-10 px-3 rounded-lg border text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${featured ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-white border-slate-200 text-slate-500"}`}
+                    onClick={() => setActiveTab(tab.name)}
+                    className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-2 shrink-0 border relative ${
+                      isActive 
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
+                        : "text-slate-400 hover:bg-slate-50 hover:text-slate-600 border-transparent"
+                    }`}
                   >
-                    <Star className={`w-4 h-4 ${featured ? "fill-amber-400 text-amber-500" : ""}`} />
-                    {featured ? "Featured" : "Not Featured"}
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                    {hasError && (
+                      <span className="w-2 h-2 rounded-full bg-red-500 absolute top-1 right-1" />
+                    )}
                   </button>
-                </div>
-              </div>
+                );
+              })}
+            </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Thumbnail Image URL</label>
-                <Input required value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} />
-              </div>
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto bg-slate-50/40 p-8 custom-scrollbar">
+              <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/60 p-6 md:p-8 shadow-sm">
+                
+                {/* Tab 1: General */}
+                {activeTab === "general" && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Project Title *</label>
+                        <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. AI-driven Fleet Analytics" className="h-10 rounded-lg border-slate-200" />
+                        {validationErrors.title && <p className="text-[10px] font-semibold text-red-500">{validationErrors.title}</p>}
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Category *</label>
+                        <select
+                          required
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm font-semibold focus-visible:outline-none bg-white"
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                        >
+                          {PORTFOLIO_CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Short Description</label>
-                <Input required value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief summary of the case study" />
-              </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Slug Path *</label>
+                          <button
+                            type="button"
+                            onClick={() => setIsSlugManual(!isSlugManual)}
+                            className="text-[9px] font-bold uppercase tracking-widest text-emerald-600 hover:underline"
+                          >
+                            {isSlugManual ? "Auto Sync" : "Manual Override"}
+                          </button>
+                        </div>
+                        <Input 
+                          required 
+                          value={slug} 
+                          disabled={!isSlugManual} 
+                          onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))} 
+                          placeholder="auto-generated-slug-path" 
+                          className="h-10 rounded-lg border-slate-200 font-mono text-xs bg-slate-50/50" 
+                        />
+                        {validationErrors.slug && <p className="text-[10px] font-semibold text-red-500">{validationErrors.slug}</p>}
+                      </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Long Description</label>
-                <textarea required className="w-full min-h-[120px] p-3 rounded-lg border border-slate-200 text-sm focus-visible:outline-none" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder="Detailed case study explanation..." />
-              </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Display Order</label>
+                        <Input type="number" value={displayOrder} onChange={(e) => setDisplayOrder(e.target.value)} className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                    </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Technologies (Comma-separated)</label>
-                <Input value={technologiesText} onChange={(e) => setTechnologiesText(e.target.value)} placeholder="e.g. Next.js, Node.js, GraphQL" />
-              </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Client / Org</label>
+                        <Input value={client} onChange={(e) => setClient(e.target.value)} placeholder="e.g. DHL Express" className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Project Role</label>
+                        <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g. Lead ML Engineer" className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Target Industry</label>
+                        <Input value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Transport & Logistics" className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                    </div>
 
-              <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={closeModal} className="rounded-xl font-bold h-11 border-slate-200">Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold h-11 px-6 shadow-sm gap-2">
-                  {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Live URL</label>
+                        <Input value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)} placeholder="https://..." className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">GitHub Repository Link</label>
+                        <Input value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="https://github.com/..." className="h-10 rounded-lg border-slate-200" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/50 rounded-xl">
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Project Lifecycle Status</h4>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">Status tag on public listings.</p>
+                        </div>
+                        <select
+                          className="h-9 px-3 rounded-lg border border-slate-200 text-xs font-bold bg-white focus:outline-none"
+                          value={status}
+                          onChange={(e: any) => setStatus(e.target.value)}
+                        >
+                          <option value="Completed">Completed</option>
+                          <option value="In Progress">In Progress</option>
+                          <option value="Coming Soon">Coming Soon</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/50 rounded-xl">
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Highlight on homepage</h4>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">Pin project to homepage highlights.</p>
+                        </div>
+                        <Switch checked={featured} onCheckedChange={setFeatured} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 2: Content */}
+                {activeTab === "content" && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Short Summary Description *</label>
+                      <Input required value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief one-sentence pitch summary..." className="h-10 rounded-lg border-slate-200" />
+                      {validationErrors.description && <p className="text-[10px] font-semibold text-red-500">{validationErrors.description}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Case Study Narrative</label>
+                      <textarea
+                        className="w-full min-h-[220px] p-4 rounded-xl border border-slate-200 text-sm focus:outline-none bg-white font-sans leading-relaxed"
+                        value={longDescription}
+                        onChange={(e) => setLongDescription(e.target.value)}
+                        placeholder="Provide details about the client's request, core technical architecture, implementation phases, and metrics achieved..."
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 3: Media */}
+                {activeTab === "media" && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Cover Thumbnail URL *</label>
+                      <Input required value={thumbnail} onChange={(e) => setThumbnail(e.target.value)} placeholder="https://..." className="h-10 rounded-lg border-slate-200 font-mono text-xs" />
+                      {validationErrors.thumbnail && <p className="text-[10px] font-semibold text-red-500">{validationErrors.thumbnail}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Gallery Media Links (One URL per line)</label>
+                      <textarea
+                        className="w-full min-h-[140px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white font-mono text-xs"
+                        value={galleryText}
+                        onChange={(e) => setGalleryText(e.target.value)}
+                        placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2..."
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 4: Case Study Details */}
+                {activeTab === "caseStudy" && (
+                  <div className="space-y-6">
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/50 space-y-2">
+                      <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider">Client Challenges Encountered (One per line)</label>
+                      <textarea
+                        className="w-full min-h-[120px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white"
+                        value={challengesText}
+                        onChange={(e) => setChallengesText(e.target.value)}
+                        placeholder="e.g. Complex legacy APIs&#10;High processing latency"
+                      />
+                    </div>
+
+                    <div className="p-4 bg-emerald-50/20 rounded-xl border border-emerald-100/50 space-y-2">
+                      <label className="text-[11px] font-extrabold uppercase text-emerald-800 tracking-wider">Delivered Key System Features (One per line)</label>
+                      <textarea
+                        className="w-full min-h-[120px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white"
+                        value={keyFeaturesText}
+                        onChange={(e) => setKeyFeaturesText(e.target.value)}
+                        placeholder="e.g. Distributed caching tier&#10;Custom real-time visual telemetry boards"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 5: Tech Stack & Tags */}
+                {activeTab === "tech" && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Core Technologies (Comma-separated)</label>
+                      <Input value={technologiesText} onChange={(e) => setTechnologiesText(e.target.value)} placeholder="e.g. Python, PyTorch, Kubernetes" className="h-10 rounded-lg border-slate-200" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Tags / Labels (Comma-separated)</label>
+                      <Input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="e.g. Deep Learning, Enterprise, FinTech" className="h-10 rounded-lg border-slate-200" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Connected Services Slugs (Comma-separated)</label>
+                      <Input value={serviceSlugsText} onChange={(e) => setServiceSlugsText(e.target.value)} placeholder="e.g. cloud-engineering, machine-learning" className="h-10 rounded-lg border-slate-200" />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 6: SEO */}
+                {activeTab === "seo" && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Meta Title TagOverride</label>
+                      <Input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} placeholder="Defaults to Project Title if left blank" className="h-10 rounded-lg border-slate-200" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Meta Description</label>
+                      <textarea
+                        className="w-full min-h-[100px] p-3 rounded-lg border border-slate-200 text-sm focus:outline-none bg-white leading-relaxed"
+                        value={seoDescription}
+                        onChange={(e) => setSeoDescription(e.target.value)}
+                        placeholder="Brief summary description optimized for search engine snippets..."
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab 7: Preview */}
+                {activeTab === "preview" && (
+                  <div className="flex flex-col items-center justify-center py-6 space-y-4">
+                    <div className="text-[10px] font-extrabold uppercase text-emerald-650 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" /> Project Listing Preview
+                    </div>
+
+                    <div className="w-full max-w-sm bg-white rounded-2xl border border-slate-200/80 shadow-2xl overflow-hidden group">
+                      <div className="relative h-44 bg-slate-100 overflow-hidden border-b border-slate-100">
+                        {thumbnail ? (
+                          <img src={IMAGE_MAP[thumbnail] || thumbnail} alt={title} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400"><Package className="w-8 h-8" /></div>
+                        )}
+                        <span className="absolute top-3 left-3 bg-emerald-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wide">{status}</span>
+                      </div>
+                      
+                      <div className="p-5 space-y-3">
+                        <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">{category}</span>
+                        <h4 className="font-bold text-slate-900 text-base leading-tight mt-1">{title || "Untitled Project"}</h4>
+                        <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{description || "Short description snippet will show here."}</p>
+                        
+                        {technologiesText && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {technologiesText.split(",").slice(0, 3).map((t, i) => (
+                              <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-semibold">{t.trim()}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+
+            {/* Modal Sticky Footer */}
+            <div className="px-8 py-4.5 bg-white border-t border-slate-200/60 flex justify-between items-center shrink-0">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {isFormDirty() ? (
+                  <span className="text-amber-600 flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" /> You have unsaved changes
+                  </span>
+                ) : (
+                  <span className="text-slate-400 flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-emerald-600" /> Saved to workspace
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" onClick={handleCloseAttempt} className="rounded-xl font-bold h-10 border-slate-200 bg-white">Cancel</Button>
+                <Button 
+                  type="button" 
+                  onClick={handleSubmit} 
+                  disabled={createMutation.isPending || updateMutation.isPending} 
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold h-10 px-5 shadow-md flex items-center gap-1.5"
+                >
+                  {(createMutation.isPending || updateMutation.isPending) ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
                   {editingId ? "Save Changes" : "Create Project"}
                 </Button>
               </div>
-            </form>
+            </div>
+
           </motion.div>
-        </div>
+          </div>
+
+          {showUnsavedConfirm && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Unsaved changes</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                  You have made modifications to this project. Leaving will discard all unsaved edits. Are you sure you want to exit?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setShowUnsavedConfirm(false)} className="h-10 rounded-xl">Keep Editing</Button>
+                  <Button onClick={() => { setShowUnsavedConfirm(false); setIsModalOpen(false); }} className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5">
+                    Discard & Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>,
+        document.body
       )}
     </div>
   );

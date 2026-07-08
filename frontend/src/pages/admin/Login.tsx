@@ -38,6 +38,7 @@ const itemVariants = {
 
 const Login = () => {
   const navigate = useNavigate();
+  console.log("VITE_API_BASE_URL resolved to:", import.meta.env.VITE_API_BASE_URL || "http://localhost:5000");
   const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -52,8 +53,9 @@ const Login = () => {
       const result = await loginAdmin({ email, password });
       return result;
     },
-    onSuccess: async () => {
+    onSuccess: async (result) => {
       setIsSuccess(true);
+      queryClient.setQueryData(["auth", "me"], result.admin);
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       setTimeout(() => {
         navigate("/admin/dashboard", { replace: true });
@@ -105,7 +107,7 @@ const Login = () => {
             backgroundSize: "48px 48px",
           }}
         />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.18] mix-blend-soft-light" />
+
       </div>
 
       <div className="relative z-10 flex min-h-screen min-h-[100dvh] flex-col lg:flex-row">

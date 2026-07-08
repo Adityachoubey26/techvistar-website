@@ -97,7 +97,7 @@ export const AdminLoginWorkspace = () => {
         ry="80"
         fill="#fef08a"
         fillOpacity="0.15"
-        animate={{ opacity: [0.1, 0.22, 0.12], rx: [110, 125, 115] }}
+        animate={{ opacity: [0.1, 0.22, 0.12], scaleX: [0.916, 1.041, 0.958] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
 

@@ -53,7 +53,7 @@ export const AdminLoginVisual = () => {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.12] mix-blend-soft-light" />
+
 
       <motion.div className="absolute inset-0" style={{ x: parallaxX, y: parallaxY }}>
         <Suspense fallback={<WorkspaceFallback />}>

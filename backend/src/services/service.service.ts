@@ -227,7 +227,7 @@ export class ServiceService {
       query.category = { $regex: new RegExp('^' + category + '$', 'i') };
     }
     return Service.find(query)
-      .select('title slug shortDescription fullDescription icon coverImage features technologies benefits offerings displayOrder seoTitle seoDescription category')
+      .select('title slug shortDescription fullDescription icon coverImage features technologies benefits offerings displayOrder seoTitle seoDescription category featured')
       .sort({ displayOrder: 1, createdAt: 1 });
   }
 

@@ -119,6 +119,10 @@ export const Work = () => {
     setSortBy
   } = filterHook;
 
+  console.log("raw API response:", apiProjects);
+  console.log("projects.length:", projectsData.length);
+  console.log("filteredProjects.length:", filteredProjects?.length);
+
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   if (isLoading) {
@@ -145,7 +149,8 @@ export const Work = () => {
     setMousePosition({ x: 0, y: 0 });
   };
 
-  const featuredProjects = filteredProjects.slice(0, 4);
+  const featuredProjects = projectsData.filter((p) => p.featured === true);
+  const normalProjects = filteredProjects.filter((p) => p.featured !== true);
 
   const processSteps = [
     { title: 'Discovery', desc: 'Understanding your product requirements, constraints, and business metrics.' },
@@ -289,9 +294,9 @@ export const Work = () => {
 
         {/* SECTION 4 — PROJECT GRID */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
-          {filteredProjects.length > 0 ? (
+          {normalProjects.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => (
+              {normalProjects.map((project) => (
                 <motion.div
                   key={project.id}
                   whileHover={{ y: -6 }}

@@ -450,6 +450,24 @@ const Industries = () => {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showUnsavedConfirm) {
+          setShowUnsavedConfirm(false);
+        } else if (deleteConfirmId) {
+          setDeleteConfirmId(null);
+        } else if (permDeleteConfirmId) {
+          setPermDeleteConfirmId(null);
+        } else if (isModalOpen) {
+          handleCloseAttempt();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, showUnsavedConfirm, deleteConfirmId, permDeleteConfirmId]);
+
   const handleCloseAttempt = () => {
     if (isFormDirty()) {
       setShowUnsavedConfirm(true);
@@ -963,7 +981,7 @@ const Industries = () => {
                         onClick={() => setPermDeleteConfirmId(item._id)} 
                         variant="destructive" 
                         size="sm" 
-                        className="h-8.5 rounded-lg text-xs font-bold gap-1 bg-red-650 hover:bg-red-500"
+                        className="h-8.5 rounded-lg text-xs font-bold gap-1 bg-red-600 hover:bg-red-500"
                       >
                         Purge
                       </Button>
@@ -1072,40 +1090,19 @@ const Industries = () => {
         </div>
       )}
 
-      {/* Unsaved Changes Confirmation */}
-      {showUnsavedConfirm && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Unsaved changes</h3>
-            <p className="text-slate-500 text-sm leading-relaxed mb-6">
-              You have made modifications to this industry. Leaving will discard all unsaved edits. Are you sure you want to exit?
-            </p>
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowUnsavedConfirm(false)} className="h-10 rounded-xl">
-                Keep Editing
-              </Button>
-              <Button 
-                onClick={() => {
-                  setShowUnsavedConfirm(false);
-                  setIsModalOpen(false);
-                }} 
-                className="bg-red-650 hover:bg-red-500 text-white h-10 rounded-xl px-5"
-              >
-                Discard & Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Portal Mounted Admin Modal */}
       {isModalOpen && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 md:p-6 select-none">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            className="bg-white rounded-[24px] border border-slate-200 shadow-2xl w-full max-w-[1400px] w-[min(95vw,1400px)] h-[90vh] max-h-[90vh] flex flex-col overflow-hidden text-slate-900"
+        <>
+          <div 
+            onClick={handleCloseAttempt}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 md:p-6 cursor-pointer"
           >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-[24px] border border-slate-200 shadow-2xl w-full max-w-[1400px] w-[min(95vw,1400px)] h-[90vh] max-h-[90vh] flex flex-col overflow-hidden text-slate-900 cursor-default"
+            >
             
             {/* Modal Header */}
             <div className="flex items-center justify-between px-8 py-5 border-b border-slate-200/60 bg-white shrink-0">
@@ -1779,7 +1776,25 @@ const Industries = () => {
             </div>
 
           </motion.div>
-        </div>,
+          </div>
+
+          {showUnsavedConfirm && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Unsaved changes</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                  You have made modifications to this industry. Leaving will discard all unsaved edits. Are you sure you want to exit?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setShowUnsavedConfirm(false)} className="h-10 rounded-xl">Keep Editing</Button>
+                  <Button onClick={() => { setShowUnsavedConfirm(false); setIsModalOpen(false); }} className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5">
+                    Discard & Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>,
         document.body
       )}
     </div>

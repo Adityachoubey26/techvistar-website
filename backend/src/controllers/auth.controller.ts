@@ -22,8 +22,8 @@ class AuthController {
 
       res.cookie(ACCESS_TOKEN_COOKIE_NAME, result.accessToken, {
         httpOnly: true,
-        secure: env.isProd,
-        sameSite: env.isProd ? 'none' : 'lax',
+        secure: true, // Set to true to allow SameSite=None on localhost
+        sameSite: 'none', // Allow cross-port cookies in development
         maxAge: parseExpiryToMs(env.accessTokenExpiry),
         path: '/',
       });
@@ -100,8 +100,8 @@ class AuthController {
 
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
         httpOnly: true,
-        secure: env.isProd,
-        sameSite: env.isProd ? 'none' : 'lax',
+        secure: true,
+        sameSite: 'none',
         path: '/',
       });
 

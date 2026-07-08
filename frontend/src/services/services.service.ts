@@ -22,7 +22,7 @@ interface QueryParams {
  */
 export async function getActiveServices(category?: string): Promise<any[]> {
   const url = new URL(`${API_BASE_URL}/api/services`);
-  if (category && category !== 'All') {
+  if (typeof category === 'string' && category && category !== 'All') {
     url.searchParams.append('category', category);
   }
 

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { motion, AnimatePresence } from "framer-motion";
 import { decorateService, IMAGE_MAP } from "@/data/services";
 
@@ -292,6 +293,89 @@ const Services = () => {
     }
   });
 
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: ({ item, featured }: { item: any; featured: boolean }) => updateService(item._id, { ...item, featured }),
+    onMutate: async ({ item, featured }) => {
+      const id = item._id;
+      await queryClient.cancelQueries({ queryKey: ["admin", "services"] });
+      const previousApiResponse = queryClient.getQueryData(["admin", "services", { 
+        page: currentPage, 
+        search: debouncedSearch, 
+        status: statusFilter, 
+        category: categoryFilter,
+        trash: viewMode === "trash",
+        featured: featuredFilter,
+        sortBy,
+        sortOrder
+      }]);
+
+      queryClient.setQueryData(
+        ["admin", "services", { 
+          page: currentPage, 
+          search: debouncedSearch, 
+          status: statusFilter, 
+          category: categoryFilter,
+          trash: viewMode === "trash",
+          featured: featuredFilter,
+          sortBy,
+          sortOrder
+        }],
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            services: old.services.map((s: any) => 
+              s._id === id ? { ...s, featured } : s
+            )
+          };
+        }
+      );
+
+      return { previousApiResponse };
+    },
+    onError: (err, newTodo, context: any) => {
+      if (context?.previousApiResponse) {
+        queryClient.setQueryData(
+          ["admin", "services", { 
+            page: currentPage, 
+            search: debouncedSearch, 
+            status: statusFilter, 
+            category: categoryFilter,
+            trash: viewMode === "trash",
+            featured: featuredFilter,
+            sortBy,
+            sortOrder
+          }],
+          context.previousApiResponse
+        );
+      }
+      toast({ title: "Error updating featured status", description: err.message, variant: "destructive" });
+    },
+    onSuccess: () => {
+      refreshServicesQueries();
+      toast({ title: "Featured Status Updated", description: "Service featured status updated successfully." });
+    }
+  });
+
+  const bulkFeaturedMutation = useMutation({
+    mutationFn: async ({ ids, featured }: { ids: string[]; featured: boolean }) => {
+      const promises = ids.map(id => {
+        const item = services.find((s: any) => s._id === id);
+        if (!item) return Promise.resolve();
+        return updateService(id, { ...item, featured });
+      });
+      return Promise.all(promises);
+    },
+    onSuccess: () => {
+      refreshServicesQueries();
+      toast({ title: "Bulk Featured Updated", description: "Selected services updated successfully." });
+      setSelectedIds([]);
+    },
+    onError: (err: any) => {
+      toast({ title: "Bulk Action Error", description: err.message, variant: "destructive" });
+    }
+  });
+
   // Slug Auto-generation logic (locked/unlocked environment behavior)
   useEffect(() => {
     if (!isSlugManual && title && !editingId) {
@@ -429,6 +513,24 @@ const Services = () => {
       document.body.style.overflow = "";
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (showUnsavedConfirm) {
+          setShowUnsavedConfirm(false);
+        } else if (deleteConfirmId) {
+          setDeleteConfirmId(null);
+        } else if (permDeleteConfirmId) {
+          setPermDeleteConfirmId(null);
+        } else if (isModalOpen) {
+          handleCloseAttempt();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, showUnsavedConfirm, deleteConfirmId, permDeleteConfirmId]);
 
   const handleCloseAttempt = () => {
     if (isFormDirty()) {
@@ -812,7 +914,25 @@ const Services = () => {
                       Apply Status
                     </Button>
                   </div>
-                  <Button onClick={handleBulkDelete} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-650 hover:bg-red-500">
+                  <Button 
+                    onClick={() => bulkFeaturedMutation.mutate({ ids: selectedIds, featured: true })} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 text-xs font-bold border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100"
+                    disabled={bulkFeaturedMutation.isPending}
+                  >
+                    Mark Featured
+                  </Button>
+                  <Button 
+                    onClick={() => bulkFeaturedMutation.mutate({ ids: selectedIds, featured: false })} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8 text-xs font-bold border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
+                    disabled={bulkFeaturedMutation.isPending}
+                  >
+                    Remove Featured
+                  </Button>
+                  <Button onClick={handleBulkDelete} variant="destructive" size="sm" className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500">
                     Bulk Soft Delete
                   </Button>
                 </>
@@ -829,7 +949,7 @@ const Services = () => {
                     }} 
                     variant="destructive" 
                     size="sm" 
-                    className="h-8 text-xs font-bold bg-red-650 hover:bg-red-500"
+                    className="h-8 text-xs font-bold bg-red-600 hover:bg-red-500"
                   >
                     Bulk Permanent Delete
                   </Button>
@@ -884,18 +1004,33 @@ const Services = () => {
                   </div>
                   <p className="text-slate-500 text-xs line-clamp-3 leading-relaxed mt-2">{item.shortDescription}</p>
                   
-                  {/* Meta Chips */}
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {item.featured && (
-                      <span className="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded text-[9px] font-bold uppercase tracking-wider">
-                        Featured
+                  {/* Meta Chips & Toggle */}
+                  <div className="flex items-center justify-between mt-3 gap-2 flex-wrap">
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.featured && (
+                        <span className="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded text-[9px] font-bold uppercase tracking-wider">
+                          Featured
+                        </span>
+                      )}
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider border ${
+                        item.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
+                      }`}>
+                        {item.status}
                       </span>
+                    </div>
+
+                    {viewMode === "active" && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Featured</span>
+                        <Switch 
+                          checked={item.featured || false} 
+                          disabled={toggleFeaturedMutation.isPending}
+                          onCheckedChange={(checked) => {
+                            toggleFeaturedMutation.mutate({ item, featured: checked });
+                          }}
+                        />
+                      </div>
                     )}
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider border ${
-                      item.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
-                    }`}>
-                      {item.status}
-                    </span>
                   </div>
 
                   {/* Soft Delete Audit info for Trash view */}
@@ -935,7 +1070,7 @@ const Services = () => {
                         onClick={() => setPermDeleteConfirmId(item._id)} 
                         variant="destructive" 
                         size="sm" 
-                        className="h-8.5 rounded-lg text-xs font-bold gap-1 bg-red-650 hover:bg-red-500"
+                        className="h-8.5 rounded-lg text-xs font-bold gap-1 bg-red-600 hover:bg-red-500"
                       >
                         Purge
                       </Button>
@@ -1007,7 +1142,7 @@ const Services = () => {
               <Button 
                 onClick={() => deleteMutation.mutate(deleteConfirmId)} 
                 disabled={deleteMutation.isPending}
-                className="bg-red-650 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
+                className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5 flex items-center gap-1.5 font-bold"
               >
                 {deleteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                 Move to Trash
@@ -1045,40 +1180,18 @@ const Services = () => {
         </div>
       )}
 
-      {/* Unsaved Changes Confirmation Dialog */}
-      {showUnsavedConfirm && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Unsaved changes</h3>
-            <p className="text-slate-500 text-sm leading-relaxed mb-6">
-              You have made modifications to this service. Leaving will discard all unsaved edits. Are you sure you want to exit?
-            </p>
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowUnsavedConfirm(false)} className="h-10 rounded-xl">
-                Keep Editing
-              </Button>
-              <Button 
-                onClick={() => {
-                  setShowUnsavedConfirm(false);
-                  setIsModalOpen(false);
-                }} 
-                className="bg-red-650 hover:bg-red-500 text-white h-10 rounded-xl px-5"
-              >
-                Discard & Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Portal Mounted Admin Modal */}
       {isModalOpen && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 md:p-6 select-none">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            className="bg-white rounded-[24px] border border-slate-200 shadow-2xl w-full max-w-[1400px] w-[min(95vw,1400px)] h-[90vh] max-h-[90vh] flex flex-col overflow-hidden text-slate-900"
+        <>
+          <div 
+            onClick={handleCloseAttempt}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 md:p-6 cursor-pointer"
           >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-[24px] border border-slate-200 shadow-2xl w-full max-w-[1400px] w-[min(95vw,1400px)] h-[90vh] max-h-[90vh] flex flex-col overflow-hidden text-slate-900 cursor-default"
+            >
             
             {/* Modal Header */}
             <div className="flex items-center justify-between px-8 py-5 border-b border-slate-200/60 bg-white shrink-0">
@@ -1757,7 +1870,25 @@ const Services = () => {
             </div>
 
           </motion.div>
-        </div>,
+          </div>
+
+          {showUnsavedConfirm && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Unsaved changes</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                  You have made modifications to this service. Leaving will discard all unsaved edits. Are you sure you want to exit?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setShowUnsavedConfirm(false)} className="h-10 rounded-xl">Keep Editing</Button>
+                  <Button onClick={() => { setShowUnsavedConfirm(false); setIsModalOpen(false); }} className="bg-red-600 hover:bg-red-500 text-white h-10 rounded-xl px-5">
+                    Discard & Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>,
         document.body
       )}
     </div>

@@ -48,9 +48,13 @@ export const ServicesSection = () => {
 
   const activeServices = [...(apiServices || []).map(decorateService)].sort((a, b) => a.order - b.order);
 
-  // If you want to limit it on the home page, you can slice here, e.g., activeServices.slice(0, 17)
-  // We'll map whatever activeServices are available, and append the "View All" card at the end.
-  const services = activeServices.slice(0, 18); // Slicing to 18 so it includes Digital Marketing, and the View All card becomes the 19th item
+  // Filter active services by featured flag
+  const featuredServices = activeServices.filter((s: any) => s.featured === true || s.featured === 'true');
+
+  // Show up to 6 featured services, falling back to first 6 active services if none exist
+  const services = featuredServices.length > 0 
+    ? featuredServices.slice(0, 6) 
+    : activeServices.slice(0, 6);
 
   return (
     <SiteSection ref={ref} id="services" variant="muted" aria-labelledby="services-heading" className="relative pt-8 pb-4 md:pt-12 md:pb-6">
