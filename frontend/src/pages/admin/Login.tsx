@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { loginAdmin } from "@/services/auth.service";
 import logo from "../../assets/logo.webp";
-import illustration from "../../assets/ai_overview_illustration.png";
+import illustration from "../../assets/overview_ai_automation.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Login = () => {

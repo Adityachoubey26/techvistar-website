@@ -4,9 +4,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { getSolutionBySlug } from '@/services/solutions.service';
-import { decorateSolution } from '@/data/solutions';
+import { SOLUTIONS_DATA } from '@/data/solutions';
 
 // Subcomponents
 import { SolutionHero } from '@/components/solutions/SolutionHero';
@@ -16,26 +14,20 @@ import { SolutionFeaturesSection } from '@/components/solutions/SolutionFeatures
 import { SolutionProcessSection } from '@/components/solutions/SolutionProcessSection';
 import { SolutionBenefitsSection } from '@/components/solutions/SolutionBenefitsSection';
 import { SolutionTechStackSection } from '@/components/solutions/SolutionTechStackSection';
-import { SolutionSidebar } from '@/components/solutions/SolutionSidebar';
-import { CTASection } from '@/components/services/CTASection';
+import { SolutionRelatedSection } from '@/components/solutions/SolutionRelatedSection';
 
 export const SolutionDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const { data: apiSolution, isLoading: isDetailLoading } = useQuery({
-    queryKey: ['solutionDetails', slug],
-    queryFn: () => getSolutionBySlug(slug || ''),
-    enabled: !!slug,
-  });
-
-  const solution = apiSolution ? decorateSolution(apiSolution) : undefined;
+  const isDetailLoading = false;
+  const solution = slug ? SOLUTIONS_DATA[slug] : undefined;
 
   useEffect(() => {
-    if (!isDetailLoading && !solution && slug !== undefined) {
+    if (!solution && slug !== undefined) {
       navigate('/solutions');
     }
-  }, [isDetailLoading, solution, slug, navigate]);
+  }, [solution, slug, navigate]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -70,30 +62,15 @@ export const SolutionDetails = () => {
         <SolutionSectionNavigation />
 
         {/* Dynamic Detail Modules Content Area */}
-        <section className="w-full mx-auto px-6 lg:px-12 xl:px-20 mt-8 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            {/* Left/Main Column for Detail Blocks */}
-            <div className="lg:col-span-2 space-y-8">
-              <SolutionOverviewSection solution={solution} />
-              <SolutionFeaturesSection solution={solution} />
-              <SolutionProcessSection solution={solution} />
-              <SolutionBenefitsSection solution={solution} />
-              <SolutionTechStackSection solution={solution} />
-            </div>
-
-            {/* Right Column Sidebar */}
-            <div className="space-y-6">
-              <SolutionSidebar />
-            </div>
-
+        <section className="w-full max-w-7xl mx-auto px-6 lg:px-12 xl:px-20 mt-12 pb-24">
+          <div className="flex flex-col space-y-16">
+            <SolutionOverviewSection solution={solution} />
+            <SolutionFeaturesSection solution={solution} />
+            <SolutionProcessSection solution={solution} />
+            <SolutionBenefitsSection solution={solution} />
+            <SolutionTechStackSection solution={solution} />
+            <SolutionRelatedSection currentSlug={solution.slug} />
           </div>
-
-          {/* Bottom Conversion Section */}
-          <div className="mt-16">
-            <CTASection service={solution as any} />
-          </div>
-
         </section>
 
         <Footer />

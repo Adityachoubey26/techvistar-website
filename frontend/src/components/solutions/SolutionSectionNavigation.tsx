@@ -12,7 +12,6 @@ const navItems: NavItem[] = [
   { id: 'process', label: 'Process' },
   { id: 'benefits', label: 'Benefits' },
   { id: 'tech-stack', label: 'Tech Stack' },
-  { id: 'faq', label: 'FAQ' },
 ];
 
 export const SolutionSectionNavigation = () => {
@@ -93,7 +92,7 @@ export const SolutionSectionNavigation = () => {
 
   return (
     <nav className="sticky top-12 sm:top-14 md:top-[4.25rem] z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm w-full transition-all duration-300">
-      <div className="w-full mx-auto px-6 lg:px-12 xl:px-20">
+      <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 xl:px-20">
         <div 
           ref={scrollContainerRef}
           className="flex overflow-x-auto scrollbar-none items-center py-3 gap-6 md:gap-8 whitespace-nowrap scroll-smooth"

@@ -14,8 +14,6 @@ import { OverviewSection } from '@/components/services/OverviewSection';
 import { SolutionsSection } from '@/components/services/SolutionsSection';
 import { ProcessSection } from '@/components/services/ProcessSection';
 import { TechnologySection } from '@/components/services/TechnologySection';
-import { IndustriesSection } from '@/components/services/IndustriesSection';
-import { CaseStudiesSection } from '@/components/services/CaseStudiesSection';
 
 
 import { ServiceSidebar } from '@/components/services/ServiceSidebar';
@@ -101,8 +99,6 @@ const ServiceDetails = () => {
               <SolutionsSection service={service} />
               <ProcessSection service={service} />
               <TechnologySection service={service} />
-              <IndustriesSection service={service} />
-              <CaseStudiesSection service={service} />
 
             </div>
 

@@ -123,21 +123,21 @@ export const SolutionsSection = ({ service }: SectionProps) => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10"
+          className="flex flex-col gap-4 relative z-10"
         >
           {offeringsData.map((offering, idx) => (
             <motion.div
               key={idx}
               variants={cardVariants}
               whileHover={prefersReducedMotion ? {} : { y: -6, scale: 1.01 }}
-              className="group flex flex-col justify-between p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-100 hover:border-emerald-500/30 shadow-[0_12px_40px_-15px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_35px_-8px_rgba(16,185,129,0.12)] transition-all duration-300"
+              className="group flex flex-col justify-between p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-100 hover:border-emerald-500/30 shadow-[0_12px_40px_-15px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_35px_-8px_rgba(16,185,129,0.12)] transition-all duration-300"
             >
               <div>
                 {/* Header: Glass Icon Wrapper and Label */}
-                <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="flex items-start justify-between gap-4 mb-1">
                   
                   {/* Integrated GlassIcon style wrapper */}
-                  <div className="icon-btn pointer-events-none scale-75 origin-top-left -mb-4 -mr-4">
+                  <div className="icon-btn pointer-events-none scale-50 origin-top-left -mb-8 -mr-4">
                     <span className="icon-btn__back" style={getBackgroundStyle(offering.color)}></span>
                     <span className="icon-btn__front">
                       <span className="icon-btn__icon">
@@ -145,25 +145,23 @@ export const SolutionsSection = ({ service }: SectionProps) => {
                       </span>
                     </span>
                   </div>
-                  
-                  {/* Learn More arrow sliding on hover */}
                   <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     Learn More
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
                 </div>
 
-                <h3 className="text-sm font-bold text-slate-900 mb-1 group-hover:text-emerald-700 transition-colors font-display">
+                <h3 className="text-sm font-bold text-slate-900 mb-0.5 group-hover:text-emerald-700 transition-colors font-display">
                   {offering.title}
                 </h3>
                 
-                <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                <p className="text-xs text-slate-500 leading-relaxed mb-2">
                   {offering.description}
                 </p>
               </div>
 
               {/* Technologies Badges */}
-              <div className="flex flex-wrap gap-1.5 mt-auto pt-2 border-t border-slate-100/50">
+              <div className="flex flex-wrap gap-1.5 mt-auto pt-1.5 border-t border-slate-100/50">
                 {offering.badges.map((tech, techIdx) => (
                   <Badge
                     key={techIdx}
@@ -179,7 +177,7 @@ export const SolutionsSection = ({ service }: SectionProps) => {
         </motion.div>
       ) : (
         /* Fallback standard offerings grid for other pages */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+        <div className="flex flex-col gap-3 relative z-10">
           {service.offerings.map((offering, i) => (
             <div
               key={i}

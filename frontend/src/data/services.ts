@@ -27,18 +27,18 @@ import serviceMobileApp from '../assets/mobile_phone_devloper.png';
 import serviceUiUx from '../assets/ui_ux_designer.png';
 import serviceAiAutomation from '../assets/Ai_and_atomation.png';
 import serviceCloudDevops from '../assets/Claud_Devops.png';
-import serviceBranding from '../assets/service_branding.png';
+import serviceBranding from '../assets/branding.png';
 import serviceDigitalMarketing from '../assets/digital_marketing.png';
 import serviceCustomSoftware from '../assets/custom_software_devlopment.png';
 import serviceAi from '../assets/service_ai.png';
-import serviceAutomation from '../assets/service_automation.png';
+import serviceAutomation from '../assets/Automation.png';
 import serviceEnterpriseAi from '../assets/service_enterprise_ai.png';
-import serviceCloud from '../assets/service_cloud.png';
-import serviceDevops from '../assets/service_devops.png';
+import serviceCloud from '../assets/cloud.png';
+import serviceDevops from '../assets/Devops.png';
 import serviceCloudInfra from '../assets/service_cloud_infra.png';
-import serviceCreativeDesign from '../assets/service_creative_design.png';
-import serviceProductDesign from '../assets/service_product_design.png';
-import serviceSaas from '../assets/service_saas.png';
+import serviceCreativeDesign from '../assets/creative design.png';
+import serviceProductDesign from '../assets/product design.png';
+import serviceSaas from '../assets/Saas.png';
 import serviceProductEng from '../assets/service_product_eng.png';
 import serviceRevenueWeb from '../assets/service_revenue_web.png';
 import serviceDocsResearch from '../assets/service_docs_research.png';
@@ -700,8 +700,8 @@ export const SERVICES: readonly Service[] = [
     longDescription: 'We engineer complex machine learning architectures. By designing custom data pipelines, compiling training datasets, fine-tuning state-of-the-art open-source LLMs, and setting up secure GPU inference servers, we construct advanced cognitive models tailored to domain-specific knowledge bases.',
     category: 'Advanced Technology',
     icon: Brain,
-    coverImage: serviceAi,
-    thumbnail: serviceAi,
+    coverImage: serviceAiAutomation,
+    thumbnail: serviceAiAutomation,
     overview: 'Develop specialized cognitive architectures capable of parsing complex tabular and text resources.',
     offerings: [
       'LLM Fine-Tuning',

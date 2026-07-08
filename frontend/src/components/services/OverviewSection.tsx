@@ -70,7 +70,7 @@ export const OverviewSection = ({ service }: SectionProps) => {
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500/10 to-sky-500/10 opacity-75 blur-xl group-hover/image:opacity-100 transition duration-300 pointer-events-none" />
             
             <div className="relative z-10 w-full transition-transform duration-300 group-hover/image:scale-[1.03]">
-              <OverviewIllustration slug={service.slug} />
+              <img src={service.coverImage} alt={service.title} className="w-full h-auto max-h-[300px] object-contain rounded-2xl drop-shadow-xl" />
             </div>
           </div>
         </div>

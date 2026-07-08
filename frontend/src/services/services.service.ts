@@ -3,6 +3,8 @@
  * @description Client service for retrieving and managing Services CMS data.
  */
 
+import { SERVICES } from '../data/services';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 /**
@@ -36,13 +38,21 @@ export async function getAllServices(): Promise<any[]> {
  * @param slug Service slug
  */
 export async function getServiceBySlug(slug: string): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/api/services/${slug}`);
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Failed to fetch service details');
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/services/${slug}`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.warn(`Fallback to static data for service ${slug}`);
+    const staticService = SERVICES.find(s => s.slug === slug);
+    if (staticService) {
+      return staticService;
+    }
+    throw error;
   }
-  const result = await response.json();
-  return result.data;
 }
 
 /**

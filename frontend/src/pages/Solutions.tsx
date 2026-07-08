@@ -10,9 +10,7 @@ import {
   ArrowRight, Sparkle, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { getActiveSolutions } from '@/services/solutions.service';
-import { decorateSolution, SolutionDetail } from '@/data/solutions';
+import { SOLUTIONS_DATA, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import { LogoCloud } from '@/components/LogoCloud';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -26,12 +24,8 @@ interface SolutionCategory {
 }
 
 export const Solutions = () => {
-  const { data: apiSolutions, isLoading } = useQuery({
-    queryKey: ['activeSolutions'],
-    queryFn: getActiveSolutions,
-  });
-
-  const solutionsData = (apiSolutions || []).map(decorateSolution);
+  const solutionsData = Object.values(SOLUTIONS_DATA);
+  const isLoading = false;
 
   const [activeCategory, setActiveCategory] = useState('business-solutions');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -40,6 +34,7 @@ export const Solutions = () => {
     'business-solutions': useRef<HTMLDivElement>(null),
     'ai-solutions': useRef<HTMLDivElement>(null),
     'digital-solutions': useRef<HTMLDivElement>(null),
+    'commerce-growth-solutions': useRef<HTMLDivElement>(null),
   };
 
   // Track active section on scroll
@@ -112,6 +107,13 @@ export const Solutions = () => {
       tagline: 'Infrastructure & Security',
       desc: 'Establish secure API endpoints, redundant container networks, and encryption compliance protocols.',
       items: solutionsData.filter(s => s.category === 'Digital Solutions')
+    },
+    {
+      id: 'commerce-growth-solutions',
+      label: 'Commerce & Growth Solutions',
+      tagline: 'Scale Revenue Platforms',
+      desc: 'Build scalable online stores, SaaS architectures, and API ecosystems with optimized workflows.',
+      items: solutionsData.filter(s => s.category === 'Commerce & Growth Solutions')
     }
   ];
 
