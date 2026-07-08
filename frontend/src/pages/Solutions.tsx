@@ -121,6 +121,13 @@ export const Solutions = () => {
 
   return (
     <>
+      <PageSeo
+        defaults={{
+          title: 'Solutions | TechVistar',
+          description: 'Explore TechVistar business, AI, and digital solutions engineered for measurable outcomes.',
+          url: buildCanonical('/solutions'),
+        }}
+      />
       <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 animate-fade-in pb-16">
         <Navbar />
 

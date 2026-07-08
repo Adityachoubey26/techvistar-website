@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Save } from 'lucide-react';
 import { CmsImageField } from '@/components/admin/common/CmsImageField';
+import { SeoManager } from '@/components/admin/common/SeoManager';
+import { seoFromItem } from '@/lib/seoAdmin';
 
 const ServicesSettings = () => {
   const { toast } = useToast();
@@ -69,7 +71,7 @@ const ServicesSettings = () => {
 
       <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
         <h2 className="text-sm font-bold text-slate-900">Services Landing Page (/services)</h2>
-        {(['title', 'subtitle', 'description', 'seoTitle', 'seoDescription', 'offeringsLabel', 'learnMoreLabel'] as const).map(
+        {(['title', 'subtitle', 'description', 'offeringsLabel', 'learnMoreLabel'] as const).map(
           (key) => (
             <div key={key}>
               <label className="text-[10px] font-bold uppercase text-slate-500">{key}</label>
@@ -81,6 +83,21 @@ const ServicesSettings = () => {
             </div>
           )
         )}
+        <div className="pt-4 border-t border-slate-100">
+          <SeoManager
+            value={seoFromItem(form.landing as unknown as Record<string, unknown>)}
+            onChange={(seo) =>
+              setForm((prev) => ({
+                ...prev,
+                landing: { ...prev.landing, ...seo },
+              }))
+            }
+            pathPrefix="/services"
+            defaultTitle={`${form.landing.title} | TechVistar`}
+            defaultDescription={form.landing.description}
+            defaultImage={form.landing.backgroundImage}
+          />
+        </div>
         <CmsImageField
           label="Hero Background Image"
           value={form.landing.backgroundImage}

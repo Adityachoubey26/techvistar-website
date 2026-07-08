@@ -2,8 +2,10 @@ import {
   Building2, Brain, Sparkles, Cloud, Target,
   Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, Clock
 } from 'lucide-react';
+import { SeoMetadata } from '@/types/seo';
+import { seoFromApi } from '@/lib/seoResolve';
 
-export interface SolutionDetail {
+export interface SolutionDetail extends SeoMetadata {
   slug: string;
   title: string;
   subtitle: string;
@@ -81,6 +83,7 @@ export function decorateSolution(apiSolution: any): SolutionDetail {
     techStack: apiSolution.techStack || [],
     metrics: apiSolution.metrics || [],
     faqs: apiSolution.faqs || [],
+    ...seoFromApi(apiSolution),
   };
 }
 

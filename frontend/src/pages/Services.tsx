@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
 import { getServicesCmsConfig } from '@/services/servicesCmsConfig.service';
 import { Service, decorateService, getServiceCardImage, IMAGE_MAP } from '@/data/services';
-import { usePageSeo } from '@/hooks/usePageSeo';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
 import { mergeServicesCmsConfig } from '@/types/servicesCms';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -36,11 +37,16 @@ const Services = () => {
   const cmsConfig = mergeServicesCmsConfig(cmsConfigApi);
   const landing = cmsConfig.landing;
 
-  usePageSeo({
-    title: landing.seoTitle,
-    description: landing.seoDescription,
-    fallbackTitle: 'Our Services | TechVistar',
-  });
+  const seoBlock = (
+    <PageSeo
+      seo={landing}
+      defaults={{
+        title: 'Our Services | TechVistar',
+        description: landing.description,
+        url: buildCanonical('/services'),
+      }}
+    />
+  );
 
   const { data: apiServices, isLoading, isError, error } = useQuery({
     queryKey: ['activeServices'],
@@ -59,6 +65,7 @@ const Services = () => {
 
   return (
     <>
+      {seoBlock}
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>

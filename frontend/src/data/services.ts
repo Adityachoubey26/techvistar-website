@@ -76,7 +76,10 @@ export interface DetailedOffering {
   iconName: string;
 }
 
-export interface Service {
+import { SeoMetadata } from '@/types/seo';
+import { seoFromApi } from '@/lib/seoResolve';
+
+export interface Service extends SeoMetadata {
   id: string;
   slug: string;
   title: string;
@@ -109,8 +112,6 @@ export interface Service {
   stats?: readonly ServiceStat[];
   detailedOfferings?: DetailedOffering[];
   dashboardImage?: string;
-  seoTitle?: string;
-  seoDescription?: string;
 }
 
 export const ICON_MAP: Record<string, LucideIcon> = {
@@ -356,8 +357,7 @@ export function decorateService(apiService: any): Service {
     stats: apiService.stats || [],
     detailedOfferings: apiService.detailedOfferings || [],
     dashboardImage,
-    seoTitle: apiService.seoTitle || '',
-    seoDescription: apiService.seoDescription || '',
+    ...seoFromApi(apiService),
   };
 }
 

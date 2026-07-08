@@ -20,10 +20,13 @@ import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
 import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
+import { SeoManager } from "@/components/admin/common/SeoManager";
+import { seoFromItem, seoToPayload } from "@/lib/seoAdmin";
+import { EMPTY_SEO, SeoMetadata } from "@/types/seo";
 
 const SOLUTION_CATEGORIES = ["Business Solutions", "AI Solutions", "Digital Solutions"];
 
-type TabName = "general" | "content" | "benefits" | "features" | "process" | "tech" | "preview";
+type TabName = "general" | "content" | "benefits" | "features" | "process" | "tech" | "seo" | "preview";
 
 // Resolves lucide icons dynamically
 const renderLucideIcon = (name: string, className = "w-4 h-4") => {
@@ -73,6 +76,7 @@ const Solutions = () => {
   const [status, setStatus] = useState<"draft" | "active">("active");
   const [displayOrder, setDisplayOrder] = useState("0");
   const [featured, setFeatured] = useState(false);
+  const [seo, setSeo] = useState<SeoMetadata>(EMPTY_SEO);
 
   // Challenges sub-schema
   const [challengeTitle, setChallengeTitle] = useState("");
@@ -368,7 +372,7 @@ const Solutions = () => {
 
   const getCurrentStateString = () => {
     return JSON.stringify({
-      title, slug, subtitle, icon, category, status, displayOrder, featured,
+      title, slug, subtitle, icon, category, status, displayOrder, featured, seo,
       challengeTitle, challengePointsText, challengeImpact,
       ourSolutionOverview, ourSolutionCapabilitiesText,
       benefitRoi, benefitEfficiency, benefitScalability, benefitSecurity,
@@ -392,6 +396,7 @@ const Solutions = () => {
     setStatus("active");
     setDisplayOrder("0");
     setFeatured(false);
+    setSeo(EMPTY_SEO);
     setChallengeTitle("Challenges Overview");
     setChallengePointsText("Identified business inefficiencies\nLack of automation workflows");
     setChallengeImpact("High operational cost overhead");
@@ -432,6 +437,7 @@ const Solutions = () => {
     setStatus(item.status || "active");
     setDisplayOrder(String(item.displayOrder || 0));
     setFeatured(item.featured || false);
+    setSeo(seoFromItem(item));
 
     const ch = item.challenges || {};
     setChallengeTitle(ch.title || "");
@@ -516,7 +522,8 @@ const Solutions = () => {
       features: featuresList,
       howItWorks: processSteps,
       techStack: techStackText.split(",").map(t => t.trim()).filter(Boolean),
-      metrics: metricsList
+      metrics: metricsList,
+      ...seoToPayload(seo),
     };
 
     if (editingId) {
@@ -960,6 +967,7 @@ const Solutions = () => {
                 { name: "features", label: "Features", icon: Tag },
                 { name: "process", label: "Process", icon: Sparkles },
                 { name: "tech", label: "Tech & Metrics", icon: BarChart3 },
+                { name: "seo", label: "SEO", icon: Globe },
                 { name: "preview", label: "Preview", icon: ShieldCheck }
               ] as { name: TabName, label: string, icon: any }[]).map((tab) => {
                 const Icon = tab.icon;
@@ -1369,6 +1377,19 @@ const Solutions = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {activeTab === "seo" && (
+                  <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
+                    <SeoManager
+                      value={seo}
+                      onChange={setSeo}
+                      slug={slug}
+                      pathPrefix="/solutions/"
+                      defaultTitle={title ? `${title} | TechVistar Solutions` : ''}
+                      defaultDescription={subtitle}
+                    />
                   </div>
                 )}
 

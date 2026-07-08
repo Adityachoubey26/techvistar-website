@@ -4,7 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getServiceBySlug } from '@/services/services.service';
 import { getServicesCmsConfig } from '@/services/servicesCmsConfig.service';
 import { decorateService } from '@/data/services';
-import { usePageSeo } from '@/hooks/usePageSeo';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
+import { getServiceCardImage } from '@/data/services';
 import { mergeServicesCmsConfig } from '@/types/servicesCms';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -43,19 +45,26 @@ const ServiceDetails = () => {
   const cmsConfig = mergeServicesCmsConfig(cmsConfigApi);
   const service = apiService ? decorateService(apiService) : undefined;
 
-  usePageSeo({
-    title: service?.seoTitle || (service ? `${service.title} | TechVistar Services` : undefined),
-    description: service?.seoDescription || service?.shortDescription,
-    fallbackTitle: 'Service Not Found | TechVistar',
-  });
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [service?.slug]);
 
+  const seoBlock = (
+    <PageSeo
+      seo={service}
+      defaults={{
+        title: service ? `${service.title} | TechVistar Services` : 'Service Not Found | TechVistar',
+        description: service?.shortDescription || '',
+        image: service ? getServiceCardImage(service) : undefined,
+        url: service ? buildCanonical(`/services/${service.slug}`) : buildCanonical('/services'),
+      }}
+    />
+  );
+
   if (isLoading) {
     return (
       <>
+        {seoBlock}
         <Navbar />
         <main className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
           <div className="text-slate-500 font-display">Loading service details...</div>
@@ -68,6 +77,7 @@ const ServiceDetails = () => {
   if (!service) {
     return (
       <>
+        {seoBlock}
         <Navbar />
         <main className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4 pt-20">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 md:p-10 shadow-sm text-center">
@@ -94,6 +104,7 @@ const ServiceDetails = () => {
 
   return (
     <>
+      {seoBlock}
       <Navbar />
       <main className="min-h-screen bg-slate-50 pt-0">
         <ServiceHero service={service} />

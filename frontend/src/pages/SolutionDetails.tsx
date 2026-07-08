@@ -16,6 +16,9 @@ import workBg from '../assets/work-bg.png';
 import challengesImg from '../assets/ai_overview_illustration.png';
 import { cn } from '@/lib/utils';
 import { RichTextContent } from '@/components/common/RichTextContent';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
+import { seoFromApi } from '@/lib/seoResolve';
 
 
 
@@ -48,7 +51,18 @@ export const SolutionDetails = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [slug]);
+  }, [solution?.slug]);
+
+  const seoBlock = solution ? (
+    <PageSeo
+      seo={solution}
+      defaults={{
+        title: `${solution.title} | TechVistar Solutions`,
+        description: solution.subtitle,
+        url: buildCanonical(`/solutions/${solution.slug}`),
+      }}
+    />
+  ) : null;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const { clientX, clientY, currentTarget } = e;
@@ -102,6 +116,7 @@ export const SolutionDetails = () => {
 
   return (
     <>
+      {seoBlock}
       <Navbar />
 
       <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 pb-20 relative overflow-hidden">
