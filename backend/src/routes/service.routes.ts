@@ -10,17 +10,37 @@ import {
   adminCreateService,
   adminUpdateService,
   adminDeleteService,
-  adminGetServices
+  adminGetServices,
+  adminRestoreService,
+  adminPermanentlyDeleteService,
+  adminBulkDelete,
+  adminBulkRestore,
+  adminBulkStatus
 } from '@/controllers/service.controller';
+import {
+  getPublicServicesCmsConfig,
+  adminGetServicesCmsConfig,
+  adminUpdateServicesCmsConfig,
+} from '@/controllers/servicesCmsConfig.controller';
+import { authMiddleware } from '@/middleware/auth.middleware';
 
 const router = Router();
 
+// ─── CMS page config (must be before /:slug) ─────────────────────────────────
+router.get('/config', getPublicServicesCmsConfig);
+router.get('/admin/config', authMiddleware, adminGetServicesCmsConfig);
+router.put('/admin/config', authMiddleware, adminUpdateServicesCmsConfig);
+
 // ─── Administrative CRUD Endpoints ───────────────────────────────────────────
-// (Note: To be protected by JWT auth middleware when Phase 2 authentication is implemented)
-router.get('/admin', adminGetServices);
-router.post('/admin', adminCreateService);
-router.put('/admin/:id', adminUpdateService);
-router.delete('/admin/:id', adminDeleteService);
+router.get('/admin', authMiddleware, adminGetServices);
+router.post('/admin', authMiddleware, adminCreateService);
+router.post('/admin/bulk-delete', authMiddleware, adminBulkDelete);
+router.post('/admin/bulk-restore', authMiddleware, adminBulkRestore);
+router.post('/admin/bulk-status', authMiddleware, adminBulkStatus);
+router.post('/admin/:id/restore', authMiddleware, adminRestoreService);
+router.delete('/admin/:id/permanent', authMiddleware, adminPermanentlyDeleteService);
+router.put('/admin/:id', authMiddleware, adminUpdateService);
+router.delete('/admin/:id', authMiddleware, adminDeleteService);
 
 // ─── Public Endpoints ────────────────────────────────────────────────────────
 // GET /api/services - Returns all active services sorted by displayOrder

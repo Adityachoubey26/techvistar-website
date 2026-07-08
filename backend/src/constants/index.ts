@@ -74,11 +74,11 @@ export const ERROR_CODES = {
 
 // ─── Database Constants ───────────────────────────────────────────────────────
 export const DB = {
-  CONNECTION_TIMEOUT_MS: 10_000,   // 10 seconds
+  CONNECTION_TIMEOUT_MS: 30_000,   // 30s — Atlas SRV DNS can be slow on some networks
   SOCKET_TIMEOUT_MS:     45_000,   // 45 seconds
   MAX_POOL_SIZE:         10,        // Max concurrent connections
   MIN_POOL_SIZE:         2,         // Keep 2 connections alive (reduce cold start latency)
-  SERVER_SELECTION_TIMEOUT_MS: 5_000,
+  SERVER_SELECTION_TIMEOUT_MS: 30_000, // 30s — default 5s often fails with querySrv ETIMEOUT
 } as const;
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────────
@@ -96,6 +96,20 @@ export const CONTACT_RATE_LIMIT = {
 export const NEWSLETTER_RATE_LIMIT = {
   WINDOW_MS:    15 * 60 * 1000, // 15 minutes
   MAX_REQUESTS: 3,              // Max 3 requests per window per IP
+} as const;
+
+// ─── Media Upload (Cloudinary — Phase 1.5) ────────────────────────────────────
+export const UPLOAD = {
+  MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024, // 10 MB
+  FIELD_NAME:          'image',
+  CLOUDINARY_FOLDER:   'techvistar/uploads',
+  ALLOWED_MIME_TYPES: [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/svg+xml',
+  ] as const,
+  ALLOWED_EXTENSIONS: ['.jpg', '.jpeg', '.png', '.webp', '.svg'] as const,
 } as const;
 
 // ─── Validation Constraints ───────────────────────────────────────────────────

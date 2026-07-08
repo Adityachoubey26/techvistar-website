@@ -1,356 +1,471 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveJobs, Job } from '@/services/job.service';
-import { CAREERS_PAGE_DATA } from '@/data/careers';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Briefcase, MapPin, Calendar, Clock, GraduationCap, Users, Cpu } from 'lucide-react';
-import { WhyChooseUsSection } from '@/components/services/WhyChooseUsSection';
-import { PageHeader } from '@/components/ui/PageHeader';
+import { 
+  Briefcase, MapPin, Clock, Search, Users,
+  ArrowRight, ChevronRight, RotateCcw, HelpCircle, Mail, MessageSquare, Code, UserCheck
+} from 'lucide-react';
 
-import careersBg from '../assets/careers-bg.png';
-import frontendImg from '../assets/mobile_phone_devloper.png';
-import backendImg from '../assets/Claud_Devops.png';
-import designImg from '../assets/ui_ux_designer.png';
-import reactInternImg from '../assets/overview_web_dev.png';
-import fullStackInternImg from '../assets/custom_software_devlopment.png';
-import marketingInternImg from '../assets/digital_marketing.png';
-import campusAmbassadorImg from '../assets/brand_and_creative_design.png';
+const HERO_BG = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop";
 
-const jobImages: Record<string, string> = {
-  'frontend-developer': frontendImg,
-  'backend-developer': backendImg,
-  'ui-ux-designer': designImg,
-  'react-intern': reactInternImg,
-  'full-stack-intern': fullStackInternImg,
-  'marketing-intern': marketingInternImg,
-  'campus-ambassador': campusAmbassadorImg,
-};
+const BENEFITS_LIST = [
+  { title: "Great Team", desc: "Work with talented and supportive people who care.", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=400&auto=format&fit=crop" },
+  { title: "Learning & Growth", desc: "Continuous learning with courses, mentorship and more.", image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=400&auto=format&fit=crop" },
+  { title: "Flexible Work", desc: "Hybrid work environment and flexible hours.", image: "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?q=80&w=400&auto=format&fit=crop" },
+  { title: "Health Benefits", desc: "Comprehensive health insurance for you and your family.", image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=400&auto=format&fit=crop" },
+  { title: "Career Growth", desc: "Clear career paths and internal our culture opportunities.", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=400&auto=format&fit=crop" },
+  { title: "Recognition", desc: "Celebrate wins and get recognized for your impact.", image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=400&auto=format&fit=crop" },
+];
+
+const LIFE_GALLERY = [
+  { url: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop", title: "Collaborative Open Space" },
+  { url: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop", title: "Interactive Engineering Syncs" },
+  { url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop", title: "Staged Hackathons" },
+  { url: "https://images.unsplash.com/photo-1527689368864-3a821dbccc34?q=80&w=800&auto=format&fit=crop", title: "Product Focus Pods" },
+  { url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop", title: "Team Breakout Discussions" },
+  { url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop", title: "Workspace Celebrations" }
+];
+
+const PROCESS_TIMELINE = [
+  { phase: "1. Application", desc: "Submit your application online.", icon: Briefcase, color: "from-teal-400 to-teal-600", textCol: "text-teal-600", bgCol: "bg-teal-50" },
+  { phase: "2. Resume Review", desc: "Our team reviews your application carefully.", icon: Users, color: "from-emerald-400 to-emerald-600", textCol: "text-emerald-600", bgCol: "bg-emerald-50" },
+  { phase: "3. Technical Round", desc: "Online assessment or technical interview.", icon: Code, color: "from-orange-400 to-orange-600", textCol: "text-orange-600", bgCol: "bg-orange-50" },
+  { phase: "4. Interview Round", desc: "Meet the team and discuss your experience.", icon: MessageSquare, color: "from-pink-400 to-pink-650", textCol: "text-pink-600", bgCol: "bg-pink-50" },
+  { phase: "5. HR Discussion", desc: "A conversation about you, our culture and role.", icon: UserCheck, color: "from-purple-400 to-purple-600", textCol: "text-purple-650", bgCol: "bg-purple-50" },
+  { phase: "6. Offer", desc: "Welcome to the team! Let's build the future.", icon: Mail, color: "from-blue-400 to-blue-600", textCol: "text-blue-600", bgCol: "bg-blue-50" }
+];
+
+const FAQS_LIST = [
+  { q: "What does the typical hiring timeline look like?", a: "Our average hiring timeline is 2-3 weeks from initial application to final offer letter, depending on technical stage alignment." },
+  { q: "Do you offer relocation support for office-based roles?", a: "Yes, we offer structured relocation packages for senior engineering and leadership roles requiring relocation to our regional hubs." },
+  { q: "Can I apply to multiple open positions simultaneously?", a: "We recommend applying to the single role that matches your primary qualifications best, but our recruitment team automatically cross-reviews candidate applications for other open campaigns." },
+  { q: "What is your remote/hybrid work structure policy?", a: "Our team operates on a flexible hybrid policy—remote-first workflows with option of working from regional collaboration spaces whenever needed." }
+];
 
 const Careers = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDept, setSelectedDept] = useState('All');
+  const [selectedLoc, setSelectedLoc] = useState('All');
+  const [selectedEmpType, setSelectedEmpType] = useState('All');
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width - 0.5;
-    const y = (clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
-
-  const { data: jobs, isLoading, error, refetch } = useQuery<Job[]>({
+  const { data: jobs, isLoading, error } = useQuery<Job[]>({
     queryKey: ['activeJobs'],
     queryFn: getActiveJobs,
   });
 
-  // Filter full-time vs internship positions
-  const activeCareers = jobs || [];
-  const fullTimePositions = activeCareers.filter(
-    (c) => c.employmentType.toLowerCase() === 'full-time'
-  );
-  const internshipPositions = activeCareers.filter(
-    (c) => c.employmentType.toLowerCase() === 'internship'
-  );
+  const activeJobs = useMemo(() => {
+    return (jobs || []).filter(job => job.status === 'active' && !job.isDeleted);
+  }, [jobs]);
 
-  const { hero, whyJoin, benefits, hiringProcess, applyCTA } = CAREERS_PAGE_DATA;
+  const departments = useMemo(() => {
+    const list = new Set(activeJobs.map(j => j.department).filter(Boolean));
+    return ['All', ...Array.from(list)];
+  }, [activeJobs]);
+
+  const locations = useMemo(() => {
+    const list = new Set(activeJobs.map(j => j.location).filter(Boolean));
+    return ['All', ...Array.from(list)];
+  }, [activeJobs]);
+
+  const employmentTypes = useMemo(() => {
+    const list = new Set(activeJobs.map(j => j.employmentType).filter(Boolean));
+    return ['All', ...Array.from(list)];
+  }, [activeJobs]);
+
+  const filteredJobs = useMemo(() => {
+    return activeJobs.filter(job => {
+      const matchesSearch = 
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (job.department || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (job.location || '').toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesDept = selectedDept === 'All' || job.department === selectedDept;
+      const matchesLoc = selectedLoc === 'All' || job.location === selectedLoc;
+      const matchesEmpType = selectedEmpType === 'All' || job.employmentType === selectedEmpType;
+
+      return matchesSearch && matchesDept && matchesLoc && matchesEmpType;
+    });
+  }, [activeJobs, searchTerm, selectedDept, selectedLoc, selectedEmpType]);
+
+  const handleScrollToPositions = () => {
+    const el = document.getElementById('open-positions');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <main id="main-content" className="min-h-screen bg-slate-50">
+      <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 font-sans">
         <Navbar />
 
         {/* 1. Hero Section */}
-        <PageHeader 
-          title={hero.title}
-          subtitle={hero.subtitle}
-          description={hero.description}
-          backgroundImage={careersBg}
-        />
+        <section className="relative min-h-[80vh] flex items-center justify-center bg-slate-950 overflow-hidden pt-20">
+          <div 
+            className="absolute inset-0 bg-cover bg-center opacity-30 scale-102 transition-transform duration-[10000ms] pointer-events-none"
+            style={{ backgroundImage: `url(${HERO_BG})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950 pointer-events-none" />
 
-                {/* 2. Why Join Section */}
-        <section className="py-16 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <WhyChooseUsSection items={whyJoin} title="Why Join TechVistar?" />
+          <div className="container mx-auto px-6 max-w-5xl relative z-10 text-center space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="space-y-4"
+            >
+              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
+                Careers at TechVistar
+              </Badge>
+              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter leading-[1.05]">
+                Build technology that <br />
+                <span className="bg-gradient-to-r from-emerald-400 via-teal-350 to-cyan-400 bg-clip-text text-transparent">solves real business problems</span>
+              </h1>
+              <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-bold leading-relaxed">
+                Join our premium global squad of systems architects, designer engineers, and full stack builders to construct state-of-the-art enterprise digital hubs.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="flex flex-wrap items-center justify-center gap-4 pt-4"
+            >
+              <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/10">
+                View Open Positions
+              </Button>
+              <Button onClick={() => {
+                const element = document.getElementById('life-at-techvistar');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }} variant="outline" size="lg" className="border-white/10 hover:bg-white/5 text-white font-bold h-12 px-6 rounded-xl">
+                Life at TechVistar
+              </Button>
+            </motion.div>
           </div>
         </section>
 
-        {/* 3. Open Positions */}
-        {isLoading ? (
-          <section className="py-16 bg-white border-t border-slate-200">
-            <div className="container mx-auto px-4 max-w-5xl">
-              <div className="flex items-center gap-3 mb-8">
-                <Briefcase className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold font-display text-slate-900">
-                  Loading Open Positions...
-                </h2>
+        {/* 2. Open Positions (Completely matching reference style) */}
+        <section id="open-positions" className="py-24 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-10">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-emerald-600">
+                <Briefcase className="h-4.5 w-4.5" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Available Roles</span>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="border-slate-200 flex flex-col bg-white overflow-hidden animate-pulse">
-                    <div className="h-44 bg-slate-100 border-b border-slate-100 flex items-center justify-center p-3" />
-                    <CardHeader className="p-5 pb-3">
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <div className="h-4 w-16 bg-slate-150 rounded" />
-                        <div className="h-3.5 w-12 bg-slate-150 rounded" />
-                      </div>
-                      <div className="h-5 w-4/5 bg-slate-200 rounded mt-1" />
-                      <div className="flex gap-4 mt-3">
-                        <div className="h-3 w-16 bg-slate-150 rounded" />
-                        <div className="h-3 w-16 bg-slate-150 rounded" />
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-5 pt-0 flex-grow flex flex-col">
-                      <div className="h-3 w-full bg-slate-150 rounded mb-2" />
-                      <div className="h-3 w-5/6 bg-slate-150 rounded mb-6" />
-                      <div className="h-9 w-full bg-slate-200 rounded mt-auto" />
-                    </CardContent>
-                  </Card>
+              <h2 className="text-3xl md:text-4xl font-extrabold font-display text-slate-900 tracking-tight">Open Positions</h2>
+            </div>
+
+            {/* Filter Bar (One Rounded Container) */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div className="relative w-full md:flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  placeholder="Search by job title, department, or keyword..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-100 focus:border-emerald-500/40 rounded-xl text-xs focus:outline-none transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div className="flex flex-col gap-1 w-full sm:w-[150px]">
+                  <select
+                    value={selectedDept}
+                    onChange={(e) => setSelectedDept(e.target.value)}
+                    className="h-10 px-3 rounded-xl border border-slate-200 text-[11px] font-bold bg-white focus:outline-none"
+                  >
+                    <option value="All">All Departments</option>
+                    {departments.filter(d => d !== 'All').map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1 w-full sm:w-[150px]">
+                  <select
+                    value={selectedLoc}
+                    onChange={(e) => setSelectedLoc(e.target.value)}
+                    className="h-10 px-3 rounded-xl border border-slate-200 text-[11px] font-bold bg-white focus:outline-none"
+                  >
+                    <option value="All">All Locations</option>
+                    {locations.filter(l => l !== 'All').map(l => (
+                      <option key={l} value={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1 w-full sm:w-[150px]">
+                  <select
+                    value={selectedEmpType}
+                    onChange={(e) => setSelectedEmpType(e.target.value)}
+                    className="h-10 px-3 rounded-xl border border-slate-200 text-[11px] font-bold bg-white focus:outline-none"
+                  >
+                    <option value="All">All Types</option>
+                    {employmentTypes.filter(t => t !== 'All').map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedDept('All');
+                    setSelectedLoc('All');
+                    setSelectedEmpType('All');
+                  }}
+                  className="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors flex items-center justify-center gap-1.5 text-xs font-bold text-slate-700 w-full sm:w-auto"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Reset Filters
+                </button>
+              </div>
+            </div>
+
+            {/* Jobs Cards Grid */}
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-[360px] bg-slate-50 border border-slate-100 rounded-3xl animate-pulse" />
                 ))}
               </div>
-            </div>
-          </section>
-        ) : error ? (
-          <section className="py-16 bg-white border-t border-slate-200 text-center">
-            <div className="container mx-auto px-4 max-w-md">
-              <p className="text-base text-red-500 font-semibold mb-3">
-                Failed to load job listings.
+            ) : error ? (
+              <p className="text-sm text-red-500 bg-red-50 border border-red-150 p-8 rounded-2xl text-center font-bold">
+                Failed to load career listings. Please reload.
               </p>
-              <p className="text-xs text-slate-500 mb-6">
-                Please check your network connection and try again.
-              </p>
-              <Button onClick={() => refetch()} className="bg-slate-900 text-white hover:bg-slate-800 font-semibold px-6">
-                Retry Connection
-              </Button>
-            </div>
-          </section>
-        ) : activeCareers.length === 0 ? (
-          <section className="py-16 bg-white border-t border-slate-200 text-center">
-            <div className="container mx-auto px-4 max-w-lg">
-              <div className="h-12 w-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
-                <Briefcase className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">No openings available currently.</h3>
-              <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-                We don't have any active open positions right now. Please submit an open application below or check back soon!
-              </p>
-            </div>
-          </section>
-        ) : (
-          <>
-            {/* 3a. Open Positions (Full-Time) */}
-            <section className="py-16 bg-white border-t border-slate-200">
-              <div className="container mx-auto px-4 max-w-5xl">
-                <div className="flex items-center gap-3 mb-8">
-                  <Briefcase className="h-6 w-6 text-primary" />
-                  <h2 className="text-2xl font-bold font-display text-slate-900">
-                    Open Positions (Full-Time)
-                  </h2>
-                </div>
+            ) : filteredJobs.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {filteredJobs.map((job) => {
+                  const parts = (job.description || "").split("<!-- split -->");
+                  const shortDesc = parts[0] || "";
+                  const banner = parts[2] || job.bannerImage || "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=600";
 
-                {fullTimePositions.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {fullTimePositions.map((job) => (
-                      <Card key={job._id} className="border-slate-200 hover:border-primary/20 hover:shadow-md transition-all flex flex-col bg-white overflow-hidden">
-                        {jobImages[job.slug] && (
-                          <div className="h-44 overflow-hidden bg-slate-50 border-b border-slate-100 flex items-center justify-center relative p-3">
-                            <img 
-                              src={jobImages[job.slug]} 
-                              alt={job.title} 
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        )}
-                        <CardHeader className="p-5 pb-3">
-                          <div className="flex justify-between items-start gap-2 mb-2">
-                            <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-none font-medium text-[10px]">
-                              {job.department}
-                            </Badge>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-                              {job.experience}
-                            </span>
-                          </div>
-                          <CardTitle className="text-base font-bold text-slate-900">
+                  return (
+                    <motion.div
+                      key={job._id}
+                      whileHover={{ y: -6 }}
+                      className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden hover:shadow-xl hover:border-emerald-500/20 transition-all duration-300 flex flex-col justify-between group h-full"
+                    >
+                      <div>
+                        {/* Banner Image Container */}
+                        <div className="h-44 bg-slate-200 overflow-hidden relative border-b border-slate-100 flex items-center justify-center">
+                          <img 
+                            src={banner} 
+                            alt={job.title} 
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103" 
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 via-transparent to-transparent pointer-events-none" />
+                          <Badge className="absolute bottom-4 left-4 bg-emerald-600 hover:bg-emerald-500 text-white border-none font-bold uppercase tracking-wider text-[8px] px-2 py-0.5 rounded shadow-md z-10">
+                            {job.department}
+                          </Badge>
+                        </div>
+
+                        {/* Card Info */}
+                        <div className="p-6 space-y-2.5">
+                          <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-emerald-600 transition-colors">
                             {job.title}
-                          </CardTitle>
-                          <div className="flex gap-4 text-xs text-slate-500 mt-2">
-                            <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {job.location}</span>
-                            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {job.employmentType}</span>
+                          </h3>
+                          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-400 font-extrabold uppercase">
+                            <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {job.location}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {job.employmentType}</span>
+                            <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {job.experience}</span>
                           </div>
-                        </CardHeader>
-                        <CardContent className="p-5 pt-0 flex-grow flex flex-col justify-between">
-                          <p className="text-xs text-slate-600 leading-relaxed mb-6">
-                            {job.description}
+                          <p className="text-[11px] text-slate-500 leading-relaxed font-semibold line-clamp-3 pt-1">
+                            {shortDesc}
                           </p>
-                          <Button asChild className="w-full bg-slate-900 text-white hover:bg-slate-800 font-semibold mt-auto">
-                            <Link to={`/careers/${job.slug}`}>Apply Now / View Details</Link>
+                        </div>
+                      </div>
+
+                      {/* Action buttons matching Vercel/Stripe pills */}
+                      <div className="p-6 pt-0 border-t border-slate-50 flex items-center justify-between gap-4 mt-3">
+                        <Link to={`/careers/apply/${job.slug}`} className="flex-1">
+                          <Button className="w-full h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] tracking-wide shadow-md shadow-emerald-500/10 transition-all flex items-center justify-center gap-1">
+                            Apply Now <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5 duration-300" />
                           </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-slate-500 bg-slate-50 border border-slate-100 p-6 rounded-lg text-center">
-                    No active full-time positions available. Check back soon or submit an open application below.
-                  </p>
-                )}
+                        </Link>
+                        <Link to={`/careers/${job.slug}`} className="text-[11px] font-bold text-emerald-650 hover:text-emerald-700 flex items-center gap-1 transition-colors">
+                          View Details <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 duration-300" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
-            </section>
-
-            {/* 4. Internship Opportunities */}
-            <section className="py-16 bg-slate-50 border-t border-slate-200">
-              <div className="container mx-auto px-4 max-w-5xl">
-                <div className="flex items-center gap-3 mb-8">
-                  <GraduationCap className="h-7 w-7 text-primary" />
-                  <h2 className="text-2xl font-bold font-display text-slate-900">
-                    Internship Opportunities
-                  </h2>
-                </div>
-
-                {internshipPositions.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {internshipPositions.map((job, idx) => {
-                      const colors = [
-                        'bg-emerald-50/40 border-emerald-200/60',
-                        'bg-blue-50/40 border-blue-200/60',
-                        'bg-amber-50/40 border-amber-200/60',
-                        'bg-indigo-50/40 border-indigo-200/60'
-                      ];
-                      const colorClass = colors[idx % colors.length];
-                      return (
-                        <Card key={job._id} className={`hover:shadow-md transition-all flex flex-col ${colorClass} overflow-hidden`}>
-                          {jobImages[job.slug] && (
-                            <div className="h-44 overflow-hidden bg-white/30 border-b border-slate-200/40 flex items-center justify-center relative p-3">
-                              <img 
-                                src={jobImages[job.slug]} 
-                                alt={job.title} 
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                          )}
-                          <CardHeader className="p-5 pb-3">
-                            <div className="flex justify-between items-start gap-2 mb-2">
-                              <Badge className="bg-emerald-550/10 text-emerald-650 hover:bg-emerald-550/15 border-none font-medium text-[10px]">
-                                {job.department}
-                              </Badge>
-                              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-                                {job.experience}
-                              </span>
-                            </div>
-                            <CardTitle className="text-base font-bold text-slate-900">
-                              {job.title}
-                            </CardTitle>
-                            <div className="flex gap-4 text-xs text-slate-500 mt-2">
-                              <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {job.location}</span>
-                              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {job.employmentType}</span>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="p-5 pt-0 flex-grow flex flex-col justify-between">
-                            <p className="text-xs text-slate-600 leading-relaxed mb-6">
-                              {job.description}
-                            </p>
-                            <Button asChild className="w-full bg-slate-900 text-white hover:bg-slate-800 font-semibold mt-auto">
-                              <Link to={`/careers/${job.slug}`}>Apply Now / View Details</Link>
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-sm text-slate-500 bg-white border border-slate-200 p-6 rounded-lg text-center">
-                    No active internship positions available at this time.
-                  </p>
-                )}
+            ) : (
+              <div className="bg-slate-50 border border-slate-200/80 p-8 rounded-2xl text-center max-w-md mx-auto shadow-sm">
+                <p className="text-slate-500 text-sm font-semibold">No open positions match your search selections.</p>
               </div>
-            </section>
-          </>
-        )}
+            )}
+          </div>
+        </section>
 
-        {/* 5. Company Benefits */}
-        <section className="py-16 bg-white border-t border-slate-200">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-slate-900 mb-10 text-center">
-              TechVistar Benefits & Perks
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {benefits.map((benefit, idx) => (
-                <div key={idx} className="bg-slate-50 border border-slate-100 rounded-xl p-5">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3">
-                    <Check className="h-4 w-4" />
+        {/* 3. Why Join TechVistar (Exactly matching reference card design) */}
+        <section className="py-24 bg-slate-50 border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-16">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Why Join TechVistar?</h2>
+              <p className="text-slate-500 text-xs sm:text-sm font-semibold">We empower people to do their best work and grow together.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {BENEFITS_LIST.map((benefit, idx) => {
+                return (
+                  <motion.div 
+                    key={idx} 
+                    whileHover={{ y: -6 }}
+                    className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_10px_30px_rgba(16,185,129,0.12)] hover:border-emerald-500/20 transition-all duration-300 flex flex-col group h-full text-left"
+                  >
+                    {/* Landscape image */}
+                    <div className="aspect-[16/9] w-full overflow-hidden bg-slate-100 relative">
+                      <img 
+                        src={benefit.image} 
+                        alt={benefit.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/15 via-transparent to-transparent pointer-events-none" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-4 flex-grow flex flex-col justify-between space-y-2">
+                      <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">{benefit.title}</h3>
+                      <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">{benefit.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Hiring Process (Perfect horizontal step icons sequence) */}
+        <section className="py-24 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-16">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Our Hiring Process</h2>
+              <p className="text-slate-500 text-xs sm:text-sm font-semibold">Our simple and transparent hiring process</p>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative max-w-5xl mx-auto">
+              {PROCESS_TIMELINE.map((step, idx) => {
+                const Icon = step.icon;
+                return (
+                  <div key={idx} className="flex flex-col items-center text-center space-y-3 relative z-10 flex-1 group">
+                    {/* Animated connecting line to the right of steps (excluding last step) */}
+                    {idx < PROCESS_TIMELINE.length - 1 && (
+                      <div className="hidden md:block absolute left-[50%] right-[-50%] top-6 h-[2px] bg-slate-100 border-dashed border-t-2 pointer-events-none group-hover:border-emerald-250 transition-colors" />
+                    )}
+
+                    {/* Circular Colored floating icon */}
+                    <motion.div 
+                      animate={{ y: [0, -4, 0] }}
+                      transition={{ repeat: Infinity, duration: 4, delay: idx * 0.3 }}
+                      className={`h-12 w-12 rounded-full bg-gradient-to-tr ${step.color} text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-default`}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </motion.div>
+
+                    <h4 className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">{step.phase}</h4>
+                    <p className="text-[9px] text-slate-400 font-semibold leading-relaxed max-w-[130px]">{step.desc}</p>
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-1">{benefit.title}</h3>
-                  <p className="text-[11px] text-slate-600 leading-relaxed">{benefit.description}</p>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Life at TechVistar */}
+        <section id="life-at-techvistar" className="py-24 bg-slate-50">
+          <div className="container mx-auto px-6 max-w-7xl space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Life at TechVistar</h2>
+              <p className="text-slate-500 text-xs sm:text-sm font-semibold">Real photography of workspaces, collaboration synch, and cultural events.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {LIFE_GALLERY.map((img, idx) => (
+                <div key={idx} className="relative group rounded-3xl overflow-hidden shadow-md aspect-[4/3] border border-slate-200 bg-slate-200">
+                  <img 
+                    src={img.url} 
+                    alt={img.title} 
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 backdrop-blur-[2px] transition-all duration-300 flex items-center justify-center">
+                    <span className="px-4 py-2 bg-white/95 text-slate-900 font-extrabold text-[10px] uppercase rounded-full shadow-lg border border-slate-100">{img.title}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 6. Hiring Process */}
-        <section className="py-16 bg-slate-50 border-t border-slate-200">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-slate-900 mb-10 text-center">
-              Our Hiring Process
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-200 md:before:hidden">
-              {hiringProcess.map((step, idx) => {
-                const stepStyles = [
-                  { badge: 'bg-emerald-500', card: 'bg-emerald-50/30 border-slate-200' },
-                  { badge: 'bg-blue-500', card: 'bg-blue-50/30 border-slate-200' },
-                  { badge: 'bg-indigo-500', card: 'bg-indigo-50/30 border-slate-200' },
-                  { badge: 'bg-amber-500', card: 'bg-amber-50/30 border-slate-200' },
-                  { badge: 'bg-rose-500', card: 'bg-rose-50/30 border-slate-200' }
-                ];
-                const currentStyle = stepStyles[idx % stepStyles.length];
+        {/* 6. FAQ Accordion Block */}
+        <section className="py-24 bg-white border-t border-slate-100">
+          <div className="container mx-auto px-6 max-w-4xl space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Frequently Asked Questions</h2>
+              <p className="text-slate-500 text-xs sm:text-sm font-semibold">Clear details about application guidelines and recruitment paths.</p>
+            </div>
+
+            <div className="space-y-4">
+              {FAQS_LIST.map((faq, idx) => {
+                const isOpen = activeFaq === idx;
                 return (
-                  <div key={step.step} className={`border rounded-xl p-5 relative flex gap-4 md:flex-col md:gap-0 transition-all ${currentStyle.card}`}>
-                    <div className={`h-8 w-8 rounded-full ${currentStyle.badge} text-white text-xs font-bold flex items-center justify-center shrink-0 mb-3 border-4 border-white shadow-sm`}>
-                      {step.step}
-                    </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 mb-1 md:mt-2">{step.title}</h3>
-                    <p className="text-[10px] text-slate-500 leading-relaxed">{step.description}</p>
+                  <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/50">
+                    <button
+                      onClick={() => setActiveFaq(isOpen ? null : idx)}
+                      className="w-full p-5 flex items-center justify-between text-left focus:outline-none"
+                    >
+                      <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
+                        <HelpCircle className="w-4 h-4 text-emerald-500" /> {faq.q}
+                      </span>
+                      <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-90 text-emerald-500' : ''}`} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="px-5 pb-5 pt-1 text-[11px] text-slate-500 leading-relaxed font-semibold border-t border-slate-150 bg-white"
+                        >
+                          {faq.a}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </div>
         </section>
 
-
-
-        {/* 8. Apply CTA Banner */}
-        <section className="py-16 bg-slate-50 border-t border-slate-200">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="bg-gradient-to-r from-primary to-emerald-600 rounded-2xl p-8 text-white text-center shadow-md">
-              <h2 className="text-xl md:text-2xl font-bold font-display mb-3">
-                {applyCTA.title}
-              </h2>
-              <p className="text-white/80 text-xs md:text-sm max-w-lg mx-auto mb-8 leading-relaxed">
-                {applyCTA.description}
-              </p>
-              <Button asChild className="bg-white text-primary hover:bg-slate-50 font-bold border-none shadow-none px-6 py-2.5 rounded-lg">
-                <a href={applyCTA.emailUrl}>{applyCTA.buttonText}</a>
+        {/* 7. Bottom CTA Block */}
+        <section className="py-16 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white border-t border-slate-900">
+          <div className="container mx-auto px-6 max-w-4xl text-center space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight">Didn't find the right opening?</h2>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-medium">
+              We are constantly seeking outstanding designers, systems developers, and backend builders. Submit your portfolio details for general open considerations.
+            </p>
+            <div className="pt-2">
+              <Button asChild className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-11 px-6 rounded-full shadow-lg shadow-emerald-500/10">
+                <Link to="/contact">Submit Open Application</Link>
               </Button>
             </div>
           </div>
         </section>
 
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 };

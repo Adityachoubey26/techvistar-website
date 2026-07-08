@@ -5,8 +5,6 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { 
-  Building2, Brain, Sparkles, Cloud, Target, 
-  Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, 
   ArrowRight, Sparkle, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,11 +22,16 @@ interface SolutionCategory {
 }
 
 export const Solutions = () => {
-  const solutionsData = Object.values(SOLUTIONS_DATA);
-  const isLoading = false;
+  const { data: apiSolutions, isLoading } = useQuery({
+    queryKey: ['activeSolutions'],
+    queryFn: () => getActiveSolutions(),
+  });
+
+  const solutionsData = apiSolutions && apiSolutions.length > 0
+    ? apiSolutions.map(decorateSolution)
+    : Object.values(SOLUTIONS_DATA);
 
   const [activeCategory, setActiveCategory] = useState('business-solutions');
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const categoryRefs = {
     'business-solutions': useRef<HTMLDivElement>(null),
@@ -60,18 +63,6 @@ export const Solutions = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoading]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width - 0.5;
-    const y = (clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
 
   const scrollToSection = (id: keyof typeof categoryRefs) => {
     const element = categoryRefs[id].current;

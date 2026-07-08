@@ -4,7 +4,9 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { SOLUTIONS_DATA } from '@/data/solutions';
+import { SOLUTIONS_DATA, decorateSolution } from '@/data/solutions';
+import { useQuery } from '@tanstack/react-query';
+import { getSolutionBySlug, getActiveSolutions } from '@/services/solutions.service';
 
 // Subcomponents
 import { SolutionHero } from '@/components/solutions/SolutionHero';
@@ -20,8 +22,23 @@ export const SolutionDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const isDetailLoading = false;
-  const solution = slug ? SOLUTIONS_DATA[slug] : undefined;
+  const { data: apiSolution, isLoading: isDetailLoading } = useQuery({
+    queryKey: ['solutionDetails', slug],
+    queryFn: () => getSolutionBySlug(slug || ''),
+    enabled: !!slug,
+  });
+
+  const solution = apiSolution ? decorateSolution(apiSolution) : (slug ? SOLUTIONS_DATA[slug] : undefined);
+
+  const { data: apiSolutions } = useQuery({
+    queryKey: ['activeSolutions'],
+    queryFn: () => getActiveSolutions(),
+    enabled: !!solution,
+  });
+
+  const solutionsData = apiSolutions && apiSolutions.length > 0 
+    ? apiSolutions.map(decorateSolution) 
+    : Object.values(SOLUTIONS_DATA);
 
   useEffect(() => {
     if (!solution && slug !== undefined) {

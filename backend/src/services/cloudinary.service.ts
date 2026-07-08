@@ -1,0 +1,139 @@
+/**
+ * @file src/services/cloudinary.service.ts
+ * @description Reusable Cloudinary upload / delete lifecycle service.
+ */
+
+import { Readable } from 'stream';
+import type { UploadApiResponse } from 'cloudinary';
+import { cloudinary } from '@/config/cloudinary';
+import { UPLOAD } from '@/constants';
+import { ApiError } from '@/utils/ApiError';
+import { logger } from '@/utils/logger';
+import { UploadedImageResult } from '@/types/upload';
+
+/** Minimal file shape accepted by uploadImage (Multer memory storage). */
+export type UploadableImageFile = {
+  buffer: Buffer;
+  mimetype: string;
+  size?: number;
+};
+
+class CloudinaryService {
+  /**
+   * Uploads an in-memory image buffer and returns secure_url + public_id metadata.
+   */
+  async uploadImage(file: UploadableImageFile): Promise<UploadedImageResult> {
+    if (!file?.buffer?.length) {
+      throw ApiError.badRequest('No image file provided.');
+    }
+
+    try {
+      const result = await this.uploadBuffer(file.buffer, file.mimetype);
+
+      logger.info('[CloudinaryService] Image uploaded', {
+        publicId: result.public_id,
+        format: result.format,
+        bytes: result.bytes,
+      });
+
+      return {
+        url: result.secure_url,
+        publicId: result.public_id,
+        width: result.width ?? 0,
+        height: result.height ?? 0,
+        format: result.format ?? 'unknown',
+      };
+    } catch (err) {
+      logger.error('[CloudinaryService] Upload failed', {
+        message: err instanceof Error ? err.message : String(err),
+        mimeType: file.mimetype,
+        size: file.size,
+      });
+
+      if (err instanceof ApiError) {
+        throw err;
+      }
+
+      throw ApiError.internal('Failed to upload image to Cloudinary.');
+    }
+  }
+
+  /**
+   * Deletes a Cloudinary asset by public_id.
+   * Never throws — Cloudinary failures are logged so MongoDB cleanup can continue.
+   */
+  async deleteImage(publicId: string | null | undefined): Promise<boolean> {
+    const id = typeof publicId === 'string' ? publicId.trim() : '';
+    if (!id) {
+      return false;
+    }
+
+    try {
+      const result = await cloudinary.uploader.destroy(id, {
+        resource_type: 'image',
+        invalidate: true,
+      });
+
+      const outcome = typeof result?.result === 'string' ? result.result : 'unknown';
+
+      if (outcome === 'ok' || outcome === 'not found') {
+        logger.info('[CloudinaryService] Image deleted', { publicId: id, outcome });
+        return outcome === 'ok';
+      }
+
+      logger.warn('[CloudinaryService] Unexpected destroy response', {
+        publicId: id,
+        result,
+      });
+      return false;
+    } catch (err) {
+      logger.error('[CloudinaryService] Delete failed — continuing without aborting API', {
+        publicId: id,
+        message: err instanceof Error ? err.message : String(err),
+      });
+      return false;
+    }
+  }
+
+  /**
+   * Best-effort bulk delete. Never throws.
+   */
+  async deleteImages(publicIds: Array<string | null | undefined>): Promise<void> {
+    const unique = [
+      ...new Set(
+        publicIds
+          .map((id) => (typeof id === 'string' ? id.trim() : ''))
+          .filter(Boolean)
+      ),
+    ];
+
+    for (const id of unique) {
+      await this.deleteImage(id);
+    }
+  }
+
+  private uploadBuffer(buffer: Buffer, mimeType: string): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: UPLOAD.CLOUDINARY_FOLDER,
+          resource_type: 'image',
+          format: mimeType === 'image/svg+xml' ? 'svg' : undefined,
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          if (!result) {
+            return reject(new Error('Cloudinary returned an empty upload result'));
+          }
+          resolve(result);
+        }
+      );
+
+      Readable.from(buffer).pipe(uploadStream);
+    });
+  }
+}
+
+export const cloudinaryService = new CloudinaryService();

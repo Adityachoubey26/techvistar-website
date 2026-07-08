@@ -6,7 +6,9 @@ import { SiteSection } from '@/components/SiteSection';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveServices } from '@/services/services.service';
-import { decorateService, SECTION_SERVICES } from '@/data/services';
+import { decorateService, getServiceCardImage } from '@/data/services';
+import { getServicesCmsConfig } from '@/services/servicesCmsConfig.service';
+import { mergeServicesCmsConfig } from '@/types/servicesCms';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -39,16 +41,30 @@ const ctaVariants = {
 export const ServicesSection = () => {
   const { ref, isInView } = useAnimatedSection();
 
+  const { data: cmsConfigApi } = useQuery({
+    queryKey: ['servicesCmsConfig'],
+    queryFn: getServicesCmsConfig,
+    staleTime: 60_000,
+  });
+
+  const sectionCopy = mergeServicesCmsConfig(cmsConfigApi).homeSection;
+
   const { data: apiServices } = useQuery({
     queryKey: ['activeServices'],
     queryFn: getActiveServices,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
-  const activeServices = (apiServices || []).map(decorateService);
+  const activeServices = [...(apiServices || []).map(decorateService)].sort((a, b) => a.order - b.order);
 
-  // If you want to limit it on the home page, you can slice here, e.g., activeServices.slice(0, 17)
-  // We'll map whatever activeServices are available, and append the "View All" card at the end.
-  const services = activeServices.slice(0, 18); // Slicing to 18 so it includes Digital Marketing, and the View All card becomes the 19th item
+  // Filter active services by featured flag
+  const featuredServices = activeServices.filter((s: any) => s.featured === true || s.featured === 'true');
+
+  // Show up to 6 featured services, falling back to first 6 active services if none exist
+  const services = featuredServices.length > 0 
+    ? featuredServices.slice(0, 6) 
+    : activeServices.slice(0, 6);
 
   return (
     <SiteSection ref={ref} id="services" variant="muted" aria-labelledby="services-heading" className="relative pt-8 pb-4 md:pt-12 md:pb-6">
@@ -57,10 +73,10 @@ export const ServicesSection = () => {
 
       <div className="container-custom relative z-10">
         <SectionHeader
-          tag={SECTION_SERVICES.tag}
-          title={SECTION_SERVICES.title}
-          highlight={SECTION_SERVICES.highlight}
-          description={SECTION_SERVICES.description}
+          tag={sectionCopy.tag}
+          title={sectionCopy.title}
+          highlight={sectionCopy.highlight}
+          description={sectionCopy.description}
           isInView={isInView}
           headingId="services-heading"
         />
@@ -83,7 +99,7 @@ export const ServicesSection = () => {
                   >
                     <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-50 ring-1 ring-slate-100 transition-all duration-500 group-hover:scale-105 group-hover:ring-emerald-500/20">
                       <img
-                        src={service.coverImage}
+                        src={getServiceCardImage(service)}
                         alt={service.title}
                         className="h-full w-full object-contain p-2 sm:p-2.5 transition-transform duration-500 group-hover:scale-110"
                       />
@@ -115,18 +131,17 @@ export const ServicesSection = () => {
                 </div>
                 
                 <h3 className="font-display text-sm sm:text-base font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight">
-                  View All Services
+                  {sectionCopy.viewAllTitle}
                 </h3>
                 
                 <span className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-emerald-600 group-hover:text-emerald-700 transition-colors mt-1">
-                  Explore All
+                  {sectionCopy.viewAllLinkText}
                   <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
                 </span>
               </SpotlightCard>
             </Link>
           </motion.div>
         </motion.div>
-
       </div>
     </SiteSection>
   );

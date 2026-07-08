@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { INDUSTRIES } from '@/data/industries';
-import { SERVICES } from '@/data/services';
 import { PROJECTS } from '@/data/projects';
 import { PROCESS_STEPS } from '@/data/process';
 import { Navbar } from '@/components/Navbar';
@@ -10,46 +9,77 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { 
-  Accordion, 
-  AccordionItem, 
-  AccordionTrigger, 
-  AccordionContent 
-} from '@/components/ui/accordion';
-import { 
   ArrowLeft, 
   ChevronRight, 
   AlertTriangle, 
   Lightbulb, 
   Check, 
-  Layers, 
   Briefcase, 
   Cpu, 
-  Workflow, 
-  HelpCircle,
-  Image
+  Image,
+  Workflow
 } from 'lucide-react';
 import { SpotlightCard } from '@/components/animations/SpotlightCard';
 import { AuroraBackground, Spotlight3DBackground } from '@/components/animations/PremiumBackground';
-import { resolveSpotlightColors } from './Industries';
+// Shared color utility for premium spotlight rendering
+const resolveSpotlightColors = (id: string) => {
+  const colorMap: Record<string, { spotlight: string; border: string }> = {
+    healthcare: { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' },
+    education: { spotlight: 'rgba(59, 130, 246, 0.06)', border: 'rgba(59, 130, 246, 0.25)' },
+    finance: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'retail-ecommerce': { spotlight: 'rgba(244, 63, 94, 0.06)', border: 'rgba(244, 63, 94, 0.25)' },
+    manufacturing: { spotlight: 'rgba(249, 115, 22, 0.06)', border: 'rgba(249, 115, 22, 0.25)' },
+    'real-estate': { spotlight: 'rgba(6, 182, 212, 0.06)', border: 'rgba(6, 182, 212, 0.25)' },
+    logistics: { spotlight: 'rgba(139, 92, 246, 0.06)', border: 'rgba(139, 92, 246, 0.25)' },
+    agriculture: { spotlight: 'rgba(34, 197, 94, 0.06)', border: 'rgba(34, 197, 94, 0.25)' },
+    hospitality: { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+    'energy-utilities': { spotlight: 'rgba(245, 158, 11, 0.06)', border: 'rgba(245, 158, 11, 0.25)' },
+  };
+  return colorMap[id] || { spotlight: 'rgba(16, 185, 129, 0.06)', border: 'rgba(16, 185, 129, 0.25)' };
+};
 import { BlurReveal, ScaleIn, StaggerContainer, StaggerItem } from '@/components/animations/ScrollAnimations';
 import { PremiumImage } from '@/components/common/PremiumImage';
 import { Magnetic, ShineEffect, GlowHover } from '@/components/animations/MicroInteractions';
+import { useQuery } from '@tanstack/react-query';
+import { getIndustryBySlug } from '@/services/industry.service';
+import { decorateIndustry, getIndustryHeroImage } from '@/data/industry.adapter';
+import { RichTextContent } from '@/components/common/RichTextContent';
+
+const DEFAULT_OVERVIEW_QUOTE =
+  'Adapting our VISTAR delivery frameworks to the precise requirements of target industries, securing data contracts, and scaling customer interfaces.';
 
 export const IndustryDetails = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  // Find dynamic industry details
-  const industry = INDUSTRIES.find((i) => i.slug === slug);
+  // Fetch dynamic industry details from backend CMS
+  const { data: apiIndustry, isPending } = useQuery({
+    queryKey: ['industryDetails', slug],
+    queryFn: () => getIndustryBySlug(slug || ''),
+    enabled: !!slug,
+  });
 
-  // Set page title & reset scroll
+  const staticIndustry = slug ? INDUSTRIES.find((i) => i.slug === slug) : undefined;
+
+  // Prefer API data; use static fallback only when available (avoids false "Not Found" during fetch)
+  const industry = apiIndustry
+    ? decorateIndustry(apiIndustry)
+    : staticIndustry;
+
+  // Set page title & reset scroll (must run before any conditional return — Rules of Hooks)
   useEffect(() => {
+    if (isPending && !staticIndustry) return;
     if (industry) {
       document.title = `${industry.title} Industry Solutions | TechVistar`;
     } else {
       document.title = 'Industry Not Found | TechVistar';
     }
     window.scrollTo(0, 0);
-  }, [industry]);
+  }, [industry, isPending, staticIndustry]);
+
+  // CMS-only slugs have no static fallback — wait for API before showing not-found
+  if (isPending && !staticIndustry) {
+    return null;
+  }
 
   if (!industry) {
     return (
@@ -78,9 +108,13 @@ export const IndustryDetails = () => {
 
   const Icon = industry.icon;
   const colors = resolveSpotlightColors(industry.id);
+  const overviewQuote = industry.overviewQuote?.trim() || DEFAULT_OVERVIEW_QUOTE;
+  const hasStats = industry.statistics && industry.statistics.length > 0;
+  const hasChallenges = industry.challenges && industry.challenges.length > 0;
+  const hasSolutions = industry.solutions && industry.solutions.length > 0;
+  const hasTechnologies = industry.technologies && industry.technologies.length > 0;
 
-  // Resolve related services and projects objects
-  const relatedServicesData = SERVICES.filter((s) => industry.services.includes(s.slug) && s.status === 'active');
+  // Resolve related projects for case studies
   const relatedProjectsData = PROJECTS.filter((p) => industry.caseStudies.includes(p.slug));
 
   return (
@@ -130,9 +164,9 @@ export const IndustryDetails = () => {
                 <BlurReveal duration={0.6} delay={0.15} className="w-full max-w-sm">
                   {/* Dynamically renders cover image inside rounded container */}
                   <div className="relative group/cover rounded-3xl overflow-hidden border border-white/15 shadow-2xl w-full aspect-[4/3] bg-slate-800">
-                    {industry.heroImage ? (
+                    {getIndustryHeroImage(industry) ? (
                       <PremiumImage 
-                        src={industry.heroImage} 
+                        src={getIndustryHeroImage(industry)} 
                         alt={industry.title}
                         aspectRatioClassName="aspect-[4/3]"
                         className="group-hover/cover:scale-[1.05] transition-transform duration-500"
@@ -159,23 +193,23 @@ export const IndustryDetails = () => {
         <Spotlight3DBackground className="py-16 md:py-24">
           <div className="container-custom max-w-5xl mx-auto px-4 space-y-16 md:space-y-24">
             
-            {/* Section 1: Overview & Sidebar layout grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start pb-12 border-b border-slate-100">
-              {/* Left Column - Overview Focus */}
-              <div className="lg:col-span-8 space-y-4">
+            {/* Section 1: Overview */}
+            <div className={`grid grid-cols-1 ${hasStats ? 'lg:grid-cols-12' : ''} gap-10 items-start pb-12 border-b border-slate-100`}>
+              <div className={`${hasStats ? 'lg:col-span-8' : ''} space-y-4`}>
                 <ScaleIn>
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
                     Overview & Sector Focus
                   </h2>
                   <div className="border-l-4 border-emerald-500 pl-4 py-1.5 mt-4">
-                    <p className="text-slate-655 text-sm sm:text-base leading-relaxed font-semibold italic">
-                      "Adapting our VISTAR delivery frameworks to the precise requirements of target industries, securing data contracts, and scaling customer interfaces."
-                    </p>
+                    <RichTextContent
+                      content={overviewQuote}
+                      className="text-slate-655 text-sm sm:text-base leading-relaxed font-semibold italic"
+                    />
                   </div>
-                  <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3">
-                    {industry.description}
-                  </p>
-
+                  <RichTextContent
+                    content={industry.description}
+                    className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium pt-3"
+                  />
                   {/* Strategic Capabilities feature grid to fill height space */}
                   <div className="mt-8 pt-6 border-t border-slate-100/80">
                     <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-4">
@@ -219,177 +253,153 @@ export const IndustryDetails = () => {
                 </ScaleIn>
               </div>
 
-              {/* Right Column - Sidebar Metrics & Stacks */}
+              {hasStats && (
               <div className="lg:col-span-4 space-y-6">
-                <ScaleIn delay={0.1}>
-                  {/* Stats Card */}
-                  <Card className="border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.03)]">
-                    <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-5">
-                      Metrics & Impact
-                    </h3>
-                    <div className="space-y-6">
-                      {industry.statistics.map((stat, index) => (
-                        <div key={index} className="group border-b border-slate-100 last:border-0 pb-4 last:pb-0">
-                          <div className={`text-3xl font-black bg-gradient-to-r ${industry.industriesColor} bg-clip-text text-transparent group-hover:scale-105 transition-transform origin-left duration-300`}>
-                            {stat.value}
+                  <ScaleIn delay={0.1}>
+                    <Card className="border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.03)]">
+                      <h3 className="font-display font-extrabold text-teal-955 text-xs uppercase tracking-wider mb-5">
+                        Metrics & Impact
+                      </h3>
+                      <div className="space-y-6">
+                        {industry.statistics.map((stat, index) => (
+                          <div key={index} className="group border-b border-slate-100 last:border-0 pb-4 last:pb-0">
+                            <div className={`text-3xl font-black bg-gradient-to-r ${industry.industriesColor} bg-clip-text text-transparent group-hover:scale-105 transition-transform origin-left duration-300`}>
+                              {stat.value}
+                            </div>
+                            <div className="text-teal-955 text-xs sm:text-sm font-bold mt-1">
+                              {stat.label}
+                            </div>
+                            {stat.description && (
+                              <p className="text-slate-500 text-xs font-semibold mt-1 leading-relaxed">
+                                {stat.description}
+                              </p>
+                            )}
                           </div>
-                          <div className="text-teal-955 text-xs sm:text-sm font-bold mt-1">
-                            {stat.label}
-                          </div>
-                          {stat.description && (
-                            <p className="text-slate-500 text-xs font-semibold mt-1 leading-relaxed">
-                              {stat.description}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                </ScaleIn>
+                        ))}
+                      </div>
+                    </Card>
+                  </ScaleIn>
               </div>
+              )}
             </div>
 
-            {/* Section 2: Business Challenges (Full Width) */}
-            <div className="space-y-6 pb-12 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-rose-500 shrink-0" />
-                <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                  Business Challenges We Resolve
-                </h2>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm font-semibold">
-                Every vertical sector contains unique bottlenecks that slow development cycles and introduce compliance risks:
-              </p>
-              <StaggerContainer className="grid grid-cols-1 gap-4">
-                {industry.challenges.map((challenge, index) => (
-                  <StaggerItem key={index}>
-                    <GlowHover glowColor="rgba(239, 68, 68, 0.05)">
-                      <SpotlightCard 
-                        spotlightColor="rgba(239, 68, 68, 0.02)"
-                        borderColor="rgba(239, 68, 68, 0.15)"
-                        className="flex flex-col sm:flex-row gap-4 sm:items-start border border-slate-200/40 bg-white p-5 rounded-2xl shadow-sm hover:scale-[1.005] transition-all"
-                      >
-                        <div className="px-3 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100/60 text-[10px] font-black uppercase tracking-wider shrink-0 w-fit">
-                          Challenge 0{index + 1}
-                        </div>
-                        <div>
-                          <h3 className="font-display font-extrabold text-teal-955 text-base mb-1">
-                            {challenge.title}
-                          </h3>
-                          <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
-                            {challenge.description}
-                          </p>
-                        </div>
-                      </SpotlightCard>
-                    </GlowHover>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </div>
-
-            {/* Section 3: Our Solutions (Full Width) */}
-            <div className="space-y-6 pb-12 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-emerald-500 shrink-0" />
-                <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                  Our Engineering Solutions
-                </h2>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
-                Deploying secure, modern, and high-performance digital platforms configured for your workflows:
-              </p>
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {industry.solutions.map((solution, index) => (
-                  <StaggerItem key={index}>
-                    <GlowHover glowColor="rgba(16, 185, 129, 0.05)">
-                      <SpotlightCard 
-                        spotlightColor="rgba(16, 185, 129, 0.04)"
-                        borderColor="rgba(16, 185, 129, 0.2)"
-                        className="border border-emerald-100/60 bg-emerald-50/[0.12] p-6 rounded-2xl h-full shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)]"
-                      >
-                        <div className="flex gap-4">
-                          <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                            <Check className="h-3.5 w-3.5" />
-                          </div>
-                          <div>
-                            <span className="text-[9px] font-black uppercase tracking-wider text-emerald-600 mb-1 block">
-                              Solution Strategy 0{index + 1}
-                            </span>
-                            <h3 className="font-display font-extrabold text-teal-955 text-base mb-2">
-                              {solution.title}
-                            </h3>
-                            <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
-                              {solution.description}
-                            </p>
-                          </div>
-                        </div>
-                      </SpotlightCard>
-                    </GlowHover>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </div>
-
-            {/* Section 4: Related Services (Full Width) */}
-            {relatedServicesData.length > 0 && (
-              <div className="space-y-6 pb-12 border-b border-slate-100">
+            {/* Section 2: Challenge & Solution */}
+            {(hasChallenges || hasSolutions) && (
+              <div className="space-y-16 md:space-y-24 pb-12 border-b border-slate-100">
+            {hasChallenges && (
+              <div className="space-y-6">
                 <div className="flex items-center gap-2">
-                  <Layers className="h-5 w-5 text-teal-900 shrink-0" />
+                  <AlertTriangle className="h-5 w-5 text-rose-500 shrink-0" />
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Related Services
+                    Business Challenges We Resolve
                   </h2>
                 </div>
-                <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
-                  Explore the core software stack and design methodologies utilized in this sector:
+                <p className="text-slate-500 text-xs sm:text-sm font-semibold">
+                  Every vertical sector contains unique bottlenecks that slow development cycles and introduce compliance risks:
                 </p>
-                <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {relatedServicesData.map((svc) => {
-                    const SvcIcon = svc.icon;
-                    return (
-                      <StaggerItem key={svc.id}>
-                        <Link 
-                          to={`/services/${svc.slug}`}
-                          className="group block rounded-2xl overflow-hidden h-full"
+                <StaggerContainer className="grid grid-cols-1 gap-4">
+                  {industry.challenges.map((challenge, index) => (
+                    <StaggerItem key={index}>
+                      <GlowHover glowColor="rgba(239, 68, 68, 0.05)">
+                        <SpotlightCard 
+                          spotlightColor="rgba(239, 68, 68, 0.02)"
+                          borderColor="rgba(239, 68, 68, 0.15)"
+                          className="flex flex-col sm:flex-row gap-4 sm:items-start border border-slate-200/40 bg-white p-5 rounded-2xl shadow-sm hover:scale-[1.005] transition-all"
                         >
-                          <GlowHover glowColor={colors.border} className="h-full">
-                            <SpotlightCard
-                              spotlightColor={colors.spotlight}
-                              borderColor={colors.border}
-                              className="h-full flex flex-col justify-between border border-slate-200/50 bg-white p-6 rounded-2xl shadow-[0_4px_25px_-4px_rgba(10,46,43,0.02)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.05)] hover:scale-[1.01] transition-all duration-300"
-                            >
-                              <div className="flex flex-col flex-grow">
-                                <div className="flex items-center gap-3 mb-4">
-                                  <span className="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 group-hover:bg-primary group-hover:text-white border border-slate-100 group-hover:rotate-6 group-hover:scale-110 transition-all duration-300 shadow-sm shrink-0 flex items-center justify-center">
-                                    <SvcIcon className="h-4.5 w-4.5" />
-                                  </span>
-                                  <h3 className="font-display font-extrabold text-teal-955 group-hover:text-primary transition-colors text-sm sm:text-base leading-snug">
-                                    {svc.title}
-                                  </h3>
-                                </div>
-                                <p className="text-slate-500 text-xs font-semibold leading-relaxed line-clamp-2 mb-4 flex-grow">
-                                  {svc.shortDescription}
-                                </p>
-                              </div>
-                              <span className="text-[10px] font-bold text-primary flex items-center gap-1 group-hover:translate-x-1.5 transition-transform mt-auto shrink-0">
-                                Explore service details <ChevronRight className="h-3 w-3" />
-                              </span>
-                            </SpotlightCard>
-                          </GlowHover>
-                        </Link>
-                      </StaggerItem>
-                    );
-                  })}
+                          <div className="px-3 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-100/60 text-[10px] font-black uppercase tracking-wider shrink-0 w-fit">
+                            Challenge 0{index + 1}
+                          </div>
+                          <div>
+                            <h3 className="font-display font-extrabold text-teal-955 text-base mb-1">
+                              {challenge.title}
+                            </h3>
+                            <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
+                              {challenge.description}
+                            </p>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
+                    </StaggerItem>
+                  ))}
                 </StaggerContainer>
               </div>
             )}
 
-            {/* Section 5: Related Projects / Case Studies (Full Width) */}
+            {hasSolutions && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-emerald-500 shrink-0" />
+                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
+                    Our Engineering Solutions
+                  </h2>
+                </div>
+                <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
+                  Deploying secure, modern, and high-performance digital platforms configured for your workflows:
+                </p>
+                <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {industry.solutions.map((solution, index) => (
+                    <StaggerItem key={index}>
+                      <GlowHover glowColor="rgba(16, 185, 129, 0.05)">
+                        <SpotlightCard 
+                          spotlightColor="rgba(16, 185, 129, 0.04)"
+                          borderColor="rgba(16, 185, 129, 0.2)"
+                          className="border border-emerald-100/60 bg-emerald-50/[0.12] p-6 rounded-2xl h-full shadow-[0_4px_20px_-4px_rgba(16,185,129,0.02)]"
+                        >
+                          <div className="flex gap-4">
+                            <div className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                              <Check className="h-3.5 w-3.5" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-black uppercase tracking-wider text-emerald-600 mb-1 block">
+                                Solution Strategy 0{index + 1}
+                              </span>
+                              <h3 className="font-display font-extrabold text-teal-955 text-base mb-2">
+                                {solution.title}
+                              </h3>
+                              <p className="text-slate-500 text-xs sm:text-sm font-medium leading-relaxed">
+                                {solution.description}
+                              </p>
+                            </div>
+                          </div>
+                        </SpotlightCard>
+                      </GlowHover>
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              </div>
+            )}
+              </div>
+            )}
+
+            {/* Section 3: Technology Stack */}
+            {hasTechnologies && (
+              <div className="space-y-6 pb-12 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Cpu className="h-5 w-5 text-teal-900 shrink-0" />
+                  <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
+                    Technology Stack
+                  </h2>
+                </div>
+                <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
+                  Core technologies we deploy for this industry vertical:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {industry.technologies.map((tech) => (
+                    <Badge key={tech} variant="outline" className="text-xs text-slate-600 border-slate-200 bg-white font-semibold px-3 py-1 rounded-lg">
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Section 4: Related Case Study */}
             {relatedProjectsData.length > 0 && (
               <div className="space-y-6 pb-12 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-5 w-5 text-teal-900 shrink-0" />
                   <h2 className="font-display text-2xl md:text-3xl font-extrabold text-teal-955 tracking-tight">
-                    Related Case Studies
+                    Related Case Study
                   </h2>
                 </div>
                 <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-6">
@@ -485,7 +495,7 @@ export const IndustryDetails = () => {
                         </p>
                         <div className="mt-3 flex flex-wrap gap-1.5">
                           {step.deliverables.map((deliv, dIdx) => (
-                            <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg transition-transform hover:scale-[1.03]">
+                             <Badge key={dIdx} variant="outline" className="text-[9px] bg-slate-50/50 text-slate-500 border-slate-200/60 font-semibold py-0.5 px-2 rounded-lg transition-transform hover:scale-[1.03]">
                               {deliv}
                             </Badge>
                           ))}
@@ -496,13 +506,10 @@ export const IndustryDetails = () => {
                 })}
               </StaggerContainer>
             </div>
-
-
-
           </div>
         </Spotlight3DBackground>
 
-        {/* Dynamic CTA Section Redesigned with Aurora Background */}
+        {/* Final CTA */}
         <AuroraBackground className="bg-gradient-to-br from-zinc-950 via-[#031c19] to-zinc-950 border-t border-emerald-950/40 py-20 md:py-24">
           <div className="container-custom max-w-4xl mx-auto text-center px-4 relative z-10">
             <ScaleIn>
@@ -515,9 +522,10 @@ export const IndustryDetails = () => {
                 {industry.cta.title}
               </h2>
               {industry.cta.subtitle && (
-                <p className="mt-5 text-slate-300 max-w-xl mx-auto text-xs sm:text-sm font-semibold leading-relaxed">
-                  {industry.cta.subtitle}
-                </p>
+                <RichTextContent
+                  content={industry.cta.subtitle}
+                  className="mt-5 text-slate-300 max-w-xl mx-auto text-xs sm:text-sm font-semibold leading-relaxed"
+                />
               )}
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Magnetic>

@@ -1,6 +1,7 @@
 import { Service } from '@/data/services';
 import { Brain, Lightbulb } from 'lucide-react';
 import '../ui/GlassIcons.css';
+import { RichTextContent } from '@/components/common/RichTextContent';
 import { OverviewIllustration } from './OverviewIllustration';
 
 interface SectionProps {
@@ -45,9 +46,10 @@ export const OverviewSection = ({ service }: SectionProps) => {
           <div className="w-12 h-1 bg-emerald-500 rounded-full" />
 
           {/* Description */}
-          <p className="text-slate-600 text-sm md:text-sm leading-relaxed">
-            {service.longDescription}
-          </p>
+          <RichTextContent
+            content={service.longDescription}
+            className="text-slate-600 text-sm md:text-sm leading-relaxed"
+          />
 
           {/* Key Insight callout box */}
           <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-2xl p-4 flex gap-4 items-start transition-all duration-300 hover:bg-emerald-50/80">
@@ -56,21 +58,24 @@ export const OverviewSection = ({ service }: SectionProps) => {
             </div>
             <div>
               <div className="text-xs font-bold text-emerald-800 mb-0.5">Key Insight</div>
-              <p className="text-xs text-emerald-700/90 leading-relaxed font-medium">
-                {service.overview}
-              </p>
+              <RichTextContent
+                content={service.overview}
+                className="text-xs text-emerald-700/90 leading-relaxed font-medium"
+              />
             </div>
           </div>
         </div>
 
-        {/* Right Dashboard Image Column - Render dynamic monochrome emerald green 3D glass illustration */}
+        {/* Right Dashboard Image Column */}
         <div className="md:col-span-5 flex justify-center items-center">
           <div className="relative group/image w-full">
-            {/* Soft background glow */}
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500/10 to-sky-500/10 opacity-75 blur-xl group-hover/image:opacity-100 transition duration-300 pointer-events-none" />
-            
             <div className="relative z-10 w-full transition-transform duration-300 group-hover/image:scale-[1.03]">
-              <img src={service.coverImage} alt={service.title} className="w-full h-auto max-h-[300px] object-contain rounded-2xl drop-shadow-xl" />
+              <img 
+                src={service.dashboardImage || service.coverImage} 
+                alt={`${service.title} overview`} 
+                className="w-full h-auto max-h-[300px] object-contain rounded-2xl drop-shadow-xl" 
+              />
             </div>
           </div>
         </div>

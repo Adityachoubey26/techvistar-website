@@ -11,6 +11,7 @@ export interface IProject extends BaseDocument {
   slug: string;
   description: string;
   thumbnail: string;
+  thumbnailPublicId?: string;
   category: string;
   technologies: string[];
   liveUrl: string;
@@ -23,6 +24,7 @@ export interface IProject extends BaseDocument {
   keyFeatures: string[];
   challenges: string[];
   gallery: string[];
+  galleryPublicIds?: string[];
   tags: string[];
   status: 'Completed' | 'In Progress' | 'Coming Soon';
   serviceSlugs: string[];
@@ -31,6 +33,11 @@ export interface IProject extends BaseDocument {
   displayOrder: number;
   seoTitle?: string;
   seoDescription?: string;
+  isDeleted?: boolean;
+  deletedAt?: Date | null;
+  deletedBy?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 const projectSchema = new Schema<IProject>(
@@ -56,6 +63,11 @@ const projectSchema = new Schema<IProject>(
       type: String,
       required: [true, 'Thumbnail is required'],
       trim: true,
+    },
+    thumbnailPublicId: {
+      type: String,
+      trim: true,
+      default: '',
     },
     category: {
       type: String,
@@ -112,6 +124,10 @@ const projectSchema = new Schema<IProject>(
       type: [String],
       default: [],
     },
+    galleryPublicIds: {
+      type: [String],
+      default: [],
+    },
     tags: {
       type: [String],
       default: [],
@@ -146,6 +162,26 @@ const projectSchema = new Schema<IProject>(
     seoDescription: {
       type: String,
       trim: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+    deletedBy: {
+      type: String,
+      default: '',
+    },
+    createdBy: {
+      type: String,
+      default: '',
+    },
+    updatedBy: {
+      type: String,
+      default: '',
     },
   },
   {

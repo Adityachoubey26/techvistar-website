@@ -24,6 +24,8 @@ import AdminLayout from "./components/admin/layout/AdminLayout";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminServices from "./pages/admin/Services";
+import AdminServicesSettings from "./pages/admin/ServicesSettings";
+import AdminIndustries from "./pages/admin/Industries";
 import AdminSolutions from "./pages/admin/Solutions";
 import AdminPortfolio from "./pages/admin/Portfolio";
 import AdminFAQs from "./pages/admin/FAQs";
@@ -113,7 +115,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <PageTransitionLoader />
         <ScrollToHashElement />
         <Routes>
@@ -139,6 +141,8 @@ const App = () => (
               <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="services" element={<AdminServices />} />
+              <Route path="services-settings" element={<AdminServicesSettings />} />
+              <Route path="industries" element={<AdminIndustries />} />
               <Route path="solutions" element={<AdminSolutions />} />
               <Route path="portfolio" element={<AdminPortfolio />} />
               <Route path="faqs" element={<AdminFAQs />} />

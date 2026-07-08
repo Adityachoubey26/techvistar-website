@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Service } from '@/data/services';
 import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 interface SectionProps {
   service: Service;
@@ -81,7 +82,7 @@ export const FAQSection = ({ service }: SectionProps) => {
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
                     <div className="px-5 pb-5 pt-1 text-xs md:text-xs text-slate-500 leading-relaxed border-t border-slate-100/50">
-                      {faq.answer}
+                      <RichTextContent content={faq.answer} className="text-xs md:text-xs text-slate-500 leading-relaxed" />
                     </div>
                   </motion.div>
                 )}

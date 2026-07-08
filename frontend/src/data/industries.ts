@@ -47,6 +47,12 @@ export interface Industry {
   shortDescription: string;
   description: string;
   heroImage: string;
+  /** CMS cover — Industry Detail hero. */
+  coverImage?: string;
+  /** CMS thumbnail — Industries listing cards. */
+  thumbnail?: string;
+  /** Optional dashboard/mockup asset. */
+  dashboardImage?: string;
   icon: LucideIcon;
   industriesColor: string; // Tailwind gradient/accent class (e.g., 'from-blue-500 to-indigo-600')
   challenges: IndustryChallenge[];
@@ -57,6 +63,8 @@ export interface Industry {
   faqs: IndustryFaq[];
   statistics: IndustryStatistic[];
   cta: IndustryCta;
+  featured?: boolean;
+  overviewQuote?: string;
 }
 
 export const INDUSTRIES: readonly Industry[] = [

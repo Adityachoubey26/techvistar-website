@@ -154,7 +154,7 @@ export const useProjectFilters = (projects: Project[] = []) => {
     });
 
     return result;
-  }, [searchQuery, selectedIndustry, selectedService, selectedTechnology, selectedStatus, sortBy]);
+  }, [projects, searchQuery, selectedIndustry, selectedService, selectedTechnology, selectedStatus, sortBy]);
 
   return {
     filteredProjects,

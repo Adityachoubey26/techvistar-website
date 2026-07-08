@@ -28,6 +28,8 @@ import solutionRouter from './solution.routes';
 import projectRouter from './project.routes';
 import faqRouter    from './faq.routes';
 import authRouter    from './auth.routes';
+import industryRouter from './industry.routes';
+import uploadRouter   from './upload.routes';
 import { RATE_LIMIT } from '@/constants';
 
 const router = Router();
@@ -36,7 +38,7 @@ const router = Router();
 // Applied to ALL /api/* routes — individual routes can have stricter limits
 const globalRateLimiter = rateLimit({
   windowMs:        RATE_LIMIT.WINDOW_MS,    // 15 minutes
-  max:             RATE_LIMIT.MAX_REQUESTS, // 100 requests per window per IP
+  max:             process.env.NODE_ENV === 'development' ? 1000 : RATE_LIMIT.MAX_REQUESTS, // 1000 requests in dev, 100 in prod
   standardHeaders: true,                   // Return rate limit info in headers
   legacyHeaders:   false,                  // Disable deprecated X-RateLimit-* headers
   message: {
@@ -60,6 +62,8 @@ router.use('/solutions', solutionRouter);
 router.use('/portfolio', projectRouter);
 router.use('/faqs',      faqRouter);
 router.use('/auth',      authRouter);
+router.use('/industries', industryRouter);
+router.use('/upload',     uploadRouter);
 
 // ─── API root info ─────────────────────────────────────────────────────────────
 // GET /api → Basic API info (not a real endpoint, just useful for developers)

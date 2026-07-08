@@ -22,6 +22,7 @@ import http from 'http';
 import app             from './app';
 import { env }         from '@/config/env';
 import { connectDB, disconnectDB } from '@/config/database';
+import '@/config/cloudinary'; // Phase 1.5 — configure Cloudinary SDK at startup
 import { logger, setupProcessLogger } from '@/utils/logger';
 
 // ─── Register process-level error handlers ────────────────────────────────────
@@ -54,7 +55,7 @@ async function startServer(): Promise<void> {
     // ── Step 2: Create HTTP server ────────────────────────────────────────
     const server = http.createServer(app);
 
-    // ── Step 3: Start listening ───────────────────────────────────────────
+    // ── Step 3: Start listening ─────────────────────────────────────────────
     server.listen(env.port, () => {
       logger.info('════════════════════════════════════════════════════');
       logger.info(`  ✓ Server running at http://localhost:${env.port}`);

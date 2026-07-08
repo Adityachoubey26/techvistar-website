@@ -6,7 +6,7 @@ interface NavItem {
   label: string;
 }
 
-const navItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'offerings', label: 'Offerings' },
   { id: 'process', label: 'Process' },
@@ -14,7 +14,12 @@ const navItems: NavItem[] = [
   { id: 'contact', label: 'Contact' },
 ];
 
-export const ServiceSectionNavigation = () => {
+interface ServiceSectionNavigationProps {
+  showFaq?: boolean;
+}
+
+export const ServiceSectionNavigation = ({ showFaq = false }: ServiceSectionNavigationProps) => {
+  const navItems = showFaq ? baseNavItems : baseNavItems.filter((item) => item.id !== 'faq');
   const [activeId, setActiveId] = useState<string>('overview');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +52,7 @@ export const ServiceSectionNavigation = () => {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [showFaq]);
 
   // Smooth scroll center active tab on mobile horizontally
   useEffect(() => {

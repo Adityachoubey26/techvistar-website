@@ -13,9 +13,8 @@ import {
   Shield,
   Star
 } from 'lucide-react';
-import { Service } from '@/data/services';
-import { ConsultationForm } from './ConsultationForm';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Service, getServiceHeroImage } from '@/data/services';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 interface ServiceHeroProps {
   service: Service;
@@ -104,7 +103,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
               <div className="md:col-span-7 space-y-5">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 text-xs font-semibold uppercase tracking-wider">
                   <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                  {service.title} Solutions
+                  {service.heroBadge?.trim() || `${service.title} Solutions`}
                 </div>
                 
                 <h1 className="text-3xl md:text-5xl font-extrabold font-display text-slate-900 leading-tight">
@@ -112,12 +111,14 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
                 </h1>
                 
                 <p className="text-base md:text-lg font-bold text-emerald-600 leading-snug">
-                  Accelerate your digital footprint with custom {service.title.toLowerCase()} configurations.
+                  {service.heroTagline?.trim() ||
+                    `Accelerate your digital footprint with custom ${service.title.toLowerCase()} configurations.`}
                 </p>
                 
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  {service.longDescription}
-                </p>
+                <RichTextContent
+                  content={service.longDescription}
+                  className="text-slate-600 text-sm leading-relaxed"
+                />
 
                 {/* Key Highlights */}
                 <div className="space-y-3 pt-2">
@@ -140,7 +141,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
               {/* Cover Image / Illustration Area */}
               <div className="md:col-span-5 flex items-center justify-center py-4 md:py-0">
                 <img
-                  src={service.coverImage}
+                  src={getServiceHeroImage(service)}
                   alt={service.title}
                   className="w-full max-w-[280px] md:max-w-full h-auto object-contain"
                 />

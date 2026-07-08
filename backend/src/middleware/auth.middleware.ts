@@ -9,8 +9,12 @@ import { env } from '@/config/env';
 import { ApiError } from '@/utils/ApiError';
 import { JwtPayload } from '@/types/common';
 
+import { extractBearerToken } from '@/utils/auth.utils';
+
 export function authMiddleware(req: Request, _res: Response, next: NextFunction): void {
-  const token = req.cookies?.accessToken ?? req.header('Authorization')?.replace('Bearer ', '');
+  const token =
+    req.cookies?.accessToken ??
+    extractBearerToken(req.header('Authorization'));
 
   if (!token) {
     return next(ApiError.unauthorized('Authentication required'));

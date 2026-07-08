@@ -3,6 +3,7 @@ import { ChevronDown, Link2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FAQ } from '@/data';
 import { useToast } from '@/hooks/use-toast';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 interface FAQItemProps {
   faq: FAQ;
@@ -64,9 +65,10 @@ export const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
             transition={{ duration: 0.25, ease: 'easeInOut' }}
           >
             <div className="border-t border-slate-100 p-5 sm:p-6 bg-slate-50/50">
-              <p className="text-xs sm:text-sm leading-relaxed text-slate-600 font-semibold">
-                {faq.answer}
-              </p>
+              <RichTextContent
+                content={faq.answer}
+                className="text-xs sm:text-sm leading-relaxed text-slate-600 font-semibold"
+              />
               {faq.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {faq.tags.map((tag) => (

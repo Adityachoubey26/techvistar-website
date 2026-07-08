@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getJobBySlug, Job } from '@/services/job.service';
 import { Navbar } from '@/components/Navbar';
@@ -8,14 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   MapPin, Clock, Briefcase, DollarSign, Calendar, 
-  ArrowLeft, CheckCircle, ChevronRight, Share2 
+  ArrowLeft, CheckCircle2, ChevronRight, Users, Building2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import careersBg from '../assets/careers-bg.png';
+import { RichTextContent } from '@/components/common/RichTextContent';
 
 export const JobDetails = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
 
   const { data: job, isLoading, error } = useQuery<Job>({
     queryKey: ['job', slug],
@@ -42,37 +41,57 @@ export const JobDetails = () => {
     );
   }
 
+  // Parse Short, Full, Banner, Office, Team Image URLs from standard description field
+  const rawDesc = job?.description || '';
+  let shortDesc = rawDesc;
+  let fullDesc = '';
+  let bannerImg = '';
+  let officeImg = '';
+  let teamImg = '';
+
+  if (rawDesc.includes('<!-- split -->')) {
+    const parts = rawDesc.split('<!-- split -->');
+    shortDesc = parts[0] || '';
+    fullDesc = parts[1] || '';
+    bannerImg = parts[2] || '';
+    officeImg = parts[3] || '';
+    teamImg = parts[4] || '';
+  } else {
+    bannerImg = job?.bannerImage || '';
+  }
+
+  // Fallbacks for empty image fields to keep page premium and realistic
+  const resolvedBanner = bannerImg || "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200";
+  const resolvedOffice = officeImg || "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800";
+  const resolvedTeam = teamImg || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800";
+
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-32 md:pb-20 border-b border-zinc-900 text-white">
+      {/* Hero Header Section */}
+      <section className="relative overflow-hidden bg-slate-950 pt-28 pb-16 md:pt-32 md:pb-24 border-b border-slate-900 text-white">
         <div 
-          className="absolute inset-0 opacity-40 pointer-events-none z-0"
-          style={{ 
-            backgroundImage: `url(${careersBg})`,
-            backgroundSize: 'auto 100%',
-            backgroundPosition: 'right',
-            backgroundRepeat: 'no-repeat',
-          }}
+          className="absolute inset-0 opacity-25 pointer-events-none z-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${resolvedBanner})` }}
         />
-        <div className="container mx-auto px-4 max-w-5xl relative z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/70 to-slate-950 pointer-events-none" />
+        
+        <div className="container mx-auto px-6 max-w-5xl relative z-10">
           <Link 
             to="/careers" 
-            className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors mb-6"
+            className="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors mb-6 uppercase tracking-wider"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to Careers
           </Link>
 
           {isLoading ? (
-            <div className="animate-pulse">
-              <div className="h-4 w-24 bg-zinc-800 rounded mb-4" />
-              <div className="h-10 w-2/3 bg-zinc-800 rounded mb-6" />
-              <div className="flex gap-4">
-                <div className="h-4 w-20 bg-zinc-800 rounded" />
-                <div className="h-4 w-20 bg-zinc-800 rounded" />
-                <div className="h-4 w-20 bg-zinc-800 rounded" />
+            <div className="animate-pulse space-y-4">
+              <div className="h-4 w-24 bg-slate-800 rounded" />
+              <div className="h-10 w-2/3 bg-slate-800 rounded" />
+              <div className="flex gap-4 pt-2">
+                <div className="h-4 w-20 bg-slate-800 rounded" />
+                <div className="h-4 w-20 bg-slate-800 rounded" />
               </div>
             </div>
           ) : (
@@ -81,33 +100,19 @@ export const JobDetails = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
+                className="space-y-4"
               >
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                    {job.department}
-                  </Badge>
-                  {job.featured && (
-                    <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">
-                      Featured Role
-                    </Badge>
-                  )}
-                </div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-6 font-display">
+                <Badge variant="secondary" className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-black uppercase tracking-wider text-[9px] px-2.5 py-0.5 rounded">
+                  {job.department}
+                </Badge>
+                <h1 className="text-3xl md:text-5xl font-black text-white font-display tracking-tighter leading-tight">
                   {job.title}
                 </h1>
-                <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-zinc-300">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-emerald-500" /> {job.location}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-emerald-500" /> {job.employmentType}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Briefcase className="h-4 w-4 text-emerald-500" /> {job.experience}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <DollarSign className="h-4 w-4 text-emerald-500" /> {job.salary}
-                  </span>
+                <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs font-bold uppercase tracking-wider text-slate-350 pt-2">
+                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-emerald-500" /> {job.location}</span>
+                  <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-emerald-500" /> {job.employmentType}</span>
+                  <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4 text-emerald-500" /> {job.experience}</span>
+                  <span className="flex items-center gap-1.5"><DollarSign className="h-4 w-4 text-emerald-500" /> {job.salary}</span>
                 </div>
               </motion.div>
             )
@@ -115,80 +120,97 @@ export const JobDetails = () => {
         </div>
       </section>
 
-      {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b border-slate-200 py-3">
-        <div className="container mx-auto px-4 max-w-5xl flex items-center gap-2 text-xs font-semibold text-slate-500">
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b border-slate-200/80 py-3 px-6">
+        <div className="container mx-auto px-0 max-w-5xl flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <ChevronRight className="h-3 w-3" />
           <Link to="/careers" className="hover:text-primary transition-colors">Careers</Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-slate-800 truncate max-w-[200px]">
-            {isLoading ? 'Loading...' : job?.title}
-          </span>
+          <span className="text-slate-800 truncate max-w-[200px]">{isLoading ? 'Loading...' : job?.title}</span>
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* Detail Layout */}
       <section className="py-16">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-6 max-w-5xl">
           {isLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-pulse">
               <div className="lg:col-span-2 space-y-6">
-                <div className="h-4 w-1/4 bg-slate-200 rounded" />
-                <div className="h-4 w-full bg-slate-200 rounded" />
-                <div className="h-4 w-5/6 bg-slate-200 rounded" />
-                <div className="h-40 w-full bg-slate-200 rounded" />
+                <div className="h-32 bg-slate-200 rounded-2xl" />
+                <div className="h-40 bg-slate-200 rounded-2xl" />
               </div>
-              <div className="h-60 bg-slate-200 rounded" />
+              <div className="h-72 bg-slate-200 rounded-2xl" />
             </div>
           ) : (
             job && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Job Info Left Column */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                
+                {/* Left Side Content */}
                 <div className="lg:col-span-2 space-y-10">
-                  {/* Job Description */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                  >
-                    <h2 className="text-xl font-bold font-display text-slate-900 mb-4">Job Description</h2>
-                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                      {job.description}
-                    </p>
-                  </motion.div>
+                  {/* Short Description overview */}
+                  {shortDesc && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.05 }}
+                      className="bg-emerald-50/20 border border-emerald-500/10 p-6 rounded-2xl"
+                    >
+                      <h2 className="text-xs font-black uppercase tracking-wider text-emerald-700 mb-3">Role Summary</h2>
+                      <p className="text-sm text-slate-700 leading-relaxed font-semibold">
+                        {shortDesc}
+                      </p>
+                    </motion.div>
+                  )}
 
-                  {/* Requirements */}
+                  {/* Full Description role details */}
+                  {fullDesc && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="space-y-4"
+                    >
+                      <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">Job Details</h2>
+                      <RichTextContent
+                        content={fullDesc}
+                        className="text-sm text-slate-655 leading-relaxed font-semibold"
+                      />
+                    </motion.div>
+                  )}
+
+                  {/* Requirements & Skills tags */}
                   {job.requirements && job.requirements.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="space-y-4"
                     >
-                      <h2 className="text-xl font-bold font-display text-slate-900 mb-4">Requirements & Skills</h2>
-                      <ul className="space-y-3">
+                      <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">Requirements & Skills</h2>
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {job.requirements.map((req, index) => (
-                          <li key={index} className="flex items-start gap-3 text-sm text-slate-600 font-semibold leading-relaxed">
-                            <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                            <span>{req}</span>
-                          </li>
+                          <Badge key={index} variant="secondary" className="bg-slate-100 text-slate-700 border-none font-bold text-[10px] uppercase py-1 px-3.5 rounded-lg">
+                            {req}
+                          </Badge>
                         ))}
-                      </ul>
+                      </div>
                     </motion.div>
                   )}
 
-                  {/* Responsibilities */}
+                  {/* Responsibilities list */}
                   {job.responsibilities && job.responsibilities.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="space-y-4"
                     >
-                      <h2 className="text-xl font-bold font-display text-slate-900 mb-4">Key Responsibilities</h2>
+                      <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">Key Responsibilities</h2>
                       <ul className="space-y-3">
                         {job.responsibilities.map((resp, index) => (
-                          <li key={index} className="flex items-start gap-3 text-sm text-slate-600 font-semibold leading-relaxed">
-                            <ChevronRight className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                          <li key={index} className="flex items-start gap-3 text-sm text-slate-655 font-semibold leading-relaxed">
+                            <ChevronRight className="h-4.5 w-4.5 text-emerald-500 mt-0.5 shrink-0" />
                             <span>{resp}</span>
                           </li>
                         ))}
@@ -196,66 +218,99 @@ export const JobDetails = () => {
                     </motion.div>
                   )}
 
-                  {/* Benefits */}
+                  {/* Benefits grid */}
                   {job.benefits && job.benefits.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
+                      transition={{ duration: 0.5, delay: 0.25 }}
+                      className="space-y-4"
                     >
-                      <h2 className="text-xl font-bold font-display text-slate-900 mb-4">What We Offer</h2>
+                      <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">What We Offer</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {job.benefits.map((benefit, index) => (
-                          <div key={index} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3">
+                          <div key={index} className="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
                             <div className="h-8 w-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                              <CheckCircle className="h-4.5 w-4.5" />
+                              <CheckCircle2 className="h-4.5 w-4.5" />
                             </div>
-                            <span className="text-xs font-bold text-slate-800">{benefit}</span>
+                            <span className="text-xs font-bold text-slate-800 leading-snug">{benefit}</span>
                           </div>
                         ))}
                       </div>
                     </motion.div>
                   )}
+
+                  {/* About Team corporate photo showcases */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="space-y-6 pt-6 border-t border-slate-200/80"
+                  >
+                    <div className="space-y-2">
+                      <h2 className="text-xl font-bold font-display text-slate-900 tracking-tight">About The Team</h2>
+                      <p className="text-slate-500 text-xs font-semibold">We believe in structured execution, transparent pipelines, and collaborative problem-solving.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                      <div className="space-y-2 group">
+                        <div className="h-44 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative">
+                          <img src={resolvedOffice} alt="Office Workspace" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest flex items-center gap-1.5">
+                          <Building2 className="w-3.5 h-3.5 text-slate-400" /> Collaborative Workspace
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 group">
+                        <div className="h-44 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative">
+                          <img src={resolvedTeam} alt="Team Sync" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest flex items-center gap-1.5">
+                          <Users className="w-3.5 h-3.5 text-slate-400" /> Product Team Sync
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
 
-                {/* Sidebar Card */}
-                <div className="space-y-6">
+                {/* Sidebar Application Panel */}
+                <div className="space-y-6 lg:sticky lg:top-28">
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: 0.3 }}
-                    className="sticky top-28"
+                    transition={{ duration: 0.4, delay: 0.2 }}
                   >
-                    <Card className="border-slate-200 shadow-sm overflow-hidden bg-white">
+                    <Card className="border-slate-200/80 shadow-lg overflow-hidden bg-white rounded-3xl">
                       <div className="bg-slate-950 p-6 text-white text-center border-b border-slate-900">
-                        <h3 className="font-bold text-lg mb-1">Interested in this role?</h3>
-                        <p className="text-zinc-400 text-xs font-medium">Apply today in just a few steps</p>
+                        <h3 className="font-extrabold text-base mb-1 font-display tracking-tight">Interested in this role?</h3>
+                        <p className="text-zinc-400 text-[11px] font-semibold uppercase tracking-wider">Apply today in just a few steps</p>
                       </div>
                       <CardContent className="p-6 space-y-6">
                         <div className="space-y-4">
                           <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                            <span className="text-slate-400 font-semibold uppercase">Department</span>
+                            <span className="text-slate-400 font-semibold uppercase tracking-wider">Department</span>
                             <span className="text-slate-800 font-bold">{job.department}</span>
                           </div>
                           <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                            <span className="text-slate-400 font-semibold uppercase">Employment Type</span>
+                            <span className="text-slate-400 font-semibold uppercase tracking-wider">Employment Type</span>
                             <span className="text-slate-800 font-bold">{job.employmentType}</span>
                           </div>
                           <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                            <span className="text-slate-400 font-semibold uppercase">Location</span>
+                            <span className="text-slate-400 font-semibold uppercase tracking-wider">Location</span>
                             <span className="text-slate-800 font-bold">{job.location}</span>
                           </div>
                           <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                            <span className="text-slate-400 font-semibold uppercase">Experience</span>
+                            <span className="text-slate-400 font-semibold uppercase tracking-wider">Experience</span>
                             <span className="text-slate-800 font-bold">{job.experience}</span>
                           </div>
                           <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                            <span className="text-slate-400 font-semibold uppercase">Salary</span>
+                            <span className="text-slate-400 font-semibold uppercase tracking-wider">Salary</span>
                             <span className="text-slate-800 font-bold">{job.salary}</span>
                           </div>
                           {job.applicationDeadline && (
                             <div className="flex justify-between items-center text-xs border-b border-slate-100 pb-3">
-                              <span className="text-slate-400 font-semibold uppercase">Deadline</span>
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider">Deadline</span>
                               <span className="text-red-500 font-bold flex items-center gap-1">
                                 <Calendar className="h-3 w-3" /> {new Date(job.applicationDeadline).toLocaleDateString()}
                               </span>
@@ -263,13 +318,14 @@ export const JobDetails = () => {
                           )}
                         </div>
 
-                        <Button asChild className="w-full bg-emerald-600 text-white hover:bg-emerald-500 font-bold shadow-sm shadow-emerald-500/10">
+                        <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-11 font-bold shadow-md shadow-emerald-500/10">
                           <Link to={`/careers/apply/${job.slug}`}>Apply Now</Link>
                         </Button>
                       </CardContent>
                     </Card>
                   </motion.div>
                 </div>
+
               </div>
             )
           )}

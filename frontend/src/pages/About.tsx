@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -8,7 +8,6 @@ import {
   Eye,
   Globe,
   GraduationCap,
-  Layers,
   Smartphone,
   Sparkles,
   Target,
@@ -20,7 +19,6 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
 import aboutBg from '../assets/about-bg.png';
-import CircularText from '@/components/ui/CircularText';
 import logoImg from '@/assets/logo.webp';
 import { PageHeader } from '@/components/ui/PageHeader';
 
@@ -97,40 +95,6 @@ const About = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left) / width - 0.5;
-    const y = (clientY - top) / height - 0.5;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
-
-  // Text Animation Variants
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.12,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease } }
-  };
-
-  const lineVariants = {
-    hidden: { width: 0 },
-    visible: { width: 64, transition: { duration: 0.6, ease, delay: 0.4 } }
-  };
 
   return (
     <main className="min-h-screen bg-muted">

@@ -26,7 +26,7 @@ export function validateContactInput(input: ContactInput): {
   email: string;
   phone: string;
   company: string;
-  serviceInterested: typeof VALIDATION.VALID_SERVICES[number];
+  serviceInterested: string;
   budget: string;
   message: string;
 } {
@@ -66,17 +66,13 @@ export function validateContactInput(input: ContactInput): {
     }
   }
 
-  // 4. Service Check
-  const validServices = VALIDATION.VALID_SERVICES as readonly string[];
+  // 4. Service Check — accept CMS service titles/slugs
   if (input.serviceInterested === undefined || input.serviceInterested === null || String(input.serviceInterested).trim() === '') {
     errors.push({ field: 'serviceInterested', message: 'Service of interest is required' });
   } else {
     const serviceStr = String(input.serviceInterested).trim();
-    if (!validServices.includes(serviceStr)) {
-      errors.push({
-        field: 'serviceInterested',
-        message: `Service of interest must be one of: ${validServices.join(', ')}`,
-      });
+    if (serviceStr.length > 120) {
+      errors.push({ field: 'serviceInterested', message: 'Service of interest cannot exceed 120 characters' });
     }
   }
 
@@ -118,9 +114,35 @@ export function validateContactInput(input: ContactInput): {
     email: String(input.email).trim().toLowerCase(),
     phone: String(input.phone).trim(),
     company: input.company ? String(input.company).trim() : '',
-    serviceInterested: String(input.serviceInterested).trim() as any,
+    serviceInterested: String(input.serviceInterested).trim(),
     budget: input.budget ? String(input.budget).trim() : '',
     message: String(input.message).trim(),
   };
+}
+
+const CONTACT_STATUSES = ['new', 'in-progress', 'resolved', 'archived'] as const;
+
+export function validateContactStatusUpdate(input: { status?: unknown }): {
+  status: typeof CONTACT_STATUSES[number];
+} {
+  const errors: Array<{ field: string; message: string }> = [];
+
+  if (input.status === undefined || input.status === null || String(input.status).trim() === '') {
+    errors.push({ field: 'status', message: 'Status is required' });
+  } else {
+    const statusStr = String(input.status).trim();
+    if (!CONTACT_STATUSES.includes(statusStr as typeof CONTACT_STATUSES[number])) {
+      errors.push({
+        field: 'status',
+        message: `Status must be one of: ${CONTACT_STATUSES.join(', ')}`,
+      });
+    }
+  }
+
+  if (errors.length > 0) {
+    throw ApiError.validationError('Validation failed', errors);
+  }
+
+  return { status: String(input.status).trim() as typeof CONTACT_STATUSES[number] };
 }
 
