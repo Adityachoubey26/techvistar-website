@@ -14,6 +14,8 @@ import { decorateSolution, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import { LogoCloud } from '@/components/LogoCloud';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
 
 interface SolutionCategory {
   id: string;
