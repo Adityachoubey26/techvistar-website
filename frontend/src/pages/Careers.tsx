@@ -12,6 +12,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { 
   Briefcase, MapPin, Clock, Search, Users,
   ArrowRight, ChevronRight, RotateCcw, HelpCircle, Mail, MessageSquare, Code, UserCheck
@@ -146,58 +147,33 @@ const Careers = () => {
         <Navbar />
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-[80vh] flex items-center justify-center bg-slate-950 overflow-hidden pt-20">
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-30 scale-102 transition-transform duration-[10000ms] pointer-events-none"
-            style={{ backgroundImage: `url(${heroBg})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950 pointer-events-none" />
-
-          <div className="container mx-auto px-6 max-w-5xl relative z-10 text-center space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="space-y-4"
-            >
-              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-                {careers.hero.eyebrow || 'Careers at TechVistar'}
-              </Badge>
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter leading-[1.05]">
-                {careers.hero.subtitle ? (
-                  <>
-                    {careers.hero.title} <br />
-                    <span className="bg-gradient-to-r from-emerald-400 via-teal-350 to-cyan-400 bg-clip-text text-transparent">
-                      {careers.hero.subtitle}
-                    </span>
-                  </>
-                ) : (
-                  careers.hero.title
-                )}
-              </h1>
-              <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-bold leading-relaxed">
-                {careers.hero.description}
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex flex-wrap items-center justify-center gap-4 pt-4"
-            >
-              <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/10">
-                View Open Positions
-              </Button>
-              <Button onClick={() => {
-                const element = document.getElementById('life-at-techvistar');
-                if (element) element.scrollIntoView({ behavior: 'smooth' });
-              }} variant="outline" size="lg" className="border-white/10 hover:bg-white/5 text-white font-bold h-12 px-6 rounded-xl">
-                Life at TechVistar
-              </Button>
-            </motion.div>
+        <PageHeader 
+          title={careers.hero.subtitle ? (
+            <>
+              {careers.hero.title} <br />
+              <span className="text-emerald-500">
+                {careers.hero.subtitle}
+              </span>
+            </>
+          ) : (
+            careers.hero.title
+          )}
+          subtitle={careers.hero.eyebrow || 'Careers at TechVistar'}
+          description={careers.hero.description}
+          backgroundImage={heroBg}
+        >
+          <div className="flex flex-wrap items-center gap-4">
+            <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/20">
+              View Open Positions
+            </Button>
+            <Button onClick={() => {
+              const element = document.getElementById('life-at-techvistar');
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }} variant="outline" size="lg" className="border-white/20 hover:bg-white/10 text-white font-bold h-12 px-6 rounded-xl">
+              Life at TechVistar
+            </Button>
           </div>
-        </section>
+        </PageHeader>
 
         {/* 2. Open Positions (Completely matching reference style) */}
         <section id="open-positions" className="py-24 bg-white border-b border-slate-100">

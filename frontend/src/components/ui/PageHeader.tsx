@@ -7,9 +7,10 @@ interface PageHeaderProps {
   subtitle?: string;
   description?: React.ReactNode;
   backgroundImage?: string;
+  children?: React.ReactNode;
 }
 
-export const PageHeader = ({ title, subtitle, description, backgroundImage }: PageHeaderProps) => {
+export const PageHeader = ({ title, subtitle, description, backgroundImage, children }: PageHeaderProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -161,6 +162,16 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage }: Pa
           >
             {description}
           </motion.p>
+        )}
+        {children && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="mt-8"
+          >
+            {children}
+          </motion.div>
         )}
       </div>
     </motion.section>
