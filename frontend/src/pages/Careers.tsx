@@ -341,8 +341,8 @@ const Careers = () => {
         </section>
 
         {/* 4. Hiring Process (Perfect horizontal step icons sequence) */}
-        <section className="py-24 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-16">
+        <section className="py-10 md:py-12 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Our Hiring Process</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">Our simple and transparent hiring process</p>
@@ -377,8 +377,8 @@ const Careers = () => {
         </section>
 
         {/* 5. Life at TechVistar */}
-        <section id="life-at-techvistar" className="py-24 bg-slate-50">
-          <div className="container mx-auto px-6 max-w-7xl space-y-12">
+        <section id="life-at-techvistar" className="py-10 md:py-12 bg-slate-50">
+          <div className="container mx-auto px-6 max-w-7xl space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Life at TechVistar</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">Real photography of workspaces, collaboration synch, and cultural events.</p>
