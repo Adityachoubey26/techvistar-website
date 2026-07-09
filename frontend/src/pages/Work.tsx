@@ -10,9 +10,9 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
-  Search, ArrowRight, Star, Briefcase, Building2, Smile, Award
+  Search, ArrowRight, Star, Briefcase, Building2, Smile, Award, Sparkles, ExternalLink, Calendar, Code, Layout, BarChart, Layers 
 } from 'lucide-react';
-import workBg from '../assets/work-bg.png';
+import workBg from '../assets/work-bg-new.png';
 import TextType from '@/components/ui/TextType';
 import { PageHeader } from '@/components/ui/PageHeader';
 
