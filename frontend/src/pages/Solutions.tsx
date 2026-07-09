@@ -12,6 +12,9 @@ import { SOLUTIONS_DATA, SolutionDetail } from '@/data/solutions';
 import workBg from '../assets/work-bg.png';
 import { LogoCloud } from '@/components/LogoCloud';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { useQuery } from '@tanstack/react-query';
+import { getActiveSolutions } from '@/services/solutions.service';
+import { decorateSolution } from '@/data/solutions';
 
 interface SolutionCategory {
   id: string;
