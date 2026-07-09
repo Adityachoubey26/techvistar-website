@@ -274,6 +274,14 @@ export const Work = () => {
 
         {/* SECTION 4 — PROJECT GRID */}
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
+              Explore More Projects
+            </h2>
+            <p className="text-sm text-slate-500 font-semibold">
+              Discover additional case studies and technical implementations across industries.
+            </p>
+          </div>
           {normalProjects.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {normalProjects.map((project) => (
