@@ -219,8 +219,8 @@ export const Contact = () => {
 
             {/* Right Side: Form Container */}
             <div className="lg:col-span-7">
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xl relative">
-                <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xl relative">
+                <div className="flex items-center gap-3 pb-3 mb-4 border-b border-slate-100">
                   <Mail className="w-5.5 h-5.5 text-emerald-600" />
                   <div>
                     <h3 className="font-display text-lg font-bold text-slate-900">Send us a message</h3>
@@ -228,7 +228,7 @@ export const Contact = () => {
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Row 1 */}
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
@@ -306,7 +306,7 @@ export const Contact = () => {
                     <textarea 
                       id="message"
                       required
-                      rows={5}
+                      rows={3}
                       placeholder="Share your project details, goals, and requirements..."
                       value={formData.message}
                       onChange={(e) => handleInputChange('message', e.target.value)}
