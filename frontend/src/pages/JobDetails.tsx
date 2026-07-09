@@ -295,9 +295,9 @@ export const JobDetails = () => {
                     transition={{ duration: 0.4, delay: 0.2 }}
                   >
                     <Card className="border-slate-200/80 shadow-lg overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-slate-950 p-6 text-white text-center border-b border-slate-900">
+                      <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-6 text-white text-center border-b border-emerald-600/50">
                         <h3 className="font-extrabold text-base mb-1 font-display tracking-tight">Interested in this role?</h3>
-                        <p className="text-zinc-400 text-[11px] font-semibold uppercase tracking-wider">Apply today in just a few steps</p>
+                        <p className="text-emerald-50 text-[11px] font-semibold uppercase tracking-wider">Apply today in just a few steps</p>
                       </div>
                       <CardContent className="p-6 space-y-6">
                         <div className="space-y-4">
