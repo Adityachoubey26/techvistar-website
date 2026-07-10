@@ -12,12 +12,14 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/ui/PageHeader';
+import DEFAULT_CAREERS_HERO_BG from '../assets/careers-bg-new.png';
 import { 
   Briefcase, MapPin, Clock, Search, Users,
   ArrowRight, ChevronRight, RotateCcw, HelpCircle, Mail, MessageSquare, Code, UserCheck
 } from 'lucide-react';
 
-const HERO_BG = "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop";
+const HERO_BG = DEFAULT_CAREERS_HERO_BG;
 
 const BENEFIT_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=400&auto=format&fit=crop",
@@ -146,62 +148,37 @@ const Careers = () => {
         <Navbar />
 
         {/* 1. Hero Section */}
-        <section className="relative min-h-[80vh] flex items-center justify-center bg-slate-950 overflow-hidden pt-20">
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-30 scale-102 transition-transform duration-[10000ms] pointer-events-none"
-            style={{ backgroundImage: `url(${heroBg})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950 pointer-events-none" />
-
-          <div className="container mx-auto px-6 max-w-5xl relative z-10 text-center space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="space-y-4"
-            >
-              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 font-black uppercase tracking-[0.2em] text-[10px] px-3.5 py-1 rounded-full">
-                {careers.hero.eyebrow || 'Careers at TechVistar'}
-              </Badge>
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter leading-[1.05]">
-                {careers.hero.subtitle ? (
-                  <>
-                    {careers.hero.title} <br />
-                    <span className="bg-gradient-to-r from-emerald-400 via-teal-350 to-cyan-400 bg-clip-text text-transparent">
-                      {careers.hero.subtitle}
-                    </span>
-                  </>
-                ) : (
-                  careers.hero.title
-                )}
-              </h1>
-              <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-bold leading-relaxed">
-                {careers.hero.description}
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex flex-wrap items-center justify-center gap-4 pt-4"
-            >
-              <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/10">
-                View Open Positions
-              </Button>
-              <Button onClick={() => {
-                const element = document.getElementById('life-at-techvistar');
-                if (element) element.scrollIntoView({ behavior: 'smooth' });
-              }} variant="outline" size="lg" className="border-white/10 hover:bg-white/5 text-white font-bold h-12 px-6 rounded-xl">
-                Life at TechVistar
-              </Button>
-            </motion.div>
+        <PageHeader
+          title={
+            careers.hero.subtitle ? (
+              <>
+                {careers.hero.title}{' '}
+                <span className="text-emerald-500">{careers.hero.subtitle}</span>
+              </>
+            ) : (
+              careers.hero.title
+            )
+          }
+          subtitle={careers.hero.eyebrow || 'Careers at TechVistar'}
+          description={careers.hero.description}
+          backgroundImage={heroBg}
+        >
+          <div className="flex flex-wrap items-center gap-4">
+            <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/20">
+              View Open Positions
+            </Button>
+            <Button onClick={() => {
+              const element = document.getElementById('life-at-techvistar');
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }} variant="outline" size="lg" className="border-white/20 hover:bg-white/10 text-white font-bold h-12 px-6 rounded-xl">
+              Life at TechVistar
+            </Button>
           </div>
-        </section>
+        </PageHeader>
 
         {/* 2. Open Positions (Completely matching reference style) */}
-        <section id="open-positions" className="py-24 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-10">
+        <section id="open-positions" className="pt-4 pb-12 md:pt-6 md:pb-16 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-6 md:space-y-8">
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-emerald-600">
                 <Briefcase className="h-4.5 w-4.5" />
@@ -355,8 +332,8 @@ const Careers = () => {
         </section>
 
         {/* 3. Why Join TechVistar (Exactly matching reference card design) */}
-        <section className="py-24 bg-slate-50 border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-16">
+        <section className="pt-4 pb-12 md:pt-6 md:pb-16 bg-slate-50 border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-10 md:space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Why Join TechVistar?</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">We empower people to do their best work and grow together.</p>
@@ -393,8 +370,8 @@ const Careers = () => {
         </section>
 
         {/* 4. Hiring Process (Perfect horizontal step icons sequence) */}
-        <section className="py-24 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-16">
+        <section className="py-10 md:py-12 bg-white border-b border-slate-100">
+          <div className="container mx-auto px-6 max-w-7xl space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Our Hiring Process</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">Our simple and transparent hiring process</p>
@@ -428,8 +405,8 @@ const Careers = () => {
         </section>
 
         {/* 5. Life at TechVistar */}
-        <section id="life-at-techvistar" className="py-24 bg-slate-50">
-          <div className="container mx-auto px-6 max-w-7xl space-y-12">
+        <section id="life-at-techvistar" className="py-10 md:py-12 bg-slate-50">
+          <div className="container mx-auto px-6 max-w-7xl space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">{careers.culture.title}</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">{careers.culture.description}</p>

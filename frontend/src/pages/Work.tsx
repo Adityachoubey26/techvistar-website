@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { 
   Search, ArrowRight, Star, Briefcase, Building2, Smile, Award
 } from 'lucide-react';
-import workBg from '../assets/work-bg.png';
+import workBg from '../assets/work-bg-new.png';
 import { LazyMount } from '@/components/common/LazyMount';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { PageSeo } from '@/components/common/PageSeo';

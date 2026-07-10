@@ -4,12 +4,13 @@ import { Badge } from '@/components/ui/badge';
 
 interface PageHeaderProps {
   title: React.ReactNode;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   description?: React.ReactNode;
   backgroundImage?: string;
+  children?: React.ReactNode;
 }
 
-export const PageHeader = ({ title, subtitle, description, backgroundImage }: PageHeaderProps) => {
+export const PageHeader = ({ title, subtitle, description, backgroundImage, children }: PageHeaderProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -32,7 +33,7 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage }: Pa
       transition={{ duration: 0.6 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative overflow-hidden bg-zinc-950 pt-28 pb-16 md:pt-32 md:pb-20 border-b border-zinc-900 text-white"
+      className="relative overflow-hidden bg-zinc-950 pt-20 pb-6 md:pt-24 md:pb-8 border-b border-zinc-900 text-white"
     >
       {/* Animated Mesh Waves + Mouse Parallax */}
       {backgroundImage && (
@@ -161,6 +162,16 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage }: Pa
           >
             {description}
           </motion.p>
+        )}
+        {children && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="mt-8"
+          >
+            {children}
+          </motion.div>
         )}
       </div>
     </motion.section>
