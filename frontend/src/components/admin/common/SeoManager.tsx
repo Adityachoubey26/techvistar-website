@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { CmsImageField } from '@/components/admin/common/CmsImageField';
 import { calculateSeoScore } from '@/lib/seoScore';
-import { buildCanonical, resolveSeo } from '@/lib/seoResolve';
+import { buildCanonical, resolveCanonical, resolveSeo } from '@/lib/seoResolve';
 import { SeoMetadata, SITE_DEFAULTS } from '@/types/seo';
 import { Globe, Facebook, Twitter } from 'lucide-react';
 
@@ -45,11 +45,10 @@ export function SeoManager({
   onSlugChange,
 }: SeoManagerProps) {
   const pageUrl = useMemo(() => {
-    const canonical = value.canonicalUrl?.trim();
-    if (canonical) return canonical;
     const normalizedPrefix = pathPrefix.endsWith('/') ? pathPrefix : `${pathPrefix}/`;
-    const path = slug ? `${normalizedPrefix}${slug}` : normalizedPrefix.replace(/\/$/, '');
-    return buildCanonical(path);
+    const path = slug ? `${normalizedPrefix}${slug}` : normalizedPrefix.replace(/\/$/, '') || '/';
+    const routeCanonical = buildCanonical(path);
+    return resolveCanonical(value.canonicalUrl, routeCanonical);
   }, [value.canonicalUrl, pathPrefix, slug]);
 
   const previewDefaults = useMemo(

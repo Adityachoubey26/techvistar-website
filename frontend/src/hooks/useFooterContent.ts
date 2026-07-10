@@ -10,6 +10,27 @@ import { getActiveIndustries } from '@/services/industry.service';
 import defaultLogoUrl from '@/assets/logo.webp';
 
 const INVALID_FOOTER_PATHS = new Set(['/privacy', '/terms', '/cookies', '/sitemap']);
+const FOOTER_SERVICES_MAX = 10;
+
+function isFeaturedService(service: { featured?: unknown }): boolean {
+  return service.featured === true || service.featured === 'true';
+}
+
+function buildFooterServiceLinks(services: Array<Record<string, unknown>>): HomeFooterLink[] {
+  const published = services
+    .filter((service) => service?.slug)
+    .sort((a, b) => (Number(a.displayOrder) || 0) - (Number(b.displayOrder) || 0));
+
+  const featured = published.filter(isFeaturedService);
+  const nonFeatured = published.filter((service) => !isFeaturedService(service));
+  const selected = [...featured, ...nonFeatured].slice(0, FOOTER_SERVICES_MAX);
+
+  return selected.map((service, index) => ({
+    label: String(service.title || service.slug),
+    href: `/services/${service.slug}`,
+    sortOrder: Number(service.displayOrder) || index,
+  }));
+}
 
 export function isValidFooterHref(href: string): boolean {
   const trimmed = href?.trim();
@@ -118,14 +139,7 @@ export function useFooterContent() {
             : DEFAULT_HOME_CMS.footer.socialLinks,
         );
 
-    const serviceLinks: HomeFooterLink[] = [...services]
-      .filter((service) => service?.slug)
-      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
-      .map((service, index) => ({
-        label: service.title || service.slug,
-        href: `/services/${service.slug}`,
-        sortOrder: service.displayOrder ?? index,
-      }));
+    const serviceLinks = buildFooterServiceLinks(services as Array<Record<string, unknown>>);
 
     const industryLinks: HomeFooterLink[] = [...industries]
       .filter((industry) => industry?.slug)

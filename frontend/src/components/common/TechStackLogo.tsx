@@ -45,7 +45,7 @@ export const TechStackLogo = ({
       alt={`${name} logo`}
       loading={loading}
       decoding={loading === 'eager' ? 'sync' : 'async'}
-      fetchPriority={priority ? 'high' : undefined}
+      {...(priority ? ({ fetchpriority: 'high' } as const) : {})}
       onError={() => setFailed(true)}
       className={cn(dimension, 'shrink-0 object-contain', className)}
     />

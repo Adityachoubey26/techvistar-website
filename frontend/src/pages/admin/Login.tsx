@@ -17,6 +17,8 @@ import logo from "../../assets/logo.webp";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminLoginVisual } from "./AdminLoginVisual";
+import { PageSeo } from "@/components/common/PageSeo";
+import { buildCanonical } from "@/lib/seoResolve";
 
 const APP_VERSION = "v1.0.0";
 
@@ -93,6 +95,15 @@ const Login = () => {
   const isDisabled = isLoading || isSuccess;
 
   return (
+    <>
+      <PageSeo
+        seo={{ robotsIndex: false, robotsFollow: false }}
+        defaults={{
+          title: 'Admin Login | TechVistar',
+          description: 'Secure administrator sign-in for TechVistar CMS.',
+          url: buildCanonical('/admin/login'),
+        }}
+      />
     <div className="relative min-h-screen min-h-[100dvh] w-full overflow-x-hidden bg-[#fafcfb] font-sans">
       {/* Page background */}
       <div className="pointer-events-none absolute inset-0">
@@ -365,6 +376,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,13 +1,33 @@
 import {
   Building2, Brain, Sparkles, Cloud, Target,
-  Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, Clock, CodeXml
+  Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, Clock, CodeXml,
+  TrendingUp, Users, Headphones, Zap, Maximize, Activity, HeadphonesIcon,
 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { resolveCmsMediaSrc } from '@/components/admin/common/CmsImageField';
+import {
+  buildDefaultHeroDescription,
+  DEFAULT_DASHBOARD_IMAGE,
+  mergeHeroFloatingCards,
+  mergeHeroStats,
+  mergeSectionCopy,
+  type SolutionHeroFloatingCard,
+  type SolutionHeroStat,
+  type SolutionSectionCopy,
+} from '@/lib/solutionDetailDefaults';
 
 export interface SolutionDetail {
   slug: string;
   title: string;
   subtitle: string;
   desc?: string;
+  heroDescription: string;
+  heroBadge: string;
+  backLinkText: string;
+  dashboardImage: string;
+  heroFloatingCards: SolutionHeroFloatingCard[];
+  heroStats: SolutionHeroStat[];
+  sectionCopy: SolutionSectionCopy;
   icon: React.ComponentType<any>;
   category: string;
   challenges: {
@@ -42,6 +62,9 @@ export interface SolutionDetail {
     value: string;
   }[];
   faqs: { q: string; a: string }[];
+  relatedSolutionSlugs: string[];
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export const ICON_MAP: Record<string, React.ComponentType<any>> = {
@@ -58,15 +81,48 @@ export const ICON_MAP: Record<string, React.ComponentType<any>> = {
   FolderGit2,
   Shield,
   Clock,
-  CodeXml
+  CodeXml,
+  TrendingUp,
+  Users,
+  Headphones,
+  HeadphonesIcon,
+  Zap,
+  Maximize,
+  Activity,
 };
 
+export function resolveSolutionIcon(name: string): React.ComponentType<any> {
+  if (ICON_MAP[name]) return ICON_MAP[name];
+  const dynamic = (LucideIcons as Record<string, React.ComponentType<any>>)[name];
+  return dynamic || Brain;
+}
+
+function resolveDashboardImage(value?: string): string {
+  if (!value) return DEFAULT_DASHBOARD_IMAGE;
+  const resolved = resolveCmsMediaSrc(value);
+  return resolved || value || DEFAULT_DASHBOARD_IMAGE;
+}
+
 export function decorateSolution(apiSolution: any): SolutionDetail {
+  const title = apiSolution.title || '';
+  const heroDescriptionRaw = (apiSolution.heroDescription || apiSolution.desc || '').trim();
+  const heroDescription =
+    heroDescriptionRaw && heroDescriptionRaw !== apiSolution.subtitle
+      ? heroDescriptionRaw
+      : buildDefaultHeroDescription(title);
+
   return {
     slug: apiSolution.slug,
-    title: apiSolution.title,
+    title,
     subtitle: apiSolution.subtitle,
-    desc: apiSolution.subtitle || apiSolution.desc || '',
+    desc: heroDescription,
+    heroDescription,
+    heroBadge: (apiSolution.heroBadge || apiSolution.category || '').trim(),
+    backLinkText: (apiSolution.backLinkText || '').trim() || mergeSectionCopy(apiSolution.sectionCopy).backLinkText,
+    dashboardImage: resolveDashboardImage(apiSolution.dashboardImage),
+    heroFloatingCards: mergeHeroFloatingCards(apiSolution.heroFloatingCards),
+    heroStats: mergeHeroStats(apiSolution.heroStats),
+    sectionCopy: mergeSectionCopy(apiSolution.sectionCopy),
     icon: ICON_MAP[apiSolution.icon] || Brain,
     category: apiSolution.category,
     challenges: apiSolution.challenges || { title: '', points: [], impact: '' },
@@ -74,7 +130,7 @@ export function decorateSolution(apiSolution: any): SolutionDetail {
     features: (apiSolution.features || []).map((f: any) => ({
       title: f.title,
       description: f.description,
-      icon: ICON_MAP[f.icon] || Brain,
+      icon: resolveSolutionIcon(f.icon),
     })),
     howItWorks: apiSolution.howItWorks || [],
     benefits: apiSolution.benefits || { roi: '', efficiency: '', scalability: '', security: '' },
@@ -82,10 +138,19 @@ export function decorateSolution(apiSolution: any): SolutionDetail {
     techStack: apiSolution.techStack || [],
     metrics: apiSolution.metrics || [],
     faqs: apiSolution.faqs || [],
+    relatedSolutionSlugs: apiSolution.relatedSolutionSlugs || [],
+    seoTitle: apiSolution.seoTitle,
+    seoDescription: apiSolution.seoDescription,
   };
 }
 
-export const SOLUTIONS_DATA: Record<string, SolutionDetail> = {
+export function decorateStaticSolution(staticSolution: Omit<SolutionDetail, 'heroDescription' | 'heroBadge' | 'backLinkText' | 'dashboardImage' | 'heroFloatingCards' | 'heroStats' | 'sectionCopy' | 'relatedSolutionSlugs'> & { icon: React.ComponentType<any> }): SolutionDetail {
+  const iconName =
+    Object.entries(ICON_MAP).find(([, comp]) => comp === staticSolution.icon)?.[0] || 'Brain';
+  return decorateSolution({ ...staticSolution, icon: iconName });
+}
+
+export const SOLUTIONS_DATA: Record<string, Omit<SolutionDetail, 'heroDescription' | 'heroBadge' | 'backLinkText' | 'dashboardImage' | 'heroFloatingCards' | 'heroStats' | 'sectionCopy' | 'relatedSolutionSlugs'> & { icon: React.ComponentType<any> }> = {
   'enterprise-software': {
     slug: 'enterprise-software',
     title: 'Enterprise Software',

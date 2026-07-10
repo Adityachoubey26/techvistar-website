@@ -23,7 +23,7 @@ const Index = () => {
         defaults={{
           title: seo.seoTitle || DEFAULT_HOME_CMS.seo.seoTitle,
           description: seo.seoDescription || DEFAULT_HOME_CMS.seo.seoDescription,
-          url: seo.canonicalUrl || buildCanonical('/'),
+          url: buildCanonical('/'),
         }}
         seo={seoFromItem(seo as unknown as Record<string, unknown>)}
       />

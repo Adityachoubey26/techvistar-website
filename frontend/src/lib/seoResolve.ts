@@ -12,7 +12,9 @@ export interface ResolvedSeo {
   twitterTitle: string;
   twitterDescription: string;
   twitterImage: string;
+  twitterSite: string;
   siteName: string;
+  keywords: string;
 }
 
 export function resolveSeo(
@@ -22,7 +24,7 @@ export function resolveSeo(
   const siteName = defaults.siteName || SITE_DEFAULTS.siteName;
   const title = seo?.seoTitle?.trim() || defaults.title;
   const description = seo?.seoDescription?.trim() || defaults.description;
-  const canonical = seo?.canonicalUrl?.trim() || defaults.url;
+  const canonical = resolveCanonical(seo?.canonicalUrl, defaults.url);
   const image =
     seo?.ogImage?.trim() ||
     seo?.twitterImage?.trim() ||
@@ -49,7 +51,9 @@ export function resolveSeo(
     twitterTitle,
     twitterDescription,
     twitterImage,
+    twitterSite: defaults.twitterSite?.trim() || '',
     siteName,
+    keywords: defaults.keywords?.trim() || '',
   };
 }
 
@@ -74,4 +78,34 @@ export function buildCanonical(path: string): string {
   const base = SITE_DEFAULTS.siteUrl.replace(/\/$/, '');
   const normalized = path.startsWith('/') ? path : `/${path}`;
   return `${base}${normalized}`;
+}
+
+/** Normalize URL to origin + pathname without trailing slash (except root). */
+function normalizeCanonicalUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const path = parsed.pathname.replace(/\/$/, '') || '';
+    return `${parsed.origin}${path}`;
+  } catch {
+    return url.trim().replace(/\/$/, '');
+  }
+}
+
+/**
+ * Prefer the route-derived canonical from each page.
+ * Honor CMS canonical only when it resolves to the same normalized path as the route.
+ */
+export function resolveCanonical(
+  cmsCanonical: string | undefined,
+  routeCanonical: string
+): string {
+  const cms = cmsCanonical?.trim();
+  if (!cms) return routeCanonical;
+
+  const normCms = normalizeCanonicalUrl(cms);
+  const normRoute = normalizeCanonicalUrl(routeCanonical);
+
+  if (normCms === normRoute) return cms;
+
+  return routeCanonical;
 }

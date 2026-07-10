@@ -17,6 +17,8 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import careersBg from '../assets/careers-bg.png';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
 
 const phoneRegex = /^\+?[0-9\s\-()]{7,25}$/;
 
@@ -118,8 +120,23 @@ export const JobApplication = () => {
     }
   };
 
+  const seoBlock = (
+    <PageSeo
+      seo={{ robotsIndex: false, robotsFollow: true }}
+      defaults={{
+        title: job ? `Apply: ${job.title} | TechVistar Careers` : 'Job Application | TechVistar',
+        description: job
+          ? `Submit your application for the ${job.title} role at TechVistar.`
+          : 'Submit your job application to TechVistar.',
+        url: job ? buildCanonical(`/careers/apply/${job.slug}`) : buildCanonical('/careers'),
+      }}
+    />
+  );
+
   if (isLoading) {
     return (
+      <>
+        {seoBlock}
       <main className="min-h-screen bg-slate-50 flex flex-col">
         <Navbar />
         <div className="flex-grow container mx-auto px-4 py-20 flex items-center justify-center">
@@ -131,11 +148,14 @@ export const JobApplication = () => {
         </div>
         <Footer />
       </main>
+      </>
     );
   }
 
   if (error || !job) {
     return (
+      <>
+        {seoBlock}
       <main className="min-h-screen bg-slate-50 flex flex-col">
         <Navbar />
         <div className="flex-grow container mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
@@ -149,10 +169,13 @@ export const JobApplication = () => {
         </div>
         <Footer />
       </main>
+      </>
     );
   }
 
   return (
+    <>
+      {seoBlock}
     <main className="min-h-screen bg-slate-50">
       <Navbar />
 
@@ -396,6 +419,7 @@ export const JobApplication = () => {
 
       <Footer />
     </main>
+    </>
   );
 };
 

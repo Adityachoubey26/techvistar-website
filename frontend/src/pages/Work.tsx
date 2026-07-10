@@ -15,6 +15,8 @@ import {
 import workBg from '../assets/work-bg.png';
 import TextType from '@/components/ui/TextType';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical } from '@/lib/seoResolve';
 
 // High Quality Brand SVG Logos
 const BrandLogos = {
@@ -153,6 +155,14 @@ export const Work = () => {
 
   return (
     <>
+      <PageSeo
+        defaults={{
+          title: 'Our Work | TechVistar Portfolio',
+          description:
+            'Showcase production-ready digital products, enterprise platforms, AI solutions, SaaS applications and scalable software engineered for modern businesses.',
+          url: buildCanonical('/work'),
+        }}
+      />
       {/* Light Theme Background matching reference exactly */}
       <main id="main-content" className="min-h-screen bg-slate-50 text-slate-900 animate-fade-in pb-16 relative overflow-x-hidden">
         <Navbar />

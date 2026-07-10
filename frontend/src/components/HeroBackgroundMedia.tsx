@@ -27,6 +27,7 @@ export function HeroBackgroundMedia({ hero }: HeroBackgroundMediaProps) {
             poster={hero.backgroundImage || undefined}
             className={cn(
               'pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover select-none',
+              'object-[62%_28%] sm:object-[55%_32%] md:object-[center_35%] lg:object-center',
               hero.backgroundBlur && 'scale-105 blur-sm'
             )}
             aria-hidden
@@ -63,10 +64,11 @@ export function HeroBackgroundMedia({ hero }: HeroBackgroundMediaProps) {
           alt=""
           className={cn(
             'pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover',
+            'object-[62%_28%] sm:object-[55%_32%] md:object-[center_35%] lg:object-center',
             hero.backgroundBlur && 'scale-105 blur-sm'
           )}
           loading="eager"
-          fetchPriority="high"
+          fetchpriority="high"
         />
         <div
           className="pointer-events-none absolute inset-0 -z-10"
