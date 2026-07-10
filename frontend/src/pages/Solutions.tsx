@@ -363,24 +363,40 @@ export const Solutions = () => {
         <section className="container-custom max-w-7xl mx-auto px-6 py-12">
           <motion.div 
             whileHover={{ y: -2 }}
-            className="rounded-3xl bg-gradient-to-br from-slate-100 to-white border border-slate-200/85 p-8 sm:p-12 text-center relative overflow-hidden shadow-md text-slate-900"
+            className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-[#10B981] to-emerald-700 border border-emerald-500/30 rounded-3xl p-8 md:p-12 text-white shadow-[0_20px_50px_rgba(16,185,129,0.15)] text-center w-full"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-emerald-300/20 blur-2xl pointer-events-none" />
+
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-10" aria-hidden="true">
+              <svg width="100%" height="100%">
+                <pattern id="cta-mesh-solutions" width="16" height="16" patternUnits="userSpaceOnUse">
+                  <path d="M 16 0 L 0 0 0 16" fill="none" stroke="currentColor" strokeWidth="1" />
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#cta-mesh-solutions)" />
+              </svg>
+            </div>
             
             <div className="max-w-2xl mx-auto relative z-10 space-y-6">
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Ready to Deploy a Solution?</h3>
-              <p className="text-slate-600 font-semibold text-sm sm:text-base leading-relaxed">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-xs font-semibold select-none">
+                <Sparkle className="h-3 w-3 text-emerald-100 animate-pulse" />
+                <span>Let's collaborate</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-white">Ready to Deploy a Solution?</h3>
+              
+              <p className="text-emerald-50/90 font-medium text-sm sm:text-base leading-relaxed">
                 Connect with our engineering leads to outline timelines, compliance metrics, and technical requirements.
               </p>
+              
               <div className="pt-2 flex flex-wrap justify-center gap-4">
                 <Link to="/contact">
-                  <Button className="h-12 px-8 bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-bold text-sm rounded-xl transition-all shadow-md">
+                  <Button className="bg-white text-emerald-700 hover:bg-slate-50 font-bold border-none shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_-4px_rgba(0,0,0,0.2)] px-7 py-3 rounded-xl inline-flex items-center gap-2 transition-all h-11 text-xs md:text-sm">
                     Book Consultation
                   </Button>
                 </Link>
                 <Link to="/contact">
-                  <Button variant="outline" className="h-12 px-8 border-slate-200 hover:bg-slate-50 font-bold rounded-xl text-slate-700 text-sm">
+                  <Button variant="outline" className="border-white/30 hover:border-white text-white hover:bg-white/10 font-bold px-7 py-3 rounded-xl inline-flex items-center gap-2 h-11 text-xs md:text-sm transition-all">
                     Contact Us
                   </Button>
                 </Link>
