@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getActiveProjects } from '@/services/portfolio.service';
 import { decorateProject } from '@/data/projects';
@@ -13,10 +14,12 @@ import {
   Search, ArrowRight, Star, Briefcase, Building2, Smile, Award
 } from 'lucide-react';
 import workBg from '../assets/work-bg.png';
-import TextType from '@/components/ui/TextType';
+import { LazyMount } from '@/components/common/LazyMount';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { PageSeo } from '@/components/common/PageSeo';
 import { buildCanonical } from '@/lib/seoResolve';
+
+const LazyTextType = lazy(() => import('@/components/ui/TextType'));
 
 // High Quality Brand SVG Logos
 const BrandLogos = {
@@ -375,17 +378,21 @@ export const Work = () => {
                 </div>
                 <div className="text-slate-700 font-semibold text-sm sm:text-base leading-relaxed italic">
                   "
-                  <TextType 
-                    text={[
-                      "TechVistar delivered our route optimization system ahead of schedule.",
-                      "The solver APIs and capacity constraints dashboard handled high-latency dispatch scripts with zero UI thread lag."
-                    ]}
-                    typingSpeed={40}
-                    pauseDuration={3000}
-                    showCursor={true}
-                    cursorCharacter="|"
-                    as="span"
-                  />
+                  <LazyMount minHeight="3rem" rootMargin="200px 0px">
+                    <Suspense fallback={<span>TechVistar delivered our route optimization system ahead of schedule.</span>}>
+                      <LazyTextType 
+                        text={[
+                          "TechVistar delivered our route optimization system ahead of schedule.",
+                          "The solver APIs and capacity constraints dashboard handled high-latency dispatch scripts with zero UI thread lag."
+                        ]}
+                        typingSpeed={40}
+                        pauseDuration={3000}
+                        showCursor={true}
+                        cursorCharacter="|"
+                        as="span"
+                      />
+                    </Suspense>
+                  </LazyMount>
                   "
                 </div>
                 <div className="border-t border-slate-100 pt-4 flex items-center justify-between">

@@ -18,6 +18,7 @@ const PAGE_SEO_MEDIA_FIELDS = SOLUTION_MEDIA_FIELDS;
 const MEDIA_SECTION_PATHS: Array<{ section: string; urlKey: string; publicIdKey: string }> = [
   { section: 'home', urlKey: 'hero.backgroundImage', publicIdKey: 'hero.backgroundImagePublicId' },
   { section: 'home', urlKey: 'hero.backgroundVideoUrl', publicIdKey: 'hero.backgroundVideoPublicId' },
+  { section: 'home', urlKey: 'hero.heroPosterImage', publicIdKey: 'hero.heroPosterImagePublicId' },
   { section: 'home', urlKey: 'portfolio.backgroundImage', publicIdKey: 'portfolio.backgroundImagePublicId' },
   { section: 'home', urlKey: 'contactCta.backgroundImage', publicIdKey: 'contactCta.backgroundImagePublicId' },
   { section: 'home', urlKey: 'footer.logo', publicIdKey: 'footer.logoPublicId' },

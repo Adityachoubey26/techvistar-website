@@ -3,8 +3,6 @@
  * @description Client service for retrieving and managing Services CMS data.
  */
 
-import { SERVICES } from '../data/services';
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 interface QueryParams {
@@ -87,6 +85,7 @@ export async function getServiceBySlug(slug: string): Promise<any> {
     return result.data;
   } catch (error) {
     console.warn(`Fallback to static data for service ${slug}`);
+    const { SERVICES } = await import('../data/services');
     const staticService = SERVICES.find(s => s.slug === slug);
     if (staticService) {
       return staticService;

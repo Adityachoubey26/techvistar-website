@@ -8,7 +8,7 @@ import {
   restoreSolution, permanentlyDeleteSolution, bulkDeleteSolutions, bulkRestoreSolutions, bulkUpdateStatus
 } from "@/services/solutions.service";
 import { useToast } from "@/hooks/use-toast";
-import * as LucideIcons from "lucide-react";
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon";
 import {
   Shapes, Trash2, Edit, Loader2, X, Plus, AlertCircle, ArrowLeft, ArrowRight,
   Search, RotateCcw, AlertTriangle, Star, ArrowUpNarrowWide, ArrowDownWideNarrow,
@@ -53,11 +53,8 @@ type TabName =
 
 // Resolves lucide icons dynamically
 const renderLucideIcon = (name: string, className = "w-4 h-4") => {
-  const IconComponent = (LucideIcons as any)[name];
-  if (IconComponent) {
-    return <IconComponent className={className} />;
-  }
-  return <LucideIcons.HelpCircle className={className} />;
+  const IconComponent = resolveLucideIcon(name);
+  return <IconComponent className={className} />;
 };
 
 const Solutions = () => {

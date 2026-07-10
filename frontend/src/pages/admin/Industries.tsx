@@ -8,11 +8,12 @@ import {
   restoreIndustry, permanentlyDeleteIndustry, bulkDeleteIndustries, bulkRestoreIndustries, bulkUpdateStatus
 } from "@/services/industry.service";
 import { useToast } from "@/hooks/use-toast";
-import * as LucideIcons from "lucide-react";
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon";
 import { 
   Trash2, Edit, Loader2, X, Plus, AlertCircle, Trash, ArrowLeft, ArrowRight,
   ChevronDown, ChevronUp, Image as ImageIcon, Sparkles, BookOpen, BarChart3, Globe, Settings, Tag, ShieldCheck, Check,
-  ArrowUpRight, Search, RotateCcw, AlertTriangle, Info, Calendar, User
+  ArrowUpRight, Search, RotateCcw, AlertTriangle, Info, Calendar, User,
+  ArrowUpNarrowWide, ArrowDownWideNarrow, Lock, Unlock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -43,11 +44,8 @@ const COLOR_PALETTES = [
 ];
 
 const renderLucideIcon = (name: string, className = "w-4 h-4") => {
-  const IconComponent = (LucideIcons as any)[name];
-  if (IconComponent) {
-    return <IconComponent className={className} />;
-  }
-  return <LucideIcons.HelpCircle className={className} />;
+  const IconComponent = resolveLucideIcon(name);
+  return <IconComponent className={className} />;
 };
 
 const Industries = () => {
@@ -758,7 +756,7 @@ const Industries = () => {
                 onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
                 className="h-9 w-9 flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                {sortOrder === "asc" ? <LucideIcons.ArrowUpNarrowWide className="w-4 h-4 text-slate-500" /> : <LucideIcons.ArrowDownWideNarrow className="w-4 h-4 text-slate-500" />}
+                {sortOrder === "asc" ? <ArrowUpNarrowWide className="w-4 h-4 text-slate-500" /> : <ArrowDownWideNarrow className="w-4 h-4 text-slate-500" />}
               </button>
             </div>
           </div>
@@ -1175,7 +1173,7 @@ const Industries = () => {
                               onClick={() => setIsSlugManual(!isSlugManual)}
                               className="text-[10px] font-extrabold text-emerald-600 hover:text-emerald-500 uppercase tracking-widest flex items-center gap-1"
                             >
-                              {isSlugManual ? <LucideIcons.Lock className="w-3 h-3" /> : <LucideIcons.Unlock className="w-3 h-3" />}
+                              {isSlugManual ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
                               {isSlugManual ? "Auto Slug" : "Manual Edit"}
                             </button>
                           </div>

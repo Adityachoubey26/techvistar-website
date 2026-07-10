@@ -1,10 +1,10 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DotGrid } from '@/components/DotGrid';
+import { LazyMount } from '@/components/common/LazyMount';
 import logo from '../assets/logo.webp';
 import { 
   Phone, Mail, MapPin, Clock, ArrowRight, ArrowUp, Star,
@@ -12,6 +12,10 @@ import {
 } from 'lucide-react';
 import { subscribeNewsletter } from '@/services/newsletter.service';
 import { useFooterContent } from '@/hooks/useFooterContent';
+
+const LazyDotGrid = lazy(() =>
+  import('@/components/DotGrid').then((m) => ({ default: m.DotGrid })),
+);
 
 const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
   linkedin: Linkedin,
@@ -91,15 +95,19 @@ export const Footer = () => {
       style={footerStyle}
     >
       
-      {/* Background DotGrid Animation */}
-      <DotGrid 
-        dotSize={5} 
-        gap={15} 
-        baseColor="#2F293A" 
-        activeColor="#306035" 
-        proximity={120} 
-        opacity={0.35} 
-      />
+      {/* Background DotGrid Animation — deferred (GSAP) */}
+      <LazyMount minHeight="0" rootMargin="400px 0px">
+        <Suspense fallback={null}>
+          <LazyDotGrid
+            dotSize={5}
+            gap={15}
+            baseColor="#2F293A"
+            activeColor="#306035"
+            proximity={120}
+            opacity={0.35}
+          />
+        </Suspense>
+      </LazyMount>
 
       {/* Subtle emerald radial glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />

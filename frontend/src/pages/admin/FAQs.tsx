@@ -10,9 +10,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import {
   MessageSquareText, Trash2, Edit, Loader2, X, Plus, AlertCircle, Trash, ArrowLeft, ArrowRight,
-  Search, RotateCcw, AlertTriangle, Info, Calendar, User, Check
+  Search, RotateCcw, AlertTriangle, Info, Calendar, User, Check,
+  ArrowUpNarrowWide, ArrowDownWideNarrow,
 } from "lucide-react";
-import * as LucideIcons from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -503,8 +503,8 @@ const FAQs = () => {
                 className="h-9 w-9 flex items-center justify-center border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 {sortOrder === "asc"
-                  ? <LucideIcons.ArrowUpNarrowWide className="w-4 h-4 text-slate-500" />
-                  : <LucideIcons.ArrowDownWideNarrow className="w-4 h-4 text-slate-500" />}
+                  ? <ArrowUpNarrowWide className="w-4 h-4 text-slate-500" />
+                  : <ArrowDownWideNarrow className="w-4 h-4 text-slate-500" />}
               </button>
             </div>
           </div>

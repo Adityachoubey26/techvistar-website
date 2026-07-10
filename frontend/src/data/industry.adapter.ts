@@ -6,7 +6,6 @@
 import { 
   Heart, GraduationCap, Landmark, ShoppingCart, Factory, Home, Truck, Sprout, Utensils, Zap, LucideIcon 
 } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
 import { IMAGE_MAP } from "./services";
 import { INDUSTRIES } from "./industries";
 import { preferCmsImage } from "@/lib/mediaFallbacks";
@@ -145,12 +144,8 @@ export function decorateIndustry(apiIndustry: any): any {
   
   // Resolve Lucide Icon component
   let resolvedIcon: LucideIcon = Heart;
-  if (apiIndustry.icon) {
-    if (ICON_MAP[apiIndustry.icon]) {
-      resolvedIcon = ICON_MAP[apiIndustry.icon];
-    } else if ((LucideIcons as any)[apiIndustry.icon]) {
-      resolvedIcon = (LucideIcons as any)[apiIndustry.icon];
-    }
+  if (apiIndustry.icon && ICON_MAP[apiIndustry.icon]) {
+    resolvedIcon = ICON_MAP[apiIndustry.icon];
   }
 
   // Find original static industry matching by slug for assets fallback

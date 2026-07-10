@@ -3,7 +3,6 @@ import {
   Layers, Code2, Cpu, Repeat, Settings, FolderGit2, Shield, Clock, CodeXml,
   TrendingUp, Users, Headphones, Zap, Maximize, Activity, HeadphonesIcon,
 } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
 import { resolveCmsMediaSrc } from '@/components/admin/common/CmsImageField';
 import {
   buildDefaultHeroDescription,
@@ -92,9 +91,7 @@ export const ICON_MAP: Record<string, React.ComponentType<any>> = {
 };
 
 export function resolveSolutionIcon(name: string): React.ComponentType<any> {
-  if (ICON_MAP[name]) return ICON_MAP[name];
-  const dynamic = (LucideIcons as Record<string, React.ComponentType<any>>)[name];
-  return dynamic || Brain;
+  return ICON_MAP[name] || Brain;
 }
 
 function resolveDashboardImage(value?: string): string {

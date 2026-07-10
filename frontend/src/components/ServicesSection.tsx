@@ -95,6 +95,9 @@ export const ServicesSection = () => {
                         src={getServiceCardImage(service)}
                         alt={service.title}
                         className="h-full w-full object-contain p-2 sm:p-2.5 transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="56px"
                       />
                     </div>
                     

@@ -111,6 +111,8 @@ const pagesCmsConfigSchema = new Schema<IPagesCmsConfig>(
         backgroundVideoWebm: { type: String, trim: true, default: '' },
         backgroundVideoUrl: { type: String, trim: true, default: '' },
         backgroundVideoPublicId: { type: String, trim: true, default: '' },
+        heroPosterImage: { type: String, trim: true, default: '' },
+        heroPosterImagePublicId: { type: String, trim: true, default: '' },
         youtubeUrl: { type: String, trim: true, default: '' },
         youtubeStartTime: { type: Number, default: 3, min: 0 },
         overlayOpacity: { type: Number, default: 40 },
