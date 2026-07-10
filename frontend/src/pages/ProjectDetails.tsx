@@ -115,10 +115,10 @@ const ProjectDetails = () => {
     <>
       {seoBlock}
       <Navbar />
-      <main className="min-h-screen bg-slate-50 pt-24 pb-16">
+      <main className="min-h-screen bg-slate-50 pt-[4.5rem] md:pt-24 pb-12 md:pb-16">
         
         {/* Project Hero Header */}
-        <section className="bg-white border-b border-slate-200 py-12 mb-8">
+        <section className="bg-white border-b border-slate-200 py-8 md:py-12 mb-6 md:mb-8">
           <div className="container mx-auto px-4 max-w-5xl">
             <Link to="/work" className="inline-flex items-center text-sm text-slate-500 hover:text-primary mb-6 transition-colors font-medium">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to all projects
@@ -134,12 +134,12 @@ const ProjectDetails = () => {
                     {project.status}
                   </Badge>
                 </div>
-                <h1 className="text-3xl md:text-5xl font-bold font-display text-slate-900 leading-tight">
+                <h1 className="text-2xl md:text-5xl font-bold font-display text-slate-900 leading-tight">
                   {project.title}
                 </h1>
               </div>
 
-              <div className="flex gap-3 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
                 <a
                   href={project.liveUrl !== '#' ? project.liveUrl : undefined}
                   target="_blank"

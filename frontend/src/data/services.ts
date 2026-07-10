@@ -21,7 +21,6 @@ import {
   HardDrive,
   LucideIcon
 } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
 import { preferCmsImage } from '@/lib/mediaFallbacks';
 import type {
   ServiceCtaBlock,
@@ -334,15 +333,9 @@ export function getServiceCardImage(service: Pick<Service, 'thumbnail' | 'coverI
 }
 
 export function decorateService(apiService: any): Service {
-  const mockService = SERVICES.find(s => s.slug === apiService.slug);
-
   let resolvedIcon: LucideIcon = Globe;
-  if (apiService.icon) {
-    if (ICON_MAP[apiService.icon]) {
-      resolvedIcon = ICON_MAP[apiService.icon];
-    } else if ((LucideIcons as any)[apiService.icon]) {
-      resolvedIcon = (LucideIcons as any)[apiService.icon];
-    }
+  if (apiService.icon && ICON_MAP[apiService.icon]) {
+    resolvedIcon = ICON_MAP[apiService.icon];
   }
 
   const slug = typeof apiService.slug === 'string' ? apiService.slug : '';
@@ -374,7 +367,7 @@ export function decorateService(apiService: any): Service {
     coverImage,
     thumbnail,
     overview: apiService.overview,
-    offerings: apiService.offerings?.length > 0 ? apiService.offerings : (mockService?.offerings || []),
+    offerings: apiService.offerings?.length > 0 ? apiService.offerings : [],
     process: apiService.process || [],
     caseStudies: apiService.caseStudies || [],
     technologies: apiService.technologies || [],
@@ -394,7 +387,7 @@ export function decorateService(apiService: any): Service {
     heroTagline: apiService.heroTagline || '',
     whyChooseUs: apiService.whyChooseUs || [],
     stats: apiService.stats || [],
-    detailedOfferings: apiService.detailedOfferings?.length > 0 ? apiService.detailedOfferings : (mockService?.detailedOfferings || []),
+    detailedOfferings: apiService.detailedOfferings?.length > 0 ? apiService.detailedOfferings : [],
     dashboardImage,
     seoTitle: apiService.seoTitle || '',
     seoDescription: apiService.seoDescription || '',

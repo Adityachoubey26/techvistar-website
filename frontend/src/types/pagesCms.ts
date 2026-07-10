@@ -1,4 +1,9 @@
 import { SeoMetadata } from '@/types/seo';
+import {
+  DEFAULT_INDUSTRY_CONSULTATION,
+  DEFAULT_INDUSTRY_SIDEBAR,
+} from '@/types/industriesCms';
+import type { IndustryConsultationBlock, IndustrySidebarBlock } from '@/types/industriesCms';
 import { ABOUT_COPY, ABOUT_PAGE, SITE } from '@/data/about';
 import {
   DEFAULT_HOME_CMS,
@@ -62,10 +67,50 @@ export interface SolutionsLandingCmsConfig extends SeoMetadata {
   cta: CmsCtaBlock;
 }
 
+export interface IndustriesLandingHeroBlock extends LandingHeroBlock {
+  ctaText: string;
+  ctaLink: string;
+}
+
+export interface IndustriesCatalogBlock {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  learnMoreLabel: string;
+}
+
+export interface IndustriesCapabilityItem {
+  icon: string;
+  title: string;
+  description: string;
+  color: string;
+  image?: string;
+  imagePublicId?: string;
+}
+
+export interface IndustriesCapabilitiesBlock {
+  eyebrow: string;
+  stats: CmsStatItem[];
+  cards: IndustriesCapabilityItem[];
+}
+
+export interface IndustriesExtendedCtaBlock extends CmsCtaBlock {
+  badge: string;
+  secondaryButtonText: string;
+  secondaryButtonLink: string;
+  backgroundImage?: string;
+  backgroundImagePublicId?: string;
+}
+
 export interface IndustriesLandingCmsConfig extends SeoMetadata {
-  hero: LandingHeroBlock;
-  intro: { title: string; description: string };
-  cta: CmsCtaBlock;
+  hero: IndustriesLandingHeroBlock;
+  intro: { title: string; description: string; icon?: string; iconPublicId?: string };
+  catalog: IndustriesCatalogBlock;
+  capabilities: IndustriesCapabilitiesBlock;
+  cta: IndustriesExtendedCtaBlock;
+  sidebarDefaults: IndustrySidebarBlock;
+  consultationDefaults: IndustryConsultationBlock;
 }
 
 export interface CareersLandingCmsConfig extends SeoMetadata {
@@ -197,19 +242,75 @@ export const DEFAULT_INDUSTRIES_LANDING_CMS: IndustriesLandingCmsConfig = {
     description:
       'We combine industry-specific domain expertise with scalable software engineering to deliver secure, regulatory-compliant, and high-performance digital ecosystems.',
     backgroundImage: '',
+    ctaText: 'Explore Industries',
+    ctaLink: '#all-industries',
   },
   intro: {
     title: 'Industries we serve',
     description:
       'Explore vertical-specific platforms and delivery patterns across healthcare, fintech, education, logistics, and more.',
+    icon: '',
+  },
+  catalog: {
+    eyebrow: 'Full catalog',
+    title: 'All Industries',
+    subtitle: '',
+    description:
+      'Browse every industry vertical we support with equal priority and enterprise-grade delivery.',
+    learnMoreLabel: 'Explore industry',
+  },
+  capabilities: {
+    eyebrow: 'Industry expertise',
+    stats: [
+      { value: '10+', label: 'Active verticals' },
+      { value: '99.9%', label: 'Uptime targets' },
+      { value: '24/7', label: 'Enterprise support' },
+      { value: 'SOC 2', label: 'Security posture' },
+    ],
+    cards: [
+      {
+        icon: 'ShieldCheck',
+        title: 'Compliance & Governance',
+        description:
+          'HIPAA, SOC 2, and sector-specific controls embedded across architecture and delivery.',
+        color: 'from-emerald-500 to-teal-600',
+      },
+      {
+        icon: 'Layers',
+        title: 'Enterprise Delivery',
+        description:
+          'Structured discovery, phased rollouts, and cross-functional squads for complex verticals.',
+        color: 'from-blue-500 to-indigo-600',
+      },
+      {
+        icon: 'Headphones',
+        title: 'Dedicated Support',
+        description:
+          'Vertical specialists guide implementation, integrations, and long-term platform evolution.',
+        color: 'from-violet-500 to-purple-600',
+      },
+      {
+        icon: 'Rocket',
+        title: 'Deployment Assistance',
+        description:
+          'Cloud-native infrastructure, observability, and production readiness from day one.',
+        color: 'from-orange-500 to-amber-600',
+      },
+    ],
   },
   cta: {
+    badge: 'Industry Solutions',
     title: 'Looking for a custom enterprise platform?',
     description:
       'We collaborate closely with technical and product stakeholders to scope, design, and deploy secure, high-performance systems tailored to your vertical\'s specific requirements.',
-    buttonText: 'Get in Touch',
+    buttonText: 'Get Started',
     buttonLink: '/contact',
+    secondaryButtonText: 'Contact Us',
+    secondaryButtonLink: '/contact',
+    backgroundImage: '',
   },
+  sidebarDefaults: DEFAULT_INDUSTRY_SIDEBAR,
+  consultationDefaults: DEFAULT_INDUSTRY_CONSULTATION,
   seoTitle: 'Industries | TechVistar',
   seoDescription: 'Explore TechVistar industry solutions across healthcare, fintech, education, and enterprise sectors.',
   canonicalUrl: 'https://techvistar.com/industries',

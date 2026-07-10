@@ -3,49 +3,57 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Work from "./pages/Work";
-import ProjectDetails from "./pages/ProjectDetails";
-import Services from "./pages/Services";
-import ServiceDetails from "./pages/ServiceDetails";
-import Careers from "./pages/Careers";
-
-import Industries from "./pages/Industries";
-import IndustryDetails from "./pages/IndustryDetails";
-import Contact from "./pages/Contact";
-import Solutions from "./pages/Solutions";
-import SolutionDetails from "./pages/SolutionDetails";
-import { JobDetails } from "./pages/JobDetails";
-import { JobApplication } from "./pages/JobApplication";
-import NotFound from "./pages/NotFound";
-import AdminLayout from "./components/admin/layout/AdminLayout";
-import AdminLogin from "./pages/admin/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminServices from "./pages/admin/Services";
-import AdminServicesSettings from "./pages/admin/ServicesSettings";
-import AdminPageSeoSettings from "./pages/admin/PageSeoSettings";
-import AdminHomeSettings from "./pages/admin/HomeSettings";
-import AdminAboutSettings from "./pages/admin/AboutSettings";
-import AdminContactSettings from "./pages/admin/ContactSettings";
-import AdminSolutionsLandingSettings from "./pages/admin/SolutionsLandingSettings";
-import AdminIndustriesLandingSettings from "./pages/admin/IndustriesLandingSettings";
-import AdminCareersLandingSettings from "./pages/admin/CareersLandingSettings";
-import AdminWebsiteSettings from "./pages/admin/WebsiteSettings";
-import AdminIndustries from "./pages/admin/Industries";
-import AdminSolutions from "./pages/admin/Solutions";
-import AdminPortfolio from "./pages/admin/Portfolio";
-import AdminFAQs from "./pages/admin/FAQs";
-import AdminJobs from "./pages/admin/Jobs";
-import AdminApplications from "./pages/admin/Applications";
-import AdminContacts from "./pages/admin/Contacts";
-import AdminNewsletter from "./pages/admin/Newsletter";
+import { Suspense, lazy, useEffect, useState, type ReactNode } from "react";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { HomeCmsProvider } from "@/contexts/HomeCmsContext";
 import { WebsiteBrandingEffect } from "@/components/WebsiteBrandingEffect";
+import { RouteFallback } from "@/components/common/RouteFallback";
+
+// Public pages — code-split per route
+const Index = lazy(() => import("./pages/Index"));
+const About = lazy(() => import("./pages/About"));
+const Work = lazy(() => import("./pages/Work"));
+const ProjectDetails = lazy(() => import("./pages/ProjectDetails"));
+const Services = lazy(() => import("./pages/Services"));
+const ServiceDetails = lazy(() => import("./pages/ServiceDetails"));
+const Industries = lazy(() => import("./pages/Industries"));
+const IndustryDetails = lazy(() => import("./pages/IndustryDetails"));
+const Careers = lazy(() => import("./pages/Careers"));
+const JobDetails = lazy(() => import("./pages/JobDetails").then((m) => ({ default: m.JobDetails })));
+const JobApplication = lazy(() => import("./pages/JobApplication").then((m) => ({ default: m.JobApplication })));
+const Contact = lazy(() => import("./pages/Contact"));
+const Solutions = lazy(() => import("./pages/Solutions"));
+const SolutionDetails = lazy(() => import("./pages/SolutionDetails"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Admin — fully isolated chunk
+const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminLayout = lazy(() => import("./components/admin/layout/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminServices = lazy(() => import("./pages/admin/Services"));
+const AdminServicesSettings = lazy(() => import("./pages/admin/ServicesSettings"));
+const AdminPageSeoSettings = lazy(() => import("./pages/admin/PageSeoSettings"));
+const AdminHomeSettings = lazy(() => import("./pages/admin/HomeSettings"));
+const AdminAboutSettings = lazy(() => import("./pages/admin/AboutSettings"));
+const AdminContactSettings = lazy(() => import("./pages/admin/ContactSettings"));
+const AdminSolutionsLandingSettings = lazy(() => import("./pages/admin/SolutionsLandingSettings"));
+const AdminIndustriesLandingSettings = lazy(() => import("./pages/admin/IndustriesLandingSettings"));
+const AdminCareersLandingSettings = lazy(() => import("./pages/admin/CareersLandingSettings"));
+const AdminWebsiteSettings = lazy(() => import("./pages/admin/WebsiteSettings"));
+const AdminIndustries = lazy(() => import("./pages/admin/Industries"));
+const AdminSolutions = lazy(() => import("./pages/admin/Solutions"));
+const AdminPortfolio = lazy(() => import("./pages/admin/Portfolio"));
+const AdminFAQs = lazy(() => import("./pages/admin/FAQs"));
+const AdminJobs = lazy(() => import("./pages/admin/Jobs"));
+const AdminApplications = lazy(() => import("./pages/admin/Applications"));
+const AdminContacts = lazy(() => import("./pages/admin/Contacts"));
+const AdminNewsletter = lazy(() => import("./pages/admin/Newsletter"));
 
 const queryClient = new QueryClient();
+
+const withSuspense = (element: ReactNode) => (
+  <Suspense fallback={<RouteFallback />}>{element}</Suspense>
+);
 
 // Sleek top progress loading bar that reacts to route changes
 const PageTransitionLoader = () => {
@@ -131,50 +139,50 @@ const App = () => (
         <PageTransitionLoader />
         <ScrollToHashElement />
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/work" element={<Work />} />
-          <Route path="/work/:slug" element={<ProjectDetails />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/services/:slug" element={<ServiceDetails />} />
-          <Route path="/industries" element={<Industries />} />
-          <Route path="/industries/:slug" element={<IndustryDetails />} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/careers/:slug" element={<JobDetails />} />
-          <Route path="/careers/apply/:slug" element={<JobApplication />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/" element={withSuspense(<Index />)} />
+          <Route path="/about" element={withSuspense(<About />)} />
+          <Route path="/work" element={withSuspense(<Work />)} />
+          <Route path="/work/:slug" element={withSuspense(<ProjectDetails />)} />
+          <Route path="/services" element={withSuspense(<Services />)} />
+          <Route path="/services/:slug" element={withSuspense(<ServiceDetails />)} />
+          <Route path="/industries" element={withSuspense(<Industries />)} />
+          <Route path="/industries/:slug" element={withSuspense(<IndustryDetails />)} />
+          <Route path="/careers" element={withSuspense(<Careers />)} />
+          <Route path="/careers/:slug" element={withSuspense(<JobDetails />)} />
+          <Route path="/careers/apply/:slug" element={withSuspense(<JobApplication />)} />
+          <Route path="/contact" element={withSuspense(<Contact />)} />
 
-          <Route path="/solutions" element={<Solutions />} />
-          <Route path="/solutions/:slug" element={<SolutionDetails />} />
+          <Route path="/solutions" element={withSuspense(<Solutions />)} />
+          <Route path="/solutions/:slug" element={withSuspense(<SolutionDetails />)} />
 
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/login" element={withSuspense(<AdminLogin />)} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="services" element={<AdminServices />} />
-              <Route path="services-settings" element={<AdminServicesSettings />} />
-              <Route path="home-settings" element={<AdminHomeSettings />} />
-              <Route path="about-settings" element={<AdminAboutSettings />} />
-              <Route path="contact-settings" element={<AdminContactSettings />} />
-              <Route path="solutions-landing" element={<AdminSolutionsLandingSettings />} />
-              <Route path="industries-landing" element={<AdminIndustriesLandingSettings />} />
-              <Route path="careers-landing" element={<AdminCareersLandingSettings />} />
-              <Route path="website-settings" element={<AdminWebsiteSettings />} />
-              <Route path="page-seo" element={<AdminPageSeoSettings />} />
-              <Route path="industries" element={<AdminIndustries />} />
-              <Route path="solutions" element={<AdminSolutions />} />
-              <Route path="portfolio" element={<AdminPortfolio />} />
-              <Route path="faqs" element={<AdminFAQs />} />
-              <Route path="jobs" element={<AdminJobs />} />
-              <Route path="applications" element={<AdminApplications />} />
-              <Route path="contacts" element={<AdminContacts />} />
-              <Route path="newsletter" element={<AdminNewsletter />} />
+            <Route path="/admin" element={withSuspense(<AdminLayout />)}>
+              <Route index element={withSuspense(<AdminDashboard />)} />
+              <Route path="dashboard" element={withSuspense(<AdminDashboard />)} />
+              <Route path="services" element={withSuspense(<AdminServices />)} />
+              <Route path="services-settings" element={withSuspense(<AdminServicesSettings />)} />
+              <Route path="home-settings" element={withSuspense(<AdminHomeSettings />)} />
+              <Route path="about-settings" element={withSuspense(<AdminAboutSettings />)} />
+              <Route path="contact-settings" element={withSuspense(<AdminContactSettings />)} />
+              <Route path="solutions-landing" element={withSuspense(<AdminSolutionsLandingSettings />)} />
+              <Route path="industries-landing" element={withSuspense(<AdminIndustriesLandingSettings />)} />
+              <Route path="careers-landing" element={withSuspense(<AdminCareersLandingSettings />)} />
+              <Route path="website-settings" element={withSuspense(<AdminWebsiteSettings />)} />
+              <Route path="page-seo" element={withSuspense(<AdminPageSeoSettings />)} />
+              <Route path="industries" element={withSuspense(<AdminIndustries />)} />
+              <Route path="solutions" element={withSuspense(<AdminSolutions />)} />
+              <Route path="portfolio" element={withSuspense(<AdminPortfolio />)} />
+              <Route path="faqs" element={withSuspense(<AdminFAQs />)} />
+              <Route path="jobs" element={withSuspense(<AdminJobs />)} />
+              <Route path="applications" element={withSuspense(<AdminApplications />)} />
+              <Route path="contacts" element={withSuspense(<AdminContacts />)} />
+              <Route path="newsletter" element={withSuspense(<AdminNewsletter />)} />
             </Route>
           </Route>
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={withSuspense(<NotFound />)} />
         </Routes>
       </BrowserRouter>
       </HomeCmsProvider>

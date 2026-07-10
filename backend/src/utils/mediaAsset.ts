@@ -237,6 +237,9 @@ export const PROJECT_MEDIA_FIELDS: ScalarMediaField[] = [
   ...SEO_SCALAR_MEDIA_FIELDS,
 ];
 
-export const SOLUTION_MEDIA_FIELDS: ScalarMediaField[] = [...SEO_SCALAR_MEDIA_FIELDS];
+export const SOLUTION_MEDIA_FIELDS: ScalarMediaField[] = [
+  { urlKey: 'dashboardImage', publicIdKey: 'dashboardImagePublicId' },
+  ...SEO_SCALAR_MEDIA_FIELDS,
+];
 
 export const JOB_MEDIA_FIELDS: ScalarMediaField[] = [...SEO_SCALAR_MEDIA_FIELDS];

@@ -21,6 +21,15 @@ interface SolutionInput extends SeoInput {
   techStack?: unknown;
   metrics?: unknown;
   faqs?: unknown;
+  heroDescription?: unknown;
+  heroBadge?: unknown;
+  backLinkText?: unknown;
+  dashboardImage?: unknown;
+  dashboardImagePublicId?: unknown;
+  heroFloatingCards?: unknown;
+  heroStats?: unknown;
+  sectionCopy?: unknown;
+  relatedSolutionSlugs?: unknown;
   status?: unknown;
   displayOrder?: unknown;
   featured?: unknown;
@@ -224,6 +233,85 @@ export function validateSolutionInput(input: SolutionInput, isUpdate = false): a
     }
   }
 
+  // Hero floating cards
+  let parsedHeroFloatingCards: any[] | undefined;
+  if (input.heroFloatingCards !== undefined) {
+    if (!Array.isArray(input.heroFloatingCards)) {
+      errors.push({ field: 'heroFloatingCards', message: 'heroFloatingCards must be an array' });
+    } else {
+      parsedHeroFloatingCards = input.heroFloatingCards.map((c: any, idx: number) => {
+        if (!c || typeof c !== 'object') {
+          errors.push({ field: `heroFloatingCards[${idx}]`, message: 'Floating card must be an object' });
+          return null;
+        }
+        return {
+          value: String(c.value || '').trim(),
+          label: String(c.label || '').trim(),
+          icon: String(c.icon || 'Shield').trim(),
+        };
+      }).filter(Boolean);
+    }
+  }
+
+  // Hero stats
+  let parsedHeroStats: any[] | undefined;
+  if (input.heroStats !== undefined) {
+    if (!Array.isArray(input.heroStats)) {
+      errors.push({ field: 'heroStats', message: 'heroStats must be an array' });
+    } else {
+      parsedHeroStats = input.heroStats.map((s: any, idx: number) => {
+        if (!s || typeof s !== 'object') {
+          errors.push({ field: `heroStats[${idx}]`, message: 'Hero stat must be an object' });
+          return null;
+        }
+        return {
+          value: String(s.value || '').trim(),
+          label: String(s.label || '').trim(),
+          description: String(s.description || '').trim(),
+          icon: String(s.icon || 'TrendingUp').trim(),
+        };
+      }).filter(Boolean);
+    }
+  }
+
+  // Section copy
+  let parsedSectionCopy: any | undefined;
+  if (input.sectionCopy !== undefined) {
+    const sc = input.sectionCopy as any;
+    if (!sc || typeof sc !== 'object') {
+      errors.push({ field: 'sectionCopy', message: 'sectionCopy must be an object' });
+    } else {
+      parsedSectionCopy = {
+        backLinkText: String(sc.backLinkText || '').trim(),
+        overviewTitle: String(sc.overviewTitle || '').trim(),
+        featuresTitle: String(sc.featuresTitle || '').trim(),
+        featuresSubtitle: String(sc.featuresSubtitle || '').trim(),
+        processTitle: String(sc.processTitle || '').trim(),
+        processSubtitle: String(sc.processSubtitle || '').trim(),
+        benefitsTitle: String(sc.benefitsTitle || '').trim(),
+        benefitsSubtitle: String(sc.benefitsSubtitle || '').trim(),
+        techStackTitle: String(sc.techStackTitle || '').trim(),
+        techStackSubtitle: String(sc.techStackSubtitle || '').trim(),
+        navItems: Array.isArray(sc.navItems)
+          ? sc.navItems.map((n: any) => ({
+              id: String(n.id || '').trim(),
+              label: String(n.label || '').trim(),
+            })).filter((n: { id: string; label: string }) => n.id && n.label)
+          : [],
+      };
+    }
+  }
+
+  // Related solution slugs
+  let parsedRelatedSolutionSlugs: string[] | undefined;
+  if (input.relatedSolutionSlugs !== undefined) {
+    if (!Array.isArray(input.relatedSolutionSlugs)) {
+      errors.push({ field: 'relatedSolutionSlugs', message: 'relatedSolutionSlugs must be an array' });
+    } else {
+      parsedRelatedSolutionSlugs = input.relatedSolutionSlugs.map((v) => String(v).trim()).filter(Boolean);
+    }
+  }
+
   // Status
   if (input.status !== undefined && input.status !== null) {
     const statusStr = String(input.status).trim();
@@ -263,6 +351,17 @@ export function validateSolutionInput(input: SolutionInput, isUpdate = false): a
     if (parsedTechStack !== undefined) updatePayload.techStack = parsedTechStack;
     if (input.metrics !== undefined) updatePayload.metrics = parsedMetrics;
     if (input.faqs !== undefined) updatePayload.faqs = parsedFAQs;
+    if (input.heroDescription !== undefined) updatePayload.heroDescription = String(input.heroDescription).trim();
+    if (input.heroBadge !== undefined) updatePayload.heroBadge = String(input.heroBadge).trim();
+    if (input.backLinkText !== undefined) updatePayload.backLinkText = String(input.backLinkText).trim();
+    if (input.dashboardImage !== undefined) updatePayload.dashboardImage = String(input.dashboardImage).trim();
+    if (input.dashboardImagePublicId !== undefined) {
+      updatePayload.dashboardImagePublicId = String(input.dashboardImagePublicId).trim();
+    }
+    if (parsedHeroFloatingCards !== undefined) updatePayload.heroFloatingCards = parsedHeroFloatingCards;
+    if (parsedHeroStats !== undefined) updatePayload.heroStats = parsedHeroStats;
+    if (parsedSectionCopy !== undefined) updatePayload.sectionCopy = parsedSectionCopy;
+    if (parsedRelatedSolutionSlugs !== undefined) updatePayload.relatedSolutionSlugs = parsedRelatedSolutionSlugs;
     if (input.status !== undefined && input.status !== null) {
       updatePayload.status = String(input.status).trim() as 'draft' | 'active';
     }
@@ -291,6 +390,16 @@ export function validateSolutionInput(input: SolutionInput, isUpdate = false): a
     techStack: parsedTechStack ?? [],
     metrics: parsedMetrics,
     faqs: parsedFAQs,
+    heroDescription: input.heroDescription !== undefined ? String(input.heroDescription).trim() : '',
+    heroBadge: input.heroBadge !== undefined ? String(input.heroBadge).trim() : '',
+    backLinkText: input.backLinkText !== undefined ? String(input.backLinkText).trim() : '',
+    dashboardImage: input.dashboardImage !== undefined ? String(input.dashboardImage).trim() : '',
+    dashboardImagePublicId:
+      input.dashboardImagePublicId !== undefined ? String(input.dashboardImagePublicId).trim() : '',
+    heroFloatingCards: parsedHeroFloatingCards ?? [],
+    heroStats: parsedHeroStats ?? [],
+    sectionCopy: parsedSectionCopy ?? undefined,
+    relatedSolutionSlugs: parsedRelatedSolutionSlugs ?? [],
     status: (input.status ? String(input.status).trim() : 'active') as 'draft' | 'active',
     displayOrder: parsedDisplayOrder,
     featured: input.featured === true || input.featured === 'true',

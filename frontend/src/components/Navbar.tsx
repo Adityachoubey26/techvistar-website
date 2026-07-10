@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { SITE } from '@/data';
 import { useQuery } from '@tanstack/react-query';
 import { getPublicPagesConfig } from '@/services/pages.service';
+import { getActiveServices, filterNavServicesByActiveSlugs } from '@/services/services.service';
 import { mergePagesCmsConfig } from '@/types/pagesCms';
 import logo from '../assets/logo.webp';
 
@@ -20,6 +21,16 @@ export const Navbar = () => {
     queryFn: getPublicPagesConfig,
     staleTime: 60_000,
   });
+  const { data: activeServices, isSuccess } = useQuery({
+    queryKey: ['activeServices'],
+    queryFn: getActiveServices,
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+  const activeServiceSlugs = useMemo(
+    () => new Set((activeServices ?? []).map((service) => String(service.slug))),
+    [activeServices]
+  );
   const websiteSettings = mergePagesCmsConfig(pagesConfig).websiteSettings;
   const navLogo = websiteSettings.logo?.trim() || logo;
   const companyName = websiteSettings.companyName?.trim() || SITE.name;
@@ -108,6 +119,19 @@ export const Navbar = () => {
     { label: 'Automation', to: '/services/automation', icon: Repeat, desc: 'RPA & workflow optimizers.' },
   ];
 
+  const publishedDevServices = useMemo(
+    () => (isSuccess ? filterNavServicesByActiveSlugs(devServices, activeServiceSlugs) : devServices),
+    [isSuccess, activeServiceSlugs]
+  );
+  const publishedDesignServices = useMemo(
+    () => (isSuccess ? filterNavServicesByActiveSlugs(designServices, activeServiceSlugs) : designServices),
+    [isSuccess, activeServiceSlugs]
+  );
+  const publishedCloudServices = useMemo(
+    () => (isSuccess ? filterNavServicesByActiveSlugs(cloudServices, activeServiceSlugs) : cloudServices),
+    [isSuccess, activeServiceSlugs]
+  );
+
   const bizSolutions = [
     { label: 'Enterprise Software', to: '/solutions/enterprise-software', icon: Building2, desc: 'Core business platforms.' },
     { label: 'CRM Systems', to: '/solutions/crm-systems', icon: Target, desc: 'Customer insights & workflows.' },
@@ -172,21 +196,21 @@ export const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] h-20 sm:h-22 flex items-center',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] h-20 flex items-center',
         isScrolled 
           ? 'bg-white/90 backdrop-blur-md shadow-md shadow-slate-100/45 border-b border-slate-200/50' 
           : 'bg-white border-b border-slate-100'
       )}
     >
-      <div className="w-full mx-auto flex items-center justify-between px-6 lg:px-12 xl:px-20 relative h-full" ref={dropdownRef}>
+      <div className="w-full mx-auto flex items-center justify-between px-4 md:px-6 lg:px-12 xl:px-20 relative h-full gap-2" ref={dropdownRef}>
         {/* Logo Branding */}
-        <Link to="/" className="flex items-center gap-3 group shrink-0">
+        <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink min-w-0">
           <img
             src={navLogo}
             alt={SITE.name}
-            className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/10 group-hover:ring-emerald-500/30 transition-all duration-300"
+            className="h-9 w-9 md:h-10 md:w-10 rounded-full object-cover ring-2 ring-emerald-500/10 group-hover:ring-emerald-500/30 transition-all duration-300 shrink-0"
           />
-          <span className="text-xl font-extrabold font-display tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors">
+          <span className="text-base md:text-xl font-extrabold font-display tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors truncate max-w-[9.5rem] sm:max-w-[12rem] md:max-w-none">
             {companyName}
           </span>
         </Link>
@@ -375,7 +399,7 @@ export const Navbar = () => {
         {/* Mobile hamburger menu toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2.5 rounded-xl hover:bg-slate-100 transition-colors text-slate-800"
+          className="lg:hidden mobile-touch-target inline-flex items-center justify-center p-2.5 rounded-xl hover:bg-slate-100 transition-colors text-slate-800 shrink-0"
           aria-label="Toggle Navigation Menu"
         >
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -397,7 +421,7 @@ export const Navbar = () => {
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Development Services</div>
                 <div className="space-y-0.5">
-                  {devServices.map((srv) => {
+                  {publishedDevServices.map((srv) => {
                     const IconComp = srv.icon;
                     return (
                       <Link
@@ -426,7 +450,7 @@ export const Navbar = () => {
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Design Services</div>
                 <div className="space-y-0.5">
-                  {designServices.map((srv) => {
+                  {publishedDesignServices.map((srv) => {
                     const IconComp = srv.icon;
                     return (
                       <Link
@@ -455,7 +479,7 @@ export const Navbar = () => {
               <motion.div variants={columnVariants} className="col-span-3 space-y-4">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Cloud & AI</div>
                 <div className="space-y-0.5">
-                  {cloudServices.map((srv) => {
+                  {publishedCloudServices.map((srv) => {
                     const IconComp = srv.icon;
                     return (
                       <Link
@@ -667,9 +691,9 @@ export const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-xl overflow-y-auto max-h-[85vh] z-40"
           >
-            <div className="container-custom py-6 px-5 space-y-6">
-              <div className="space-y-2">
-                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Home</Link>
+            <div className="container-custom py-4 md:py-6 px-4 md:px-5 space-y-4 md:space-y-6">
+              <div className="space-y-1 md:space-y-2">
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 md:py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Home</Link>
                 
                 {/* Services Accordion */}
                 <div>
@@ -692,7 +716,7 @@ export const Navbar = () => {
                         
                         <div className="space-y-2 pt-1">
                           <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Development</span>
-                          {devServices.map(srv => (
+                          {publishedDevServices.map(srv => (
                             <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
                               <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
                               <span>{srv.label}</span>
@@ -702,7 +726,7 @@ export const Navbar = () => {
 
                         <div className="space-y-2 pt-2">
                           <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-455 block">Design</span>
-                          {designServices.map(srv => (
+                          {publishedDesignServices.map(srv => (
                             <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
                               <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
                               <span>{srv.label}</span>
@@ -712,7 +736,7 @@ export const Navbar = () => {
 
                         <div className="space-y-2 pt-2">
                           <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Cloud & AI</span>
-                          {cloudServices.map(srv => (
+                          {publishedCloudServices.map(srv => (
                             <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
                               <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
                               <span>{srv.label}</span>

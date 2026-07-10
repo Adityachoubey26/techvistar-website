@@ -11,6 +11,11 @@ import {
   Zap,
   LucideIcon
 } from 'lucide-react';
+import type {
+  IndustryConsultationBlock,
+  IndustryCtaBlock,
+  IndustrySidebarBlock,
+} from '@/types/industriesCms';
 
 export interface IndustryChallenge {
   title: string;
@@ -31,6 +36,22 @@ export interface IndustryStatistic {
   value: string;
   label: string;
   description?: string;
+  iconType?: string;
+  colorTheme?: string;
+}
+
+export interface IndustryProcessStep {
+  step: number;
+  title: string;
+  description: string;
+}
+
+export interface IndustryDetailedOffering {
+  title: string;
+  description: string;
+  badges?: string[];
+  color?: string;
+  iconName?: string;
 }
 
 export interface IndustryCta {
@@ -57,6 +78,8 @@ export interface Industry {
   industriesColor: string; // Tailwind gradient/accent class (e.g., 'from-blue-500 to-indigo-600')
   challenges: IndustryChallenge[];
   solutions: IndustrySolution[];
+  /** Plain-text offering bullets from CMS (features / offerings). */
+  offerings?: string[];
   services: string[]; // Slugs of related services from services.ts
   technologies: string[]; // Key technologies utilized in this industry vertical
   caseStudies: string[]; // Slugs of related projects/case studies from projects.ts
@@ -65,6 +88,19 @@ export interface Industry {
   cta: IndustryCta;
   featured?: boolean;
   overviewQuote?: string;
+  category?: string;
+  heroBadge?: string;
+  heroTagline?: string;
+  benefits?: string[];
+  process?: IndustryProcessStep[];
+  detailedOfferings?: IndustryDetailedOffering[];
+  ctaBlock?: IndustryCtaBlock;
+  sidebar?: Partial<IndustrySidebarBlock>;
+  consultationForm?: Partial<IndustryConsultationBlock>;
+  relatedIndustrySlugs?: string[];
+  overview?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export const INDUSTRIES: readonly Industry[] = [

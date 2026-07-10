@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface VideoProps {
   youtubeUrl: string;
@@ -6,6 +7,12 @@ interface VideoProps {
   startTime?: number;
   overlayClassName?: string;
   iframeClassName?: string;
+  /** Optional poster shown until the player is in view */
+  posterUrl?: string;
+  /** Fade poster out once YouTube player is ready (hero LCP poster) */
+  fadePosterOnReady?: boolean;
+  /** Begin loading the player immediately (used with hero poster placeholder) */
+  loadImmediately?: boolean;
 }
 
 type YtPlayer = {
@@ -108,14 +115,38 @@ export const Video: React.FC<VideoProps> = ({
   startTime = 3,
   overlayClassName = 'bg-black/50',
   iframeClassName,
+  posterUrl,
+  fadePosterOnReady = false,
+  loadImmediately = false,
 }) => {
   const videoId = getYouTubeId(youtubeUrl);
+  const rootRef = useRef<HTMLDivElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YtPlayer | null>(null);
   const configuredStart = clampStartTime(startTime);
+  const [isActive, setIsActive] = useState(loadImmediately);
+  const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
-    if (!videoId || !playerContainerRef.current) return;
+    if (loadImmediately) return;
+
+    const root = rootRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.05 },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [loadImmediately]);
+
+  useEffect(() => {
+    const shouldLoad = loadImmediately || isActive;
+    if (!shouldLoad || !videoId || !playerContainerRef.current) return;
 
     let cancelled = false;
 
@@ -148,6 +179,7 @@ export const Video: React.FC<VideoProps> = ({
               event.target.seekTo(configuredStart, true);
             }
             event.target.playVideo();
+            setPlayerReady(true);
           },
           onStateChange: (event) => {
             if (event.data === window.YT?.PlayerState.ENDED) {
@@ -165,8 +197,9 @@ export const Video: React.FC<VideoProps> = ({
       cancelled = true;
       playerRef.current?.destroy();
       playerRef.current = null;
+      setPlayerReady(false);
     };
-  }, [videoId, configuredStart]);
+  }, [videoId, configuredStart, isActive, loadImmediately]);
 
   if (!videoId) {
     return (
@@ -181,9 +214,24 @@ export const Video: React.FC<VideoProps> = ({
 
   return (
     <div
+      ref={rootRef}
       className="absolute inset-0 -z-20 w-full h-full overflow-hidden pointer-events-none select-none"
       aria-hidden="true"
     >
+      {posterUrl && (fadePosterOnReady || !isActive) ? (
+        <img
+          src={posterUrl}
+          alt=""
+          className={cn(
+            'absolute inset-0 h-full w-full object-cover',
+            fadePosterOnReady && 'transition-opacity duration-500 ease-in-out',
+            fadePosterOnReady && playerReady ? 'opacity-0' : 'opacity-100',
+          )}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
+      ) : null}
       <div
         ref={playerContainerRef}
         className={`absolute top-1/2 left-1/2 w-[177.78vh] min-w-full h-[56.25vw] min-h-full -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none border-0 ${iframeClassName ?? ''}`}

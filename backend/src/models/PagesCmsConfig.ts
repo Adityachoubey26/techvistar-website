@@ -61,6 +61,50 @@ const processStepSchema = {
   description: { type: String, trim: true, default: '' },
 };
 
+const industryCapabilityCardSchema = {
+  icon: { type: String, trim: true, default: 'ShieldCheck' },
+  title: { type: String, trim: true, default: '' },
+  description: { type: String, trim: true, default: '' },
+  color: { type: String, trim: true, default: 'from-emerald-500 to-teal-600' },
+  image: { type: String, trim: true, default: '' },
+  imagePublicId: { type: String, trim: true, default: '' },
+};
+
+const sidebarDefaultsSchema = {
+  summaryTitle: { type: String, trim: true, default: '' },
+  responseTimeTitle: { type: String, trim: true, default: '' },
+  responseTime: { type: String, trim: true, default: '' },
+  businessHoursTitle: { type: String, trim: true, default: '' },
+  businessHours: { type: String, trim: true, default: '' },
+  secureTitle: { type: String, trim: true, default: '' },
+  secureDescription: { type: String, trim: true, default: '' },
+  buttonLabel: { type: String, trim: true, default: '' },
+  directInquiriesTitle: { type: String, trim: true, default: '' },
+  directInquiriesBody: { type: String, trim: true, default: '' },
+  contactEmail: { type: String, trim: true, default: '' },
+};
+
+const consultationDefaultsSchema = {
+  title: { type: String, trim: true, default: '' },
+  description: { type: String, trim: true, default: '' },
+  submitLabel: { type: String, trim: true, default: '' },
+  privacyText: { type: String, trim: true, default: '' },
+  successTitle: { type: String, trim: true, default: '' },
+  successMessage: { type: String, trim: true, default: '' },
+};
+
+const extendedCtaBlockSchema = {
+  title: { type: String, trim: true, default: '' },
+  description: { type: String, trim: true, default: '' },
+  buttonText: { type: String, trim: true, default: '' },
+  buttonLink: { type: String, trim: true, default: '' },
+  badge: { type: String, trim: true, default: '' },
+  secondaryButtonText: { type: String, trim: true, default: '' },
+  secondaryButtonLink: { type: String, trim: true, default: '' },
+  backgroundImage: { type: String, trim: true, default: '' },
+  backgroundImagePublicId: { type: String, trim: true, default: '' },
+};
+
 const ctaBlockSchema = {
   title: { type: String, trim: true, default: '' },
   description: { type: String, trim: true, default: '' },
@@ -75,6 +119,8 @@ const landingHeroSchema = {
   description: { type: String, trim: true, default: '' },
   backgroundImage: { type: String, trim: true, default: '' },
   backgroundImagePublicId: { type: String, trim: true, default: '' },
+  ctaText: { type: String, trim: true, default: '' },
+  ctaLink: { type: String, trim: true, default: '' },
 };
 
 export interface IPagesCmsConfig extends BaseDocument {
@@ -111,6 +157,8 @@ const pagesCmsConfigSchema = new Schema<IPagesCmsConfig>(
         backgroundVideoWebm: { type: String, trim: true, default: '' },
         backgroundVideoUrl: { type: String, trim: true, default: '' },
         backgroundVideoPublicId: { type: String, trim: true, default: '' },
+        heroPosterImage: { type: String, trim: true, default: '' },
+        heroPosterImagePublicId: { type: String, trim: true, default: '' },
         youtubeUrl: { type: String, trim: true, default: '' },
         youtubeStartTime: { type: Number, default: 3, min: 0 },
         overlayOpacity: { type: Number, default: 40 },
@@ -265,8 +313,24 @@ const pagesCmsConfigSchema = new Schema<IPagesCmsConfig>(
       intro: {
         title: { type: String, trim: true, default: '' },
         description: { type: String, trim: true, default: '' },
+        icon: { type: String, trim: true, default: '' },
+        iconPublicId: { type: String, trim: true, default: '' },
       },
-      cta: ctaBlockSchema,
+      catalog: {
+        eyebrow: { type: String, trim: true, default: '' },
+        title: { type: String, trim: true, default: '' },
+        subtitle: { type: String, trim: true, default: '' },
+        description: { type: String, trim: true, default: '' },
+        learnMoreLabel: { type: String, trim: true, default: '' },
+      },
+      capabilities: {
+        eyebrow: { type: String, trim: true, default: '' },
+        stats: { type: [statItemSchema], default: [] },
+        cards: { type: [industryCapabilityCardSchema], default: [] },
+      },
+      cta: extendedCtaBlockSchema,
+      sidebarDefaults: sidebarDefaultsSchema,
+      consultationDefaults: consultationDefaultsSchema,
       ...seoMongooseFields,
       seoTitle: { type: String, trim: true, default: 'Industries | TechVistar' },
       canonicalUrl: { type: String, trim: true, default: 'https://techvistar.com/industries' },

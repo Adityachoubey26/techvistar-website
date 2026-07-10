@@ -12,7 +12,7 @@ import { IMAGE_MAP as PROJECT_IMAGE_MAP } from "@/data/projects";
 export interface CmsImageFieldProps {
   label: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, publicId?: string) => void;
   helperText?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -52,7 +52,7 @@ export function CmsImageField({
         helperText={helperText}
         disabled={disabled}
         onChange={(data) => {
-          onChange(data?.imageUrl ?? "");
+          onChange(data?.imageUrl ?? "", data?.publicId);
         }}
       />
       <div className="space-y-1">

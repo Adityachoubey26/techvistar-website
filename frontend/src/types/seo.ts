@@ -18,6 +18,8 @@ export interface SeoDefaults {
   image?: string;
   url: string;
   siteName?: string;
+  twitterSite?: string;
+  keywords?: string;
 }
 
 export const EMPTY_SEO: SeoMetadata = {

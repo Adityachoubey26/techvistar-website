@@ -87,10 +87,14 @@ export const SolutionsSection = ({ service }: SectionProps) => {
   };
 
   const getBackgroundStyle = (color: string) => {
+    const normalized = color.toLowerCase().trim();
+    if (gradientMapping[normalized]) {
+      return { background: gradientMapping[normalized] };
+    }
     if (gradientMapping[color]) {
       return { background: gradientMapping[color] };
     }
-    return { background: color };
+    return { background: gradientMapping.green };
   };
 
   return (
@@ -134,10 +138,10 @@ export const SolutionsSection = ({ service }: SectionProps) => {
             >
               <div>
                 {/* Header: Glass Icon Wrapper and Label */}
-                <div className="flex items-start justify-between gap-4 mb-1">
+                <div className="flex items-start justify-between gap-4 mb-1 overflow-visible">
                   
                   {/* Integrated GlassIcon style wrapper */}
-                  <div className="icon-btn pointer-events-none scale-50 origin-top-left -mb-8 -mr-4">
+                  <div className="icon-btn pointer-events-none scale-50 origin-top-left -mb-8 -mr-4 shrink-0 min-h-[4.5rem] min-w-[4.5rem]">
                     <span className="icon-btn__back" style={getBackgroundStyle(offering.color)}></span>
                     <span className="icon-btn__front">
                       <span className="icon-btn__icon">

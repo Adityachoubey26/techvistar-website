@@ -151,7 +151,7 @@ export const Solutions = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="container-custom max-w-7xl mx-auto px-6 py-16 space-y-16"
+              className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 space-y-12 md:space-y-16"
             >
               <div className="space-y-10">
                 <div className="h-6 w-48 bg-slate-200/60 rounded animate-pulse" />
@@ -176,14 +176,15 @@ export const Solutions = () => {
             >
               
               {/* STICKY CATEGORY NAVIGATION */}
-              <div className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-y border-slate-200/80 py-4 mt-0 shadow-sm select-none">
-                <div className="container-custom max-w-7xl mx-auto px-6 flex justify-center gap-4 sm:gap-8 text-xs sm:text-sm font-bold">
+              <div className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-y border-slate-200/80 py-3 md:py-4 mt-0 shadow-sm select-none">
+                <div className="container-custom max-w-7xl mx-auto px-4 md:px-6 overflow-x-auto scrollbar-none">
+                  <div className="flex justify-start md:justify-center gap-3 sm:gap-8 min-w-max md:min-w-0 text-[10px] sm:text-xs md:text-sm font-bold">
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => scrollToSection(cat.id as any)}
                       className={cn(
-                         "relative pb-1 px-1 transition-colors hover:text-emerald-600",
+                         "relative pb-1 px-1 transition-colors hover:text-emerald-600 mobile-touch-target shrink-0",
                         activeCategory === cat.id ? "text-emerald-600" : "text-slate-500"
                       )}
                     >
@@ -196,16 +197,17 @@ export const Solutions = () => {
                       )}
                     </button>
                   ))}
+                  </div>
                 </div>
               </div>
 
               {/* SOLUTION CATEGORY LISTINGS */}
-              <div className="space-y-16 py-16">
+              <div className="space-y-12 md:space-y-16 py-12 md:py-16">
                 {categories.map((cat) => (
                   <section 
                     key={cat.id}
                     ref={categoryRefs[cat.id as keyof typeof categoryRefs]}
-                    className="container-custom max-w-7xl mx-auto px-6 scroll-mt-28"
+                    className="container-custom max-w-7xl mx-auto px-4 md:px-6 scroll-mt-28"
                   >
                     {/* Category Header */}
                     <div className="mb-10 space-y-2 border-b border-slate-200/60 pb-6 relative">
@@ -263,7 +265,7 @@ export const Solutions = () => {
               </div>
 
               {/* 2. OPTIONAL FEATURED SOLUTION SECTION BELOW THE LISTINGS */}
-              <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/40">
+              <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 border-t border-slate-200/40">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}

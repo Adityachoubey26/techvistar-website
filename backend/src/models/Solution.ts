@@ -47,6 +47,38 @@ export interface ISolutionMetric {
   value: string;
 }
 
+export interface ISolutionHeroFloatingCard {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+export interface ISolutionHeroStat {
+  value: string;
+  label: string;
+  description: string;
+  icon: string;
+}
+
+export interface ISolutionNavItem {
+  id: string;
+  label: string;
+}
+
+export interface ISolutionSectionCopy {
+  backLinkText: string;
+  overviewTitle: string;
+  featuresTitle: string;
+  featuresSubtitle: string;
+  processTitle: string;
+  processSubtitle: string;
+  benefitsTitle: string;
+  benefitsSubtitle: string;
+  techStackTitle: string;
+  techStackSubtitle: string;
+  navItems: ISolutionNavItem[];
+}
+
 export interface ISolutionFAQ {
   q: string;
   a: string;
@@ -67,6 +99,15 @@ export interface ISolution extends BaseDocument, ISeoFields {
   techStack: string[];
   metrics: ISolutionMetric[];
   faqs: ISolutionFAQ[];
+  heroDescription?: string;
+  heroBadge?: string;
+  backLinkText?: string;
+  dashboardImage?: string;
+  dashboardImagePublicId?: string;
+  heroFloatingCards?: ISolutionHeroFloatingCard[];
+  heroStats?: ISolutionHeroStat[];
+  sectionCopy?: ISolutionSectionCopy;
+  relatedSolutionSlugs?: string[];
   status: 'draft' | 'active';
   displayOrder: number;
   featured: boolean;
@@ -159,6 +200,68 @@ const solutionSchema = new Schema<ISolution>(
         a: { type: String, required: true, trim: true },
       },
     ],
+    heroDescription: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    heroBadge: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    backLinkText: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    dashboardImage: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    dashboardImagePublicId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    heroFloatingCards: [
+      {
+        value: { type: String, trim: true, default: '' },
+        label: { type: String, trim: true, default: '' },
+        icon: { type: String, trim: true, default: 'Shield' },
+      },
+    ],
+    heroStats: [
+      {
+        value: { type: String, trim: true, default: '' },
+        label: { type: String, trim: true, default: '' },
+        description: { type: String, trim: true, default: '' },
+        icon: { type: String, trim: true, default: 'TrendingUp' },
+      },
+    ],
+    sectionCopy: {
+      backLinkText: { type: String, trim: true, default: '' },
+      overviewTitle: { type: String, trim: true, default: '' },
+      featuresTitle: { type: String, trim: true, default: '' },
+      featuresSubtitle: { type: String, trim: true, default: '' },
+      processTitle: { type: String, trim: true, default: '' },
+      processSubtitle: { type: String, trim: true, default: '' },
+      benefitsTitle: { type: String, trim: true, default: '' },
+      benefitsSubtitle: { type: String, trim: true, default: '' },
+      techStackTitle: { type: String, trim: true, default: '' },
+      techStackSubtitle: { type: String, trim: true, default: '' },
+      navItems: [
+        {
+          id: { type: String, trim: true, default: '' },
+          label: { type: String, trim: true, default: '' },
+        },
+      ],
+    },
+    relatedSolutionSlugs: {
+      type: [String],
+      default: [],
+    },
     status: {
       type: String,
       enum: ['draft', 'active'],

@@ -37,8 +37,8 @@ export const SolutionFeaturesSection = ({ solution }: SectionProps) => {
           <Layers className="h-6 w-6 text-emerald-600" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 font-display">Features</h2>
-          <p className="text-sm text-slate-500 font-medium mt-1">Key capabilities of our solution</p>
+          <h2 className="text-2xl font-bold text-slate-900 font-display">{solution.sectionCopy.featuresTitle}</h2>
+          <p className="text-sm text-slate-500 font-medium mt-1">{solution.sectionCopy.featuresSubtitle}</p>
         </div>
       </div>
 

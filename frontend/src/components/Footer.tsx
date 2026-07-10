@@ -1,10 +1,10 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DotGrid } from '@/components/DotGrid';
+import { LazyMount } from '@/components/common/LazyMount';
 import logo from '../assets/logo.webp';
 import { 
   Phone, Mail, MapPin, Clock, ArrowRight, ArrowUp, Star,
@@ -12,6 +12,10 @@ import {
 } from 'lucide-react';
 import { subscribeNewsletter } from '@/services/newsletter.service';
 import { useFooterContent } from '@/hooks/useFooterContent';
+
+const LazyDotGrid = lazy(() =>
+  import('@/components/DotGrid').then((m) => ({ default: m.DotGrid })),
+);
 
 const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
   linkedin: Linkedin,
@@ -87,24 +91,28 @@ export const Footer = () => {
 
   return (
     <footer
-      className="relative overflow-hidden border-t border-zinc-900 text-slate-400 py-16 md:py-24 select-none"
+      className="relative overflow-hidden border-t border-zinc-900 text-slate-400 py-8 md:py-24 select-none"
       style={footerStyle}
     >
       
-      {/* Background DotGrid Animation */}
-      <DotGrid 
-        dotSize={5} 
-        gap={15} 
-        baseColor="#2F293A" 
-        activeColor="#306035" 
-        proximity={120} 
-        opacity={0.35} 
-      />
+      {/* Background DotGrid Animation — deferred (GSAP) */}
+      <LazyMount minHeight="0" rootMargin="400px 0px">
+        <Suspense fallback={null}>
+          <LazyDotGrid
+            dotSize={5}
+            gap={15}
+            baseColor="#2F293A"
+            activeColor="#306035"
+            proximity={120}
+            opacity={0.35}
+          />
+        </Suspense>
+      </LazyMount>
 
       {/* Subtle emerald radial glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(100vw,600px)] h-[200px] md:h-[300px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-      <div className="container-custom max-w-7xl mx-auto px-6 relative z-10 space-y-16">
+      <div className="container-custom max-w-7xl mx-auto px-4 md:px-6 relative z-10 space-y-8 md:space-y-16">
         
         {/* TOP ROW: Column grids */}
         <motion.div 
@@ -112,13 +120,13 @@ export const Footer = () => {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 md:gap-12 lg:gap-8"
         >
           {/* Column 1: Left Premium Contact Card */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-4 md:col-span-2 space-y-6">
-            <Link to="/" className="inline-flex items-center gap-3">
-              <img src={footer.logo || logo} alt={footer.heading} className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/10" />
-              <span className="text-xl font-bold font-display text-white tracking-tight">{footer.heading}</span>
+          <motion.div variants={itemFadeUp} className="lg:col-span-4 md:col-span-2 space-y-4 md:space-y-6">
+            <Link to="/" className="inline-flex items-center gap-2.5 md:gap-3 min-w-0">
+              <img src={footer.logo || logo} alt={footer.heading} className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover ring-2 ring-emerald-500/10 shrink-0" />
+              <span className="text-lg md:text-xl font-bold font-display text-white tracking-tight truncate">{footer.heading}</span>
             </Link>
             
             <p className="text-xs sm:text-sm leading-relaxed text-slate-200 font-bold max-w-sm">
@@ -126,7 +134,7 @@ export const Footer = () => {
             </p>
 
             {/* Info details with subtle hover glow */}
-            <div className="space-y-3.5 border-t border-white/5 pt-5 text-xs sm:text-sm font-bold">
+            <div className="space-y-2.5 md:space-y-3.5 border-t border-white/5 pt-4 md:pt-5 text-xs sm:text-sm font-bold">
               <div className="flex items-center gap-3 group/info">
                 <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover/info:bg-emerald-500/20 transition-all duration-300">
                   <Phone className="w-4 h-4" />
@@ -160,7 +168,7 @@ export const Footer = () => {
               rel="noopener noreferrer"
               whileHover={{ y: -3, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3.5 bg-emerald-950/20 hover:bg-emerald-900/40 border border-emerald-500/20 hover:border-emerald-500/50 rounded-xl p-3 px-4 shadow-[0_0_15px_rgba(16,185,129,0.03)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-2.5 md:gap-3.5 bg-emerald-950/20 hover:bg-emerald-900/40 border border-emerald-500/20 hover:border-emerald-500/50 rounded-xl p-2.5 md:p-3 px-3 md:px-4 shadow-[0_0_15px_rgba(16,185,129,0.03)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300 cursor-pointer"
             >
               {/* Google G icon */}
               <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
@@ -183,10 +191,12 @@ export const Footer = () => {
             </motion.a>
           </motion.div>
 
+          {/* Link columns — 2-up on mobile, original grid from md */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-5 md:contents">
           {/* Column 2: Services List */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Services</div>
-            <ul className="space-y-3 font-bold text-xs sm:text-sm">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-3 md:space-y-5">
+            <div className="font-extrabold font-display text-white text-[10px] md:text-xs uppercase tracking-widest border-b border-white/5 pb-1.5 md:pb-2">Services</div>
+            <ul className="space-y-2 md:space-y-3 font-bold text-[11px] sm:text-sm">
               {footer.serviceLinks.map((link) => (
                 <li key={link.label}>
                   <Link 
@@ -202,9 +212,9 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 3: Industries Serve List */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Industries</div>
-            <ul className="space-y-3 font-bold text-xs sm:text-sm">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-3 md:space-y-5">
+            <div className="font-extrabold font-display text-white text-[10px] md:text-xs uppercase tracking-widest border-b border-white/5 pb-1.5 md:pb-2">Industries</div>
+            <ul className="space-y-2 md:space-y-3 font-bold text-[11px] sm:text-sm">
               {footer.industryLinks.map((link) => (
                 <li key={link.label}>
                   <Link 
@@ -220,9 +230,9 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 4: Company Links */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Company</div>
-            <ul className="space-y-3 font-bold text-xs sm:text-sm">
+          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-3 md:space-y-5">
+            <div className="font-extrabold font-display text-white text-[10px] md:text-xs uppercase tracking-widest border-b border-white/5 pb-1.5 md:pb-2">Company</div>
+            <ul className="space-y-2 md:space-y-3 font-bold text-[11px] sm:text-sm">
               {footer.companyLinks.map((link) => (
                 <li key={link.label}>
                   <Link 
@@ -238,8 +248,8 @@ export const Footer = () => {
           </motion.div>
 
           {/* Column 5: Premium Newsletter Card */}
-          <motion.div variants={itemFadeUp} className="lg:col-span-2 md:col-span-1 space-y-5">
-            <div className="font-extrabold font-display text-white text-xs uppercase tracking-widest border-b border-white/5 pb-2">Newsletter</div>
+          <motion.div variants={itemFadeUp} className="col-span-2 lg:col-span-2 md:col-span-1 space-y-3 md:space-y-5">
+            <div className="font-extrabold font-display text-white text-[10px] md:text-xs uppercase tracking-widest border-b border-white/5 pb-1.5 md:pb-2">Newsletter</div>
             
             <div className="space-y-3">
               <div className="text-white text-xs font-bold leading-snug">{footer.newsletterHeading}</div>
@@ -262,10 +272,11 @@ export const Footer = () => {
               </Button>
             </form>
           </motion.div>
+          </div>
         </motion.div>
 
         {/* BOTTOM ROW: Socials & copyright info bar */}
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 text-xs font-semibold">
+        <div className="pt-5 md:pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 relative z-10 text-[11px] md:text-xs font-semibold">
           
           {/* Social circular buttons */}
           <div className="flex gap-3 order-2 md:order-1">
@@ -288,13 +299,13 @@ export const Footer = () => {
           </div>
 
           {/* Center Copyright Info */}
-          <p className="text-slate-500 order-3 md:order-2 text-center">
+          <p className="text-slate-500 order-3 md:order-2 text-center max-w-xs md:max-w-none leading-relaxed">
             {footer.copyright}
             {footer.bottomText ? ` ${footer.bottomText}` : ''}
           </p>
 
           {/* Right Links & Back to Top */}
-          <div className="flex items-center gap-6 order-1 md:order-3">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 order-1 md:order-3">
             {footer.legalLinks.length > 0 && (
               <div className="flex gap-4 text-slate-500">
                 {footer.legalLinks.map((link) =>

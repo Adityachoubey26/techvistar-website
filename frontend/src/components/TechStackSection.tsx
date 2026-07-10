@@ -163,8 +163,7 @@ export const TechStackSection = () => {
                   <TechStackLogo
                     name={tech.name}
                     size="sm"
-                    loading="eager"
-                    priority
+                    loading="lazy"
                   />
                 </div>
                 <div>
@@ -189,8 +188,7 @@ export const TechStackSection = () => {
                   <TechStackLogo
                     name={tech.name}
                     size="sm"
-                    loading="eager"
-                    priority
+                    loading="lazy"
                   />
                 </div>
                 <div>

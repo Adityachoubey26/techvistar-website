@@ -14,10 +14,6 @@ export function WebsiteBrandingEffect() {
   const settings = mergePagesCmsConfig(data).websiteSettings;
 
   useEffect(() => {
-    if (settings.browserTitle?.trim()) {
-      document.title = settings.browserTitle;
-    }
-
     const themeMeta =
       document.querySelector('meta[name="theme-color"]') ??
       (() => {
@@ -30,17 +26,16 @@ export function WebsiteBrandingEffect() {
       themeMeta.setAttribute('content', settings.browserThemeColor);
     }
 
-    const faviconHref = settings.favicon?.trim();
-    if (faviconHref) {
-      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
-      link.href = faviconHref;
+    const faviconHref = settings.favicon?.trim() || '/favicon.webp';
+    let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
     }
-  }, [settings.browserTitle, settings.browserThemeColor, settings.favicon]);
+    link.type = faviconHref.endsWith('.webp') ? 'image/webp' : 'image/png';
+    link.href = faviconHref;
+  }, [settings.browserThemeColor, settings.favicon]);
 
   return null;
 }

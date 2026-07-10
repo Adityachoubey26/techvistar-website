@@ -37,6 +37,9 @@ export interface HomeHeroConfig {
   backgroundVideoWebm: string;
   backgroundVideoUrl: string;
   backgroundVideoPublicId?: string;
+  /** Optional LCP poster shown instantly while hero video loads */
+  heroPosterImage: string;
+  heroPosterImagePublicId?: string;
   youtubeUrl: string;
   youtubeStartTime: number;
   overlayOpacity: number;
@@ -271,6 +274,8 @@ export const DEFAULT_HOME_CMS: HomeCmsConfig = {
     backgroundVideoWebm: '',
     backgroundVideoUrl: '',
     backgroundVideoPublicId: '',
+    heroPosterImage: '',
+    heroPosterImagePublicId: '',
     youtubeUrl: 'https://youtu.be/CfjNMLgax2s?si=Pri2z-IYXELhd6CS',
     youtubeStartTime: 3,
     overlayOpacity: 40,

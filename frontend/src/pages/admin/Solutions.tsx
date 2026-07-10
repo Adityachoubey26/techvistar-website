@@ -8,11 +8,12 @@ import {
   restoreSolution, permanentlyDeleteSolution, bulkDeleteSolutions, bulkRestoreSolutions, bulkUpdateStatus
 } from "@/services/solutions.service";
 import { useToast } from "@/hooks/use-toast";
-import * as LucideIcons from "lucide-react";
+import { resolveLucideIcon } from "@/lib/resolveLucideIcon";
 import {
   Shapes, Trash2, Edit, Loader2, X, Plus, AlertCircle, ArrowLeft, ArrowRight,
   Search, RotateCcw, AlertTriangle, Star, ArrowUpNarrowWide, ArrowDownWideNarrow,
-  Settings, BookOpen, Tag, Sparkles, BarChart3, Globe, ShieldCheck, Check, Trash
+  Settings, BookOpen, Tag, Sparkles, BarChart3, Globe, ShieldCheck, Check, Trash,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,18 +21,40 @@ import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 import { RichTextEditor } from "@/components/admin/common/RichTextEditor";
 import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
+import { CmsImageField } from "@/components/admin/common/CmsImageField";
+import { CmsSortableList } from "@/components/admin/common/CmsSortableList";
+import { SeoManager } from "@/components/admin/common/SeoManager";
+import { seoFromItem, seoToPayload } from "@/lib/seoAdmin";
+import { EMPTY_SEO, SeoMetadata } from "@/types/seo";
+import {
+  SolutionExtendedCmsFields,
+  createDefaultExtendedCmsState,
+  extendedStateFromItem,
+  type SolutionExtendedCmsState,
+} from "@/components/admin/solutions/SolutionExtendedCmsFields";
 
 const SOLUTION_CATEGORIES = ["Business Solutions", "AI Solutions", "Digital Solutions"];
 
-type TabName = "general" | "content" | "benefits" | "features" | "process" | "tech" | "preview";
+type TabName =
+  | "general"
+  | "hero"
+  | "content"
+  | "media"
+  | "benefits"
+  | "features"
+  | "process"
+  | "tech"
+  | "faqs"
+  | "industries"
+  | "sections"
+  | "relations"
+  | "seo"
+  | "preview";
 
 // Resolves lucide icons dynamically
 const renderLucideIcon = (name: string, className = "w-4 h-4") => {
-  const IconComponent = (LucideIcons as any)[name];
-  if (IconComponent) {
-    return <IconComponent className={className} />;
-  }
-  return <LucideIcons.HelpCircle className={className} />;
+  const IconComponent = resolveLucideIcon(name);
+  return <IconComponent className={className} />;
 };
 
 const Solutions = () => {
@@ -94,6 +117,9 @@ const Solutions = () => {
   const [processSteps, setProcessSteps] = useState<{ step: string; title: string; desc: string }[]>([]);
   const [techStackText, setTechStackText] = useState("");
   const [metricsList, setMetricsList] = useState<{ label: string; value: string }[]>([]);
+  const [dashboardImage, setDashboardImage] = useState("");
+  const [extendedCms, setExtendedCms] = useState<SolutionExtendedCmsState>(createDefaultExtendedCmsState);
+  const [seo, setSeo] = useState<SeoMetadata>(EMPTY_SEO);
 
   // Validation
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -133,6 +159,20 @@ const Solutions = () => {
 
   const solutions = apiResponse?.solutions || [];
   const pagination = apiResponse?.pagination || { total: 0, page: 1, limit: itemsPerPage, totalPages: 1 };
+
+  const { data: allSolutionsForRelations } = useQuery({
+    queryKey: ["admin", "solutions", "all-for-relations"],
+    queryFn: () => getAllSolutions({ page: 1, limit: 200, status: "all" }),
+    staleTime: 60_000,
+  });
+
+  const solutionRelationOptions = (allSolutionsForRelations?.solutions || [])
+    .filter((s: { slug?: string; _id?: string }) => s.slug && s._id !== editingId)
+    .map((s: { slug: string; title: string }) => ({ slug: s.slug, title: s.title }));
+
+  const patchExtendedCms = (patch: Partial<SolutionExtendedCmsState>) => {
+    setExtendedCms((prev) => ({ ...prev, ...patch }));
+  };
 
   const refreshSolutionsQueries = () => {
     queryClient.invalidateQueries({ queryKey: ["admin", "solutions"] });
@@ -372,7 +412,8 @@ const Solutions = () => {
       challengeTitle, challengePointsText, challengeImpact,
       ourSolutionOverview, ourSolutionCapabilitiesText,
       benefitRoi, benefitEfficiency, benefitScalability, benefitSecurity,
-      featuresList, processSteps, techStackText, metricsList
+      featuresList, processSteps, techStackText, metricsList,
+      dashboardImage, extendedCms, seo,
     });
   };
 
@@ -411,6 +452,9 @@ const Solutions = () => {
     setMetricsList([
       { label: "Cost Savings", value: "30%" }
     ]);
+    setDashboardImage("");
+    setExtendedCms(createDefaultExtendedCmsState());
+    setSeo(EMPTY_SEO);
     setValidationErrors({});
     setActiveTab("general");
 
@@ -452,6 +496,9 @@ const Solutions = () => {
     setProcessSteps(item.howItWorks || []);
     setTechStackText((item.techStack || []).join(", "));
     setMetricsList(item.metrics || []);
+    setDashboardImage(item.dashboardImage || "");
+    setExtendedCms(extendedStateFromItem(item));
+    setSeo(seoFromItem(item));
 
     setValidationErrors({});
     setActiveTab("general");
@@ -516,7 +563,18 @@ const Solutions = () => {
       features: featuresList,
       howItWorks: processSteps,
       techStack: techStackText.split(",").map(t => t.trim()).filter(Boolean),
-      metrics: metricsList
+      metrics: metricsList,
+      dashboardImage,
+      heroDescription: normalizeRichContent(extendedCms.heroDescription),
+      heroBadge: extendedCms.heroBadge,
+      backLinkText: extendedCms.backLinkText,
+      heroFloatingCards: extendedCms.heroFloatingCards,
+      heroStats: extendedCms.heroStats,
+      sectionCopy: extendedCms.sectionCopy,
+      industries: extendedCms.industriesList,
+      faqs: extendedCms.faqsList,
+      relatedSolutionSlugs: extendedCms.relatedSolutionSlugs,
+      ...seoToPayload(seo),
     };
 
     if (editingId) {
@@ -955,11 +1013,18 @@ const Solutions = () => {
             <div className="flex bg-white px-8 border-b border-slate-200/60 overflow-x-auto gap-2 py-2.5 shrink-0 scrollbar-none">
               {([
                 { name: "general", label: "General", icon: Settings },
+                { name: "hero", label: "Hero", icon: Sparkles },
                 { name: "content", label: "Content", icon: BookOpen },
+                { name: "media", label: "Media", icon: ImageIcon },
                 { name: "benefits", label: "Benefits", icon: Tag },
                 { name: "features", label: "Features", icon: Tag },
                 { name: "process", label: "Process", icon: Sparkles },
                 { name: "tech", label: "Tech & Metrics", icon: BarChart3 },
+                { name: "faqs", label: "FAQs", icon: BookOpen },
+                { name: "industries", label: "Industries", icon: Globe },
+                { name: "sections", label: "Sections", icon: Settings },
+                { name: "relations", label: "Relations", icon: ArrowRight },
+                { name: "seo", label: "SEO", icon: Globe },
                 { name: "preview", label: "Preview", icon: ShieldCheck }
               ] as { name: TabName, label: string, icon: any }[]).map((tab) => {
                 const Icon = tab.icon;
@@ -1083,6 +1148,16 @@ const Solutions = () => {
                   </div>
                 )}
 
+                {/* Tab: Hero */}
+                {activeTab === "hero" && (
+                  <SolutionExtendedCmsFields
+                    activeTab="hero"
+                    state={extendedCms}
+                    onChange={patchExtendedCms}
+                    allSolutionOptions={solutionRelationOptions}
+                  />
+                )}
+
                 {/* Tab 2: Content */}
                 {activeTab === "content" && (
                   <div className="space-y-6">
@@ -1142,6 +1217,18 @@ const Solutions = () => {
                   </div>
                 )}
 
+                {/* Tab: Media */}
+                {activeTab === "media" && (
+                  <div className="space-y-6">
+                    <CmsImageField
+                      label="Hero Dashboard Image"
+                      value={dashboardImage}
+                      onChange={setDashboardImage}
+                      helperText="Dashboard mockup shown in the hero section (JPG, PNG, WEBP — max 5 MB)"
+                    />
+                  </div>
+                )}
+
                 {/* Tab 3: Benefits */}
                 {activeTab === "benefits" && (
                   <div className="space-y-6">
@@ -1187,18 +1274,13 @@ const Solutions = () => {
                       </Button>
                     </div>
 
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-                      {featuresList.map((feature, idx) => (
-                        <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 relative space-y-3">
-                          <button
-                            type="button"
-                            onClick={() => setFeaturesList(featuresList.filter((_, i) => i !== idx))}
-                            className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg absolute top-4 right-4"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                          
-                          <div className="grid grid-cols-2 gap-4 pr-10">
+                    <CmsSortableList
+                      items={featuresList}
+                      onChange={setFeaturesList}
+                      onDuplicate={(item) => ({ ...item, title: `${item.title} (copy)` })}
+                      renderItem={(feature, idx) => (
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                               <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Feature Title</label>
                               <Input
@@ -1224,7 +1306,7 @@ const Solutions = () => {
                               />
                             </div>
                           </div>
-                          <div className="space-y-1 pr-10">
+                          <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Description</label>
                             <Input
                               value={feature.description}
@@ -1237,8 +1319,8 @@ const Solutions = () => {
                             />
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      )}
+                    />
                   </div>
                 )}
 
@@ -1258,17 +1340,12 @@ const Solutions = () => {
                       </Button>
                     </div>
 
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-                      {processSteps.map((stepItem, idx) => (
-                        <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 relative grid grid-cols-3 gap-4 pr-10">
-                          <button
-                            type="button"
-                            onClick={() => setProcessSteps(processSteps.filter((_, i) => i !== idx))}
-                            className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg absolute top-4 right-4"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                          
+                    <CmsSortableList
+                      items={processSteps}
+                      onChange={setProcessSteps}
+                      onDuplicate={(item) => ({ ...item, title: `${item.title} (copy)` })}
+                      renderItem={(stepItem, idx) => (
+                        <div className="grid grid-cols-3 gap-4">
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Index/Step</label>
                             <Input
@@ -1281,7 +1358,6 @@ const Solutions = () => {
                               className="h-9 rounded-lg bg-white border-slate-200 font-mono"
                             />
                           </div>
-
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Title</label>
                             <Input
@@ -1294,7 +1370,6 @@ const Solutions = () => {
                               className="h-9 rounded-lg bg-white border-slate-200"
                             />
                           </div>
-
                           <div className="space-y-1 col-span-3">
                             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Description</label>
                             <Input
@@ -1308,8 +1383,8 @@ const Solutions = () => {
                             />
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      )}
+                    />
                   </div>
                 )}
 
@@ -1335,9 +1410,12 @@ const Solutions = () => {
                     </div>
 
                     <div className="space-y-4">
-                      {metricsList.map((m, idx) => (
-                        <div key={idx} className="flex gap-4 items-center bg-slate-50 p-3 rounded-xl border border-slate-200/50">
-                          <div className="flex-1 grid grid-cols-2 gap-4">
+                      <CmsSortableList
+                        items={metricsList}
+                        onChange={setMetricsList}
+                        onDuplicate={(item) => ({ ...item, label: `${item.label} (copy)` })}
+                        renderItem={(m, idx) => (
+                          <div className="grid grid-cols-2 gap-4">
                             <Input
                               value={m.label}
                               onChange={(e) => {
@@ -1359,16 +1437,32 @@ const Solutions = () => {
                               className="h-9 bg-white border-slate-200"
                             />
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => setMetricsList(metricsList.filter((_, i) => i !== idx))}
-                            className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
+                        )}
+                      />
                     </div>
+                  </div>
+                )}
+
+                {["faqs", "industries", "sections", "relations"].includes(activeTab) && (
+                  <SolutionExtendedCmsFields
+                    activeTab={activeTab}
+                    state={extendedCms}
+                    onChange={patchExtendedCms}
+                    allSolutionOptions={solutionRelationOptions}
+                  />
+                )}
+
+                {activeTab === "seo" && (
+                  <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
+                    <SeoManager
+                      value={seo}
+                      onChange={setSeo}
+                      slug={slug}
+                      pathPrefix="/solutions/"
+                      defaultTitle={title ? `${title} | TechVistar Solutions` : ''}
+                      defaultDescription={stripHtmlToText(extendedCms.heroDescription) || subtitle}
+                      defaultImage={dashboardImage}
+                    />
                   </div>
                 )}
 

@@ -6,11 +6,11 @@
 import { 
   Heart, GraduationCap, Landmark, ShoppingCart, Factory, Home, Truck, Sprout, Utensils, Zap, LucideIcon 
 } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
 import { IMAGE_MAP } from "./services";
 import { INDUSTRIES } from "./industries";
 import { preferCmsImage } from "@/lib/mediaFallbacks";
 import { seoFromApi } from "@/lib/seoResolve";
+import type { IndustryCtaBlock, IndustrySidebarBlock, IndustryConsultationBlock } from "@/types/industriesCms";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Heart,
@@ -145,12 +145,8 @@ export function decorateIndustry(apiIndustry: any): any {
   
   // Resolve Lucide Icon component
   let resolvedIcon: LucideIcon = Heart;
-  if (apiIndustry.icon) {
-    if (ICON_MAP[apiIndustry.icon]) {
-      resolvedIcon = ICON_MAP[apiIndustry.icon];
-    } else if ((LucideIcons as any)[apiIndustry.icon]) {
-      resolvedIcon = (LucideIcons as any)[apiIndustry.icon];
-    }
+  if (apiIndustry.icon && ICON_MAP[apiIndustry.icon]) {
+    resolvedIcon = ICON_MAP[apiIndustry.icon];
   }
 
   // Find original static industry matching by slug for assets fallback
@@ -175,22 +171,94 @@ export function decorateIndustry(apiIndustry: any): any {
         .map((w: any) => ({ title: String(w.title).trim(), description: String(w.description).trim() }))
     : [];
 
-  // Map solutions from detailedOfferings only — no synthetic feature blurbs
-  const solutions = Array.isArray(apiIndustry.detailedOfferings)
+  const offeringStrings = [
+    ...(Array.isArray(apiIndustry.offerings) ? apiIndustry.offerings : []),
+    ...(Array.isArray(apiIndustry.features) ? apiIndustry.features : []),
+  ]
+    .filter((entry: unknown) => typeof entry === 'string' && entry.trim())
+    .map((entry: string) => entry.trim());
+
+  // Map solutions from detailedOfferings, then plain offerings/features strings
+  const solutions = Array.isArray(apiIndustry.detailedOfferings) &&
+    apiIndustry.detailedOfferings.some((d: any) => d?.title?.trim())
     ? apiIndustry.detailedOfferings
         .filter((d: any) => d?.title?.trim() && d?.description?.trim())
         .map((d: any) => ({ title: String(d.title).trim(), description: String(d.description).trim() }))
-    : [];
+    : offeringStrings.map((title: string) => ({
+        title,
+        description: String(apiIndustry.shortDescription || '').trim(),
+      }));
 
   // Map statistics — only entries with both value and label
   const statistics = Array.isArray(apiIndustry.stats)
     ? apiIndustry.stats
         .filter((s: any) => s?.value?.trim() && s?.label?.trim())
-        .map((s: any) => ({ value: String(s.value).trim(), label: String(s.label).trim(), description: '' }))
+        .map((s: any) => ({
+          value: String(s.value).trim(),
+          label: String(s.label).trim(),
+          description: '',
+          iconType: String(s.iconType || 'rocket').trim(),
+          colorTheme: String(s.colorTheme || 'green').trim(),
+        }))
     : [];
 
-  // Map services slugs (relational mapping) — empty array is valid for CMS-created industries
+  const process = Array.isArray(apiIndustry.process)
+    ? apiIndustry.process
+        .filter((p: any) => p?.title?.trim() && p?.description?.trim())
+        .map((p: any, idx: number) => ({
+          step: Number(p.step) || idx + 1,
+          title: String(p.title).trim(),
+          description: String(p.description).trim(),
+        }))
+    : [];
+
+  const benefits = Array.isArray(apiIndustry.benefits)
+    ? apiIndustry.benefits.filter((b: any) => typeof b === 'string' && b.trim()).map((b: string) => b.trim())
+    : [];
+
+  const detailedOfferings = Array.isArray(apiIndustry.detailedOfferings)
+    ? apiIndustry.detailedOfferings
+        .filter((d: any) => d?.title?.trim() && d?.description?.trim())
+        .map((d: any) => ({
+          title: String(d.title).trim(),
+          description: String(d.description).trim(),
+          badges: Array.isArray(d.badges) ? d.badges : [],
+          color: String(d.color || 'green').trim(),
+          iconName: String(d.iconName || 'sparkles').trim(),
+        }))
+    : [];
+
+  const ctaLabel = String(apiIndustry.ctaLabel || apiIndustry.cta || 'Get in Touch').trim();
+  const category = String(apiIndustry.category || '').trim();
+  const heroBadge =
+    (typeof apiIndustry.heroBadge === 'string' && apiIndustry.heroBadge.trim()) ||
+    category ||
+    undefined;
+  const heroTagline =
+    (typeof apiIndustry.heroTagline === 'string' && apiIndustry.heroTagline.trim()) ||
+    (typeof apiIndustry.overviewQuote === 'string' && apiIndustry.overviewQuote.trim()) ||
+    undefined;
+
+  const ctaBlock: IndustryCtaBlock | undefined = apiIndustry.ctaBlock
+    ? {
+        badge: String(apiIndustry.ctaBlock.badge || '').trim(),
+        headline: String(apiIndustry.ctaBlock.headline || '').trim(),
+        body: String(apiIndustry.ctaBlock.body || apiIndustry.cta || '').trim(),
+        primaryButtonLabel: String(apiIndustry.ctaBlock.primaryButtonLabel || ctaLabel).trim(),
+        secondaryButtonLabel: String(apiIndustry.ctaBlock.secondaryButtonLabel || 'Contact Us').trim(),
+        secondaryButtonHref: String(apiIndustry.ctaBlock.secondaryButtonHref || '/contact').trim(),
+      }
+    : undefined;
+
+  const sidebar: Partial<IndustrySidebarBlock> | undefined = apiIndustry.sidebar || undefined;
+  const consultationForm: Partial<IndustryConsultationBlock> | undefined =
+    apiIndustry.consultationForm || undefined;
+
+  // Map services slugs (relational mapping) — stored in industries[] field
   const servicesSlugs = Array.isArray(apiIndustry.industries) ? apiIndustry.industries : [];
+  const relatedIndustrySlugs = Array.isArray(apiIndustry.relatedIndustrySlugs)
+    ? apiIndustry.relatedIndustrySlugs.filter((s: unknown) => typeof s === 'string' && s.trim())
+    : [];
 
   // Map case studies from caseStudies object array
   const caseStudiesSlugs = Array.isArray(apiIndustry.caseStudies)
@@ -206,6 +274,10 @@ export function decorateIndustry(apiIndustry: any): any {
     title: apiIndustry.title || 'Untitled Industry',
     shortDescription: apiIndustry.shortDescription || '',
     description: apiIndustry.fullDescription || apiIndustry.shortDescription || '',
+    overview:
+      typeof apiIndustry.overview === 'string' && apiIndustry.overview.trim()
+        ? apiIndustry.overview.trim()
+        : undefined,
     heroImage,
     coverImage,
     thumbnail,
@@ -214,18 +286,35 @@ export function decorateIndustry(apiIndustry: any): any {
     industriesColor,
     challenges,
     solutions,
+    offerings: offeringStrings,
     services: servicesSlugs,
-    technologies: Array.isArray(apiIndustry.technologies) ? apiIndustry.technologies : [],
+    relatedIndustrySlugs,
+    technologies: Array.isArray(apiIndustry.technologies)
+      ? apiIndustry.technologies
+          .filter((tech: unknown) => typeof tech === 'string' && tech.trim())
+          .map((tech: string) => tech.trim())
+      : [],
     caseStudies: caseStudiesSlugs,
     faqs,
     statistics,
     featured: Boolean(apiIndustry.featured),
     overviewQuote: typeof apiIndustry.overviewQuote === 'string' ? apiIndustry.overviewQuote.trim() : '',
+    category,
+    heroBadge,
+    heroTagline,
+    ctaBlock,
+    sidebar,
+    consultationForm,
+    benefits,
+    process,
+    detailedOfferings,
     cta: {
-      title: apiIndustry.ctaLabel || apiIndustry.cta || 'Let\'s partner up to discuss your project',
-      subtitle: apiIndustry.overview || '',
-      buttonText: 'Get in Touch',
-      buttonLink: '/contact'
+      title: ctaBlock?.headline || (typeof apiIndustry.overview === 'string' && apiIndustry.overview.trim()
+        ? apiIndustry.overview.trim()
+        : `Partner with TechVistar for ${apiIndustry.title || 'your industry'}`),
+      subtitle: ctaBlock?.body || apiIndustry.shortDescription || '',
+      buttonText: ctaBlock?.primaryButtonLabel || ctaLabel,
+      buttonLink: '/contact',
     },
     ...seoFromApi(apiIndustry),
   };

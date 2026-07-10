@@ -1,14 +1,14 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { SOLUTIONS_DATA, decorateSolution } from '@/data/solutions';
+import { SOLUTIONS_DATA, decorateSolution, decorateStaticSolution } from '@/data/solutions';
 import { useQuery } from '@tanstack/react-query';
-import { getSolutionBySlug, getActiveSolutions } from '@/services/solutions.service';
+import { getSolutionBySlug } from '@/services/solutions.service';
+import { PageSeo } from '@/components/common/PageSeo';
+import { buildCanonical, seoFromApi } from '@/lib/seoResolve';
 
-// Subcomponents
 import { SolutionHero } from '@/components/solutions/SolutionHero';
 import { SolutionSectionNavigation } from '@/components/solutions/SolutionSectionNavigation';
 import { SolutionOverviewSection } from '@/components/solutions/SolutionOverviewSection';
@@ -19,31 +19,36 @@ import { SolutionTechStackSection } from '@/components/solutions/SolutionTechSta
 
 export const SolutionDetails = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
 
   const { data: apiSolution, isLoading: isDetailLoading } = useQuery({
     queryKey: ['solutionDetails', slug],
     queryFn: () => getSolutionBySlug(slug || ''),
     enabled: !!slug,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
-  const solution = apiSolution ? decorateSolution(apiSolution) : (slug ? SOLUTIONS_DATA[slug] : undefined);
+  const solution = apiSolution
+    ? decorateSolution(apiSolution)
+    : slug && SOLUTIONS_DATA[slug]
+      ? decorateStaticSolution(SOLUTIONS_DATA[slug])
+      : undefined;
 
-  const { data: apiSolutions } = useQuery({
-    queryKey: ['activeSolutions'],
-    queryFn: () => getActiveSolutions(),
-    enabled: !!solution,
-  });
+  const solutionSeo = apiSolution
+    ? seoFromApi(apiSolution as Record<string, unknown>)
+    : undefined;
 
-  const solutionsData = apiSolutions && apiSolutions.length > 0 
-    ? apiSolutions.map(decorateSolution) 
-    : Object.values(SOLUTIONS_DATA);
-
-  useEffect(() => {
-    if (!solution && slug !== undefined) {
-      navigate('/solutions');
-    }
-  }, [solution, slug, navigate]);
+  const seoBlock = (
+    <PageSeo
+      seo={solutionSeo}
+      defaults={{
+        title: solution?.seoTitle || (solution ? `${solution.title} | TechVistar Solutions` : 'Solution Not Found | TechVistar'),
+        description: solution?.seoDescription || solution?.heroDescription || solution?.subtitle || '',
+        image: solution?.dashboardImage,
+        url: solution ? buildCanonical(`/solutions/${solution.slug}`) : buildCanonical('/solutions'),
+      }}
+    />
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -52,6 +57,7 @@ export const SolutionDetails = () => {
   if (isDetailLoading) {
     return (
       <>
+        {seoBlock}
         <Navbar />
         <main className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
           <div className="text-slate-500 font-display flex items-center gap-2">
@@ -64,21 +70,42 @@ export const SolutionDetails = () => {
     );
   }
 
-  if (!solution) return null;
+  if (!solution) {
+    return (
+      <>
+        {seoBlock}
+        <Navbar />
+        <main className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4 pt-20">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 md:p-10 shadow-sm text-center">
+            <h1 className="text-2xl md:text-3xl font-bold font-display text-slate-900 tracking-tight mb-3">
+              Solution Not Found
+            </h1>
+            <p className="text-slate-600 text-sm leading-relaxed mb-8">
+              We couldn&apos;t find the solution you were looking for. It may have been moved or renamed.
+            </p>
+            <a
+              href="/solutions"
+              className="inline-flex items-center justify-center w-full rounded-xl bg-primary text-white hover:bg-primary/95 h-10 px-4 text-sm font-bold"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Solutions
+            </a>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
+      {seoBlock}
       <Navbar />
       <main className="min-h-screen bg-slate-50 pt-0">
-        
-        {/* Hero Section */}
         <SolutionHero solution={solution} />
+        <SolutionSectionNavigation navItems={solution.sectionCopy.navItems} />
 
-        {/* Sticky Sub-Navbar */}
-        <SolutionSectionNavigation />
-
-        {/* Dynamic Detail Modules Content Area */}
-        <section className="w-full max-w-7xl mx-auto px-6 lg:px-12 xl:px-20 mt-12 pb-8">
+        <section className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-12 xl:px-20 mt-12 pb-8 detail-page-gutter">
           <div className="flex flex-col space-y-12">
             <SolutionOverviewSection solution={solution} />
             <SolutionFeaturesSection solution={solution} />

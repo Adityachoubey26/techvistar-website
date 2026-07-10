@@ -84,8 +84,8 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
   };
 
   return (
-    <section className="bg-white border-b border-slate-200 pt-24 pb-10 md:pt-28 md:pb-14 mb-8">
-      <div className="w-full mx-auto px-6 lg:px-12 xl:px-20">
+    <section className="bg-white border-b border-slate-200 pt-[4.5rem] pb-8 md:pt-28 md:pb-14 mb-6 md:mb-8">
+      <div className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-20 detail-page-gutter">
         <Link to="/services" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-6 transition-colors font-medium">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to all services
         </Link>
@@ -106,7 +106,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
                   {service.heroBadge?.trim() || `${service.title} Solutions`}
                 </div>
                 
-                <h1 className="text-3xl md:text-5xl font-extrabold font-display text-slate-900 leading-tight">
+                <h1 className="text-[1.75rem] leading-[1.12] md:text-5xl font-extrabold font-display text-slate-900 md:leading-tight">
                   {service.title}
                 </h1>
                 

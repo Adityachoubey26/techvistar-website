@@ -96,6 +96,23 @@ const HomeSettings = () => {
             youtubeUrl={form.hero.youtubeUrl}
             onYoutubeUrlChange={(url) => patchHero('youtubeUrl', url)}
           />
+          {form.hero.mediaType === 'video' ? (
+            <CmsImageField
+              label="Hero poster image (optional)"
+              value={form.hero.heroPosterImage}
+              onChange={(url, publicId) =>
+                setForm((prev) => ({
+                  ...prev,
+                  hero: {
+                    ...prev.hero,
+                    heroPosterImage: url,
+                    heroPosterImagePublicId: publicId ?? prev.hero.heroPosterImagePublicId,
+                  },
+                }))
+              }
+              helperText="Shown instantly while the hero video loads. JPG, PNG, or WEBP — max 5 MB"
+            />
+          ) : null}
           <div>
             <label className="text-[10px] font-bold uppercase text-slate-500">YouTube start time (seconds)</label>
             <Input
