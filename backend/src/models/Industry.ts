@@ -77,6 +77,38 @@ export interface IIndustry extends BaseDocument, ISeoFields {
   dashboardImage?: string;
   dashboardImagePublicId?: string;
   faqs: IIndustryFaq[];
+  relatedIndustrySlugs: string[];
+  heroBadge?: string;
+  heroTagline?: string;
+  ctaBlock?: {
+    badge: string;
+    headline: string;
+    body: string;
+    primaryButtonLabel: string;
+    secondaryButtonLabel: string;
+    secondaryButtonHref: string;
+  };
+  sidebar?: {
+    summaryTitle: string;
+    responseTimeTitle: string;
+    responseTime: string;
+    businessHoursTitle: string;
+    businessHours: string;
+    secureTitle: string;
+    secureDescription: string;
+    buttonLabel: string;
+    directInquiriesTitle: string;
+    directInquiriesBody: string;
+    contactEmail: string;
+  };
+  consultationForm?: {
+    title: string;
+    description: string;
+    submitLabel: string;
+    privacyText: string;
+    successTitle: string;
+    successMessage: string;
+  };
 
   // Audit and Soft Delete
   isDeleted?: boolean;
@@ -245,6 +277,49 @@ const industrySchema = new Schema<IIndustry>(
       type: String,
       trim: true,
       default: '',
+    },
+    relatedIndustrySlugs: {
+      type: [String],
+      default: [],
+    },
+    heroBadge: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    heroTagline: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    ctaBlock: {
+      badge: { type: String, trim: true, default: 'Industry Solutions' },
+      headline: { type: String, trim: true, default: '' },
+      body: { type: String, trim: true, default: '' },
+      primaryButtonLabel: { type: String, trim: true, default: 'Get in Touch' },
+      secondaryButtonLabel: { type: String, trim: true, default: 'Contact Us' },
+      secondaryButtonHref: { type: String, trim: true, default: '/contact' },
+    },
+    sidebar: {
+      summaryTitle: { type: String, trim: true, default: '' },
+      responseTimeTitle: { type: String, trim: true, default: '' },
+      responseTime: { type: String, trim: true, default: '' },
+      businessHoursTitle: { type: String, trim: true, default: '' },
+      businessHours: { type: String, trim: true, default: '' },
+      secureTitle: { type: String, trim: true, default: '' },
+      secureDescription: { type: String, trim: true, default: '' },
+      buttonLabel: { type: String, trim: true, default: '' },
+      directInquiriesTitle: { type: String, trim: true, default: '' },
+      directInquiriesBody: { type: String, trim: true, default: '' },
+      contactEmail: { type: String, trim: true, default: '' },
+    },
+    consultationForm: {
+      title: { type: String, trim: true, default: '' },
+      description: { type: String, trim: true, default: '' },
+      submitLabel: { type: String, trim: true, default: '' },
+      privacyText: { type: String, trim: true, default: '' },
+      successTitle: { type: String, trim: true, default: '' },
+      successMessage: { type: String, trim: true, default: '' },
     },
     // Soft Delete & Audit Fields
     isDeleted: {

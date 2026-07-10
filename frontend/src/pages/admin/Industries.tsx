@@ -12,7 +12,7 @@ import { resolveLucideIcon } from "@/lib/resolveLucideIcon";
 import { 
   Trash2, Edit, Loader2, X, Plus, AlertCircle, Trash, ArrowLeft, ArrowRight,
   ChevronDown, ChevronUp, Image as ImageIcon, Sparkles, BookOpen, BarChart3, Globe, Settings, Tag, ShieldCheck, Check,
-  ArrowUpRight, Search, RotateCcw, AlertTriangle, Info, Calendar, User,
+  ArrowUpRight, Search, RotateCcw, AlertTriangle, Info, Calendar, User, MessageSquare, Link2, HelpCircle,
   ArrowUpNarrowWide, ArrowDownWideNarrow, Lock, Unlock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -25,8 +25,16 @@ import { normalizeRichContent, stripHtmlToText } from "@/lib/sanitizeHtml";
 import { SeoManager } from "@/components/admin/common/SeoManager";
 import { seoFromItem, seoToPayload } from "@/lib/seoAdmin";
 import { EMPTY_SEO, SeoMetadata } from "@/types/seo";
+import { getAllServices } from "@/services/services.service";
+import {
+  IndustryExtendedCmsFields,
+  EMPTY_INDUSTRY_EXTENDED_CMS,
+  extendedCmsFromIndustryItem,
+  extendedCmsToIndustryPayload,
+  type IndustryExtendedCmsState,
+} from "@/components/admin/industries/IndustryExtendedCmsFields";
 
-type TabName = "general" | "content" | "media" | "features" | "stats" | "process" | "seo" | "preview";
+type TabName = "general" | "content" | "media" | "features" | "offerings" | "faqs" | "relations" | "stats" | "process" | "cta" | "sidebar" | "seo" | "preview";
 
 const SUPPORTED_ICONS = [
   "Rocket", "Shield", "Star", "Clock", "Brain", "Database", "Globe", "Smartphone", 
@@ -57,7 +65,6 @@ const Industries = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [featuredFilter, setFeaturedFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"active" | "trash">("active");
   const [sortBy, setSortBy] = useState("displayOrder");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -95,7 +102,6 @@ const Industries = () => {
   const [thumbnail, setThumbnail] = useState("");
   const [seo, setSeo] = useState<SeoMetadata>(EMPTY_SEO);
   const [cta, setCta] = useState("");
-  const [featured, setFeatured] = useState(false);
   const [dashboardImage, setDashboardImage] = useState("");
 
   // Audit history states
@@ -125,6 +131,7 @@ const Industries = () => {
   // Complex sub-docs states
   const [processSteps, setProcessSteps] = useState<{ step: number; title: string; description: string }[]>([]);
   const [statsList, setStatsList] = useState<{ value: string; label: string; iconType: string; colorTheme: string }[]>([]);
+  const [extendedCms, setExtendedCms] = useState<IndustryExtendedCmsState>(EMPTY_INDUSTRY_EXTENDED_CMS);
 
   // Icon Picker searchable dropdown state
   const [iconSearchTerm, setIconSearchTerm] = useState("");
@@ -156,7 +163,6 @@ const Industries = () => {
       status: statusFilter, 
       category: categoryFilter,
       trash: viewMode === "trash",
-      featured: featuredFilter,
       sortBy,
       sortOrder
     }],
@@ -168,7 +174,7 @@ const Industries = () => {
         status: statusFilter,
         category: categoryFilter,
         trash: viewMode === "trash",
-        featured: featuredFilter,
+        featured: "all",
         sortBy,
         sortOrder
       });
@@ -193,6 +199,20 @@ const Industries = () => {
     enabled: isModalOpen,
   });
   const allIndustries = allIndustriesRes?.industries || [];
+
+  const { data: allServicesRes } = useQuery({
+    queryKey: ["admin", "services", "all-slugs"],
+    queryFn: () => getAllServices({ page: 1, limit: 500 }),
+    enabled: isModalOpen,
+  });
+  const allServiceOptions = (allServicesRes?.services || []).map((s: any) => ({
+    slug: s.slug,
+    title: s.title,
+  }));
+  const allIndustryOptions = allIndustries.map((ind: any) => ({
+    slug: ind.slug,
+    title: ind.title,
+  }));
 
   // Mutators
   const createMutation = useMutation({
@@ -329,8 +349,8 @@ const Industries = () => {
   const getCurrentStateString = () => {
     return JSON.stringify({
       title, slug, shortDescription, fullDescription, icon, category, overview, overviewQuote, status, displayOrder,
-      coverImage, thumbnail, seo, cta, featured, dashboardImage,
-      features, technologies, benefits, industries, offerings, processSteps, statsList
+      coverImage, thumbnail, seo, cta, dashboardImage,
+      features, technologies, benefits, industries, offerings, processSteps, statsList, extendedCms
     });
   };
 
@@ -356,7 +376,6 @@ const Industries = () => {
     setThumbnail("");
     setSeo(EMPTY_SEO);
     setCta("");
-    setFeatured(false);
     setDashboardImage("");
     setFeatures([]);
     setTechnologies([]);
@@ -365,6 +384,7 @@ const Industries = () => {
     setOfferings([]);
     setProcessSteps([]);
     setStatsList([]);
+    setExtendedCms(EMPTY_INDUSTRY_EXTENDED_CMS);
     setValidationErrors({});
     setAuditInfo({});
     setActiveTab("general");
@@ -374,8 +394,8 @@ const Industries = () => {
       setOriginalDataStr(JSON.stringify({
         title: "", slug: "", shortDescription: "", fullDescription: "", icon: "Rocket", category: "Industrial",
         overview: "", overviewQuote: "", status: "draft", displayOrder: "0", coverImage: "", thumbnail: "", seo: EMPTY_SEO,
-        cta: "", featured: false, dashboardImage: "", features: [], technologies: [], benefits: [], industries: [], offerings: [],
-        processSteps: [], statsList: []
+        cta: "", dashboardImage: "", features: [], technologies: [], benefits: [], industries: [], offerings: [],
+        processSteps: [], statsList: [], extendedCms: EMPTY_INDUSTRY_EXTENDED_CMS
       }));
     }, 50);
 
@@ -399,7 +419,6 @@ const Industries = () => {
     setThumbnail(item.thumbnail || "");
     setSeo(seoFromItem(item));
     setCta(item.ctaLabel || item.cta || "");
-    setFeatured(item.featured || false);
     setDashboardImage(item.dashboardImage || "");
     setFeatures(item.features || []);
     setTechnologies(item.technologies || []);
@@ -408,6 +427,7 @@ const Industries = () => {
     setOfferings(item.offerings || []);
     setProcessSteps(item.process || []);
     setStatsList(item.stats || []);
+    setExtendedCms(extendedCmsFromIndustryItem(item));
     setValidationErrors({});
     
     // Set audit info
@@ -427,10 +447,10 @@ const Industries = () => {
         title: item.title || "", slug: item.slug || "", shortDescription: item.shortDescription || "",
         fullDescription: item.fullDescription || "", icon: item.icon || "Rocket", category: item.category || "Industrial",
         overview: item.overview || "", overviewQuote: item.overviewQuote || "", status: item.status || "draft", displayOrder: String(item.displayOrder || 0),
-        coverImage: item.coverImage || "", thumbnail: item.thumbnail || "", seo: seoFromItem(item), cta: item.ctaLabel || item.cta || "", featured: item.featured || false,
+        coverImage: item.coverImage || "", thumbnail: item.thumbnail || "", seo: seoFromItem(item), cta: item.ctaLabel || item.cta || "",
         dashboardImage: item.dashboardImage || "", features: item.features || [], technologies: item.technologies || [],
         benefits: item.benefits || [], industries: item.industries || [], offerings: item.offerings || [],
-        processSteps: item.process || [], statsList: item.stats || []
+        processSteps: item.process || [], statsList: item.stats || [], extendedCms: extendedCmsFromIndustryItem(item)
       }));
     }, 50);
 
@@ -555,10 +575,11 @@ const Industries = () => {
       thumbnail,
       ...seoToPayload(seo),
       ctaLabel: cta,
-      featured,
+      featured: false,
       dashboardImage,
       process: processSteps,
-      stats: statsList
+      stats: statsList,
+      ...extendedCmsToIndustryPayload(extendedCms, cta),
     };
 
     if (editingId) {
@@ -800,18 +821,6 @@ const Industries = () => {
               </div>
             )}
 
-            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-              Featured:
-              <select 
-                value={featuredFilter}
-                onChange={(e) => { setFeaturedFilter(e.target.value); setCurrentPage(1); }}
-                className="h-8 px-2.5 rounded-lg border border-slate-200 text-xs font-semibold bg-white focus:outline-none"
-              >
-                <option value="all">All Featured</option>
-                <option value="true">Featured Only</option>
-                <option value="false">Non-Featured</option>
-              </select>
-            </div>
           </div>
 
           <button 
@@ -819,7 +828,6 @@ const Industries = () => {
               setSearchTerm("");
               setStatusFilter("all");
               setCategoryFilter("all");
-              setFeaturedFilter("all");
               setSortBy("displayOrder");
               setSortOrder("asc");
             }}
@@ -919,11 +927,6 @@ const Industries = () => {
                   <p className="text-slate-500 text-xs line-clamp-3 leading-relaxed mt-2">{item.shortDescription}</p>
                   
                   <div className="flex flex-wrap gap-1.5 mt-3">
-                    {item.featured && (
-                      <span className="px-2 py-0.5 bg-amber-50 text-amber-600 border border-amber-100 rounded text-[9px] font-bold uppercase tracking-wider">
-                        Featured
-                      </span>
-                    )}
                     <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider border ${
                       item.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'
                     }`}>
@@ -1107,8 +1110,13 @@ const Industries = () => {
                 { name: "content", label: "Content", icon: BookOpen },
                 { name: "media", label: "Media", icon: ImageIcon },
                 { name: "features", label: "Features", icon: Tag },
+                { name: "offerings", label: "Offerings", icon: Sparkles },
+                { name: "faqs", label: "FAQs", icon: HelpCircle },
+                { name: "relations", label: "Relations", icon: Link2 },
                 { name: "stats", label: "Stats", icon: BarChart3 },
                 { name: "process", label: "Process", icon: Sparkles },
+                { name: "cta", label: "CTA", icon: ArrowUpRight },
+                { name: "sidebar", label: "Sidebar", icon: Info },
                 { name: "seo", label: "SEO Settings", icon: Globe },
                 { name: "preview", label: "Preview", icon: ShieldCheck }
               ] as { name: TabName, label: string, icon: any }[]).map((tab) => {
@@ -1263,20 +1271,9 @@ const Industries = () => {
                           </select>
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2 md:col-span-2">
                           <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">CTA Label</label>
                           <Input value={cta} onChange={(e) => setCta(e.target.value)} placeholder="e.g. Consult with Healthcare Experts" className="h-10 rounded-lg border-slate-200" />
-                        </div>
-
-                        <div className="flex items-center gap-3 pt-8 pl-1">
-                          <input 
-                            type="checkbox" 
-                            id="portal-modal-featured-light"
-                            checked={featured} 
-                            onChange={(e) => setFeatured(e.target.checked)}
-                            className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
-                          />
-                          <label htmlFor="portal-modal-featured-light" className="text-[11px] font-bold uppercase tracking-wider text-slate-500 cursor-pointer">Featured Industry</label>
                         </div>
                       </div>
                     </div>
@@ -1516,6 +1513,16 @@ const Industries = () => {
                       ))}
                     </div>
                   </div>
+                )}
+
+                {["offerings", "faqs", "relations", "cta", "sidebar"].includes(activeTab) && (
+                  <IndustryExtendedCmsFields
+                    activeTab={activeTab}
+                    state={extendedCms}
+                    onChange={(patch) => setExtendedCms((prev) => ({ ...prev, ...patch }))}
+                    allServiceOptions={allServiceOptions}
+                    allIndustryOptions={allIndustryOptions}
+                  />
                 )}
 
                 {/* Tab 6: Process Accordion Editor */}

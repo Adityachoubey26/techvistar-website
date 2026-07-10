@@ -38,6 +38,12 @@ interface IndustryInput {
   detailedOfferings?: unknown;
   dashboardImage?: unknown;
   faqs?: unknown;
+  relatedIndustrySlugs?: unknown;
+  heroBadge?: unknown;
+  heroTagline?: unknown;
+  ctaBlock?: unknown;
+  sidebar?: unknown;
+  consultationForm?: unknown;
 }
 
 export function validateIndustryInput(input: IndustryInput, isUpdate = false): any {
@@ -238,6 +244,68 @@ export function validateIndustryInput(input: IndustryInput, isUpdate = false): a
     }
   }
 
+  const parsedRelatedIndustrySlugs = parseStringArray('relatedIndustrySlugs', input.relatedIndustrySlugs);
+
+  const parseCtaBlock = (val: unknown) => {
+    if (val === undefined || val === null) return undefined;
+    if (typeof val !== 'object') {
+      errors.push({ field: 'ctaBlock', message: 'CTA block must be an object' });
+      return undefined;
+    }
+    const c = val as Record<string, unknown>;
+    return {
+      badge: String(c.badge ?? '').trim(),
+      headline: String(c.headline ?? '').trim(),
+      body: String(c.body ?? '').trim(),
+      primaryButtonLabel: String(c.primaryButtonLabel ?? '').trim(),
+      secondaryButtonLabel: String(c.secondaryButtonLabel ?? '').trim(),
+      secondaryButtonHref: String(c.secondaryButtonHref ?? '').trim(),
+    };
+  };
+
+  const parseSidebarBlock = (val: unknown) => {
+    if (val === undefined || val === null) return undefined;
+    if (typeof val !== 'object') {
+      errors.push({ field: 'sidebar', message: 'Sidebar must be an object' });
+      return undefined;
+    }
+    const s = val as Record<string, unknown>;
+    return {
+      summaryTitle: String(s.summaryTitle ?? '').trim(),
+      responseTimeTitle: String(s.responseTimeTitle ?? '').trim(),
+      responseTime: String(s.responseTime ?? '').trim(),
+      businessHoursTitle: String(s.businessHoursTitle ?? '').trim(),
+      businessHours: String(s.businessHours ?? '').trim(),
+      secureTitle: String(s.secureTitle ?? '').trim(),
+      secureDescription: String(s.secureDescription ?? '').trim(),
+      buttonLabel: String(s.buttonLabel ?? '').trim(),
+      directInquiriesTitle: String(s.directInquiriesTitle ?? '').trim(),
+      directInquiriesBody: String(s.directInquiriesBody ?? '').trim(),
+      contactEmail: String(s.contactEmail ?? '').trim(),
+    };
+  };
+
+  const parseConsultationBlock = (val: unknown) => {
+    if (val === undefined || val === null) return undefined;
+    if (typeof val !== 'object') {
+      errors.push({ field: 'consultationForm', message: 'Consultation form config must be an object' });
+      return undefined;
+    }
+    const f = val as Record<string, unknown>;
+    return {
+      title: String(f.title ?? '').trim(),
+      description: String(f.description ?? '').trim(),
+      submitLabel: String(f.submitLabel ?? '').trim(),
+      privacyText: String(f.privacyText ?? '').trim(),
+      successTitle: String(f.successTitle ?? '').trim(),
+      successMessage: String(f.successMessage ?? '').trim(),
+    };
+  };
+
+  const parsedCtaBlock = parseCtaBlock(input.ctaBlock);
+  const parsedSidebar = parseSidebarBlock(input.sidebar);
+  const parsedConsultationForm = parseConsultationBlock(input.consultationForm);
+
   // Display Order
   let parsedDisplayOrder = 0;
   if (input.displayOrder !== undefined && input.displayOrder !== null) {
@@ -291,6 +359,12 @@ export function validateIndustryInput(input: IndustryInput, isUpdate = false): a
     ...(input.stats !== undefined && { stats: parsedStats }),
     ...(input.detailedOfferings !== undefined && { detailedOfferings: parsedDetailedOfferings }),
     ...(input.faqs !== undefined && { faqs: parsedFaqs }),
+    ...(input.relatedIndustrySlugs !== undefined && { relatedIndustrySlugs: parsedRelatedIndustrySlugs }),
+    ...(input.heroBadge !== undefined && { heroBadge: String(input.heroBadge).trim() }),
+    ...(input.heroTagline !== undefined && { heroTagline: String(input.heroTagline).trim() }),
+    ...(parsedCtaBlock !== undefined && { ctaBlock: parsedCtaBlock }),
+    ...(parsedSidebar !== undefined && { sidebar: parsedSidebar }),
+    ...(parsedConsultationForm !== undefined && { consultationForm: parsedConsultationForm }),
     dashboardImage: input.dashboardImage ? String(input.dashboardImage).trim() : '',
   };
 }
