@@ -1,5 +1,5 @@
 import { SolutionDetail } from '@/data/solutions';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion, Variants } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
 interface SectionProps {
@@ -18,7 +18,9 @@ interface TechStyle {
 export const SolutionTechStackSection = ({ solution }: SectionProps) => {
   const prefersReducedMotion = useReducedMotion();
 
-  const containerVariants = {
+  if (!solution.techStack || solution.techStack.length === 0) return null;
+
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -28,7 +30,7 @@ export const SolutionTechStackSection = ({ solution }: SectionProps) => {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 120 } }
   };
