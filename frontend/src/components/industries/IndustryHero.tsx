@@ -40,8 +40,8 @@ export const IndustryHero = ({ industry }: IndustryHeroProps) => {
   };
 
   return (
-    <section className="border-b border-slate-200 bg-white pb-10 pt-24 md:pb-14 md:pt-28">
-      <div className="mx-auto w-full px-6 lg:px-12 xl:px-20">
+    <section className="border-b border-slate-200 bg-white pb-8 pt-[4.5rem] md:pb-14 md:pt-28">
+      <div className="mx-auto w-full px-4 md:px-6 lg:px-12 xl:px-20 detail-page-gutter">
         <Link
           to="/industries"
           className="mb-6 inline-flex items-center text-sm font-medium text-slate-500 transition-colors hover:text-emerald-600"
@@ -57,7 +57,7 @@ export const IndustryHero = ({ industry }: IndustryHeroProps) => {
                 {industry.heroBadge?.trim() || `${industry.title} Vertical`}
               </div>
 
-              <h1 className="font-display text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
+              <h1 className="font-display text-[1.75rem] leading-[1.12] font-extrabold text-slate-900 md:text-5xl md:leading-tight">
                 {industry.title}
               </h1>
 

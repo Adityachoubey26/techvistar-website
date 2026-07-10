@@ -133,8 +133,8 @@ export const JobDetails = () => {
       </PageHeader>
 
       {/* Breadcrumbs */}
-      <div className="bg-white border-b border-slate-200/80 py-3 px-6">
-        <div className="container mx-auto px-0 max-w-5xl flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+      <div className="bg-white border-b border-slate-200/80 py-3 px-4 md:px-6">
+        <div className="container mx-auto px-0 max-w-5xl flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 min-w-0">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <ChevronRight className="h-3 w-3" />
           <Link to="/careers" className="hover:text-primary transition-colors">Careers</Link>
@@ -144,8 +144,8 @@ export const JobDetails = () => {
       </div>
 
       {/* Detail Layout */}
-      <section className="py-16">
-        <div className="container mx-auto px-6 max-w-5xl">
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4 md:px-6 max-w-5xl">
           {isLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-pulse">
               <div className="lg:col-span-2 space-y-6">

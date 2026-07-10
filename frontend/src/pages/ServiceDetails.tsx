@@ -108,7 +108,7 @@ const ServiceDetails = () => {
         <ServiceSectionNavigation showFaq={showFaq} />
 
         {/* Dynamic Detail Modules Content Area */}
-        <section className="w-full mx-auto px-6 lg:px-12 xl:px-20 mt-8 pb-16">
+        <section className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-20 mt-8 pb-16 detail-page-gutter">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               <OverviewSection service={service} />

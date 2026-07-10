@@ -457,11 +457,66 @@
   }
 
   .section-padding {
-    @apply py-16 md:py-24 lg:py-28;
+    @apply py-12 md:py-24 lg:py-28;
   }
 
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Mobile-only layout helpers (≤767px) — tablet/desktop rules above are unchanged */
+  @media (max-width: 767px) {
+    html {
+      overflow-x: hidden;
+    }
+
+    body {
+      overflow-x: clip;
+    }
+
+    .hero-headline {
+      font-size: clamp(1.08rem, 4.1vw + 0.32rem, 1.52rem) !important;
+      line-height: 1.26 !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    .hero-headline span {
+      max-width: 20ch;
+    }
+
+    .hero-tagline {
+      font-size: clamp(0.8125rem, 2.1vw + 0.38rem, 0.9375rem) !important;
+      line-height: 1.52 !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .hero-cta-row {
+      gap: 0.625rem;
+      margin-top: 0.875rem !important;
+    }
+
+    .hero-shell {
+      gap: 0.625rem;
+    }
+
+    .hero-trust-logos {
+      gap: 0.5rem 0.75rem;
+    }
+
+    .detail-page-gutter {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+
+    .mobile-section-tight {
+      padding-top: 3.5rem !important;
+      padding-bottom: 3.5rem !important;
+    }
+
+    .mobile-touch-target {
+      min-height: 2.75rem;
+      min-width: 2.75rem;
+    }
   }
 
   /* Off-screen until focused — keyboard and assistive tech */

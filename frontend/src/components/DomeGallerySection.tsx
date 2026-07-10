@@ -119,7 +119,7 @@ export const DomeGallerySection = () => {
             </div>
 
             {/* Main Heading */}
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-black text-slate-900 leading-[1.12] tracking-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-[2.5rem] font-black text-slate-900 leading-[1.12] tracking-tight">
               {portfolio.heading} <br />
               <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 bg-clip-text text-transparent">
                 {portfolio.highlight}

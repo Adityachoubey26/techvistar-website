@@ -19,7 +19,7 @@ export const JoinTeamPreview = () => {
   ];
 
   return (
-    <section className="py-24 bg-slate-50 relative overflow-hidden border-t border-slate-200/60">
+    <section className="py-16 md:py-24 bg-slate-50 relative overflow-hidden border-t border-slate-200/60">
       {/* Grid Pattern Background */}
       <div 
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#ffffff_1.5px,transparent_1.5px),linear-gradient(to_bottom,#ffffff_1.5px,transparent_1.5px)] bg-[size:4rem_4rem] opacity-40" 
@@ -39,7 +39,7 @@ export const JoinTeamPreview = () => {
                 Careers at TechVistar
               </span>
               
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-slate-900 tracking-tight leading-[1.15] mt-4">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold font-display text-slate-900 tracking-tight leading-[1.15] mt-4">
                 Build Your Future <br />
                 <span className="gradient-text">With TechVistar</span>
               </h2>

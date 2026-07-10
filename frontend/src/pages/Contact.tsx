@@ -143,7 +143,7 @@ export const Contact = () => {
         />
 
         {/* HERO GRID SECTION - FORM AND INFO CARDS */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-16 relative z-10" id="contact-form-section">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 relative z-10" id="contact-form-section">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             
             {/* Left Side: Stats & Cards */}
@@ -369,7 +369,7 @@ export const Contact = () => {
         </section>
 
         {/* HEADQUARTERS MAP & DIRECTIONS BANNER */}
-        <section className="container-custom max-w-7xl mx-auto px-6 mb-20 relative z-10">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 mb-12 md:mb-20 relative z-10">
           <div className="group w-full rounded-[2rem] overflow-hidden border border-slate-200/60 bg-white shadow-[0_8px_30px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(16,185,129,0.2)] transition-all duration-700 flex flex-col md:flex-row relative">
             
             {/* Grayscale OSM Map representation */}
@@ -393,7 +393,7 @@ export const Contact = () => {
                     <MapPin className="w-3.5 h-3.5" />
                     {contact.office.heading}
                   </span>
-                  <h3 className="text-3xl md:text-4xl font-extrabold font-display text-slate-900 mb-3">TechVistar</h3>
+                  <h3 className="text-2xl md:text-4xl font-extrabold font-display text-slate-900 mb-3">TechVistar</h3>
                   <p className="text-sm md:text-base text-slate-500 font-semibold leading-relaxed">
                     {contact.office.address}
                   </p>
@@ -416,7 +416,7 @@ export const Contact = () => {
         </section>
 
         {/* OUR OFFICES SECTION */}
-        <section className="container-custom max-w-7xl mx-auto px-6 mb-20 relative z-10">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 mb-12 md:mb-20 relative z-10">
           <div className="mb-8">
             <h3 className="text-lg font-bold font-display text-slate-900">Our Offices</h3>
           </div>
@@ -554,7 +554,7 @@ export const Contact = () => {
         </section>
 
         {/* PILLARS BAR SECTION */}
-        <section className="container-custom max-w-7xl mx-auto px-6 mb-20 relative z-10">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 mb-12 md:mb-20 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
@@ -590,7 +590,7 @@ export const Contact = () => {
         <FAQSection pageFilter="all" layout="split" limit={4} showViewAll={true} />
 
         {/* TRUSTED BY CLIENT LOGOS SECTION */}
-        <section className="container-custom max-w-7xl mx-auto px-6 mt-10 relative z-10 border-t border-slate-200/60">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 mt-8 md:mt-10 relative z-10 border-t border-slate-200/60">
           <LogoCloud />
         </section>
 

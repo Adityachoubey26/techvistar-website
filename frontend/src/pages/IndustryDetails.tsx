@@ -114,7 +114,7 @@ export const IndustryDetails = () => {
         <IndustryHero industry={industry} />
         <IndustrySectionNavigation />
 
-        <section className="mx-auto mt-8 w-full max-w-none px-6 pb-16 lg:px-12 xl:px-20">
+        <section className="mx-auto mt-8 w-full max-w-none px-4 pb-16 md:px-6 lg:px-12 xl:px-20 detail-page-gutter">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div className="space-y-8 lg:col-span-2">
               <IndustryOverviewSection industry={industry} />

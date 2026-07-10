@@ -104,7 +104,7 @@ const Services = () => {
 
         {/* Category filter */}
         <section className="border-b border-slate-200 bg-white py-8">
-          <div className="container mx-auto max-w-7xl px-6">
+          <div className="container mx-auto max-w-7xl px-4 md:px-6">
             <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2 text-emerald-600">
                 <Layers className="h-4 w-4" />
@@ -145,8 +145,8 @@ const Services = () => {
         </section>
 
         {isLoading ? (
-          <section className="py-24">
-            <div className="container mx-auto max-w-7xl px-6">
+          <section className="py-16 md:py-24">
+            <div className="container mx-auto max-w-7xl px-4 md:px-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {[...Array(6)].map((_, idx) => (
                   <div
@@ -158,8 +158,8 @@ const Services = () => {
             </div>
           </section>
         ) : isError ? (
-          <section className="py-24">
-            <div className="container mx-auto max-w-lg px-6">
+          <section className="py-16 md:py-24">
+            <div className="container mx-auto max-w-lg px-4 md:px-6">
               <div className="flex flex-col items-center rounded-2xl border border-red-100 bg-red-50/50 p-8 text-center">
                 <div className="mb-4 rounded-xl bg-red-100 p-3 text-red-600">
                   <AlertCircle className="h-8 w-8" />
@@ -177,14 +177,14 @@ const Services = () => {
         ) : (
           <>
             {featuredServices.length > 0 && (
-              <section id="featured-services" className="border-b border-slate-100 bg-white py-24">
-                <div className="container mx-auto max-w-7xl space-y-12 px-6">
+              <section id="featured-services" className="border-b border-slate-100 bg-white py-16 md:py-24">
+                <div className="container mx-auto max-w-7xl space-y-10 md:space-y-12 px-4 md:px-6">
                   <div className="max-w-2xl space-y-3">
                     <div className="flex items-center gap-2 text-emerald-600">
                       <Star className="h-4 w-4 fill-emerald-500 text-emerald-500" />
                       <span className="text-[10px] font-black uppercase tracking-widest">Top Picks</span>
                     </div>
-                    <h2 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
+                    <h2 className="font-display text-2xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
                       Featured Services
                     </h2>
                     <p className="text-sm font-semibold text-slate-500">
@@ -208,14 +208,14 @@ const Services = () => {
               </section>
             )}
 
-            <section id="all-services" className="bg-slate-50 py-24">
-              <div className="container mx-auto max-w-7xl space-y-12 px-6">
+            <section id="all-services" className="bg-slate-50 py-16 md:py-24">
+              <div className="container mx-auto max-w-7xl space-y-10 md:space-y-12 px-4 md:px-6">
                 <div className="max-w-2xl space-y-3">
                   <div className="flex items-center gap-2 text-emerald-600">
                     <Layers className="h-4 w-4" />
                     <span className="text-[10px] font-black uppercase tracking-widest">Full Catalog</span>
                   </div>
-                  <h2 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
+                  <h2 className="font-display text-2xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
                     {featuredServices.length > 0 ? 'All Services' : landing.title}
                   </h2>
                   <p className="text-sm font-semibold text-slate-500">

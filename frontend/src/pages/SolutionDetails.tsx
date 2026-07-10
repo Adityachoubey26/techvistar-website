@@ -105,7 +105,7 @@ export const SolutionDetails = () => {
         <SolutionHero solution={solution} />
         <SolutionSectionNavigation navItems={solution.sectionCopy.navItems} />
 
-        <section className="w-full max-w-7xl mx-auto px-6 lg:px-12 xl:px-20 mt-12 pb-8">
+        <section className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-12 xl:px-20 mt-12 pb-8 detail-page-gutter">
           <div className="flex flex-col space-y-12">
             <SolutionOverviewSection solution={solution} />
             <SolutionFeaturesSection solution={solution} />

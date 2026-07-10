@@ -31,7 +31,7 @@ export const SolutionHero = ({ solution }: SolutionHeroProps) => {
   const heroStats = solution.heroStats.slice(0, 4);
 
   return (
-    <section className="relative bg-gradient-to-b from-emerald-50/40 to-white pt-20 pb-4 md:pt-24 md:pb-8 overflow-hidden">
+    <section className="relative bg-gradient-to-b from-emerald-50/40 to-white pt-[4.5rem] pb-4 md:pt-24 md:pb-8 overflow-hidden">
       
       <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" aria-hidden="true">
         <svg width="100%" height="100%">
@@ -42,7 +42,7 @@ export const SolutionHero = ({ solution }: SolutionHeroProps) => {
         </svg>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 xl:px-20 relative z-10">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-12 xl:px-20 relative z-10 detail-page-gutter">
         
         <Link to="/solutions" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-4 transition-colors font-medium">
           <ArrowLeft className="mr-2 h-4 w-4" /> {backLinkText}
@@ -67,7 +67,7 @@ export const SolutionHero = ({ solution }: SolutionHeroProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold font-display text-slate-900 leading-[1.1] tracking-tight mb-6">
+              <h1 className="text-[1.75rem] leading-[1.12] md:text-5xl lg:text-[3.5rem] font-extrabold font-display text-slate-900 md:leading-[1.1] tracking-tight mb-4 md:mb-6">
                 {solution.title}
               </h1>
             </motion.div>

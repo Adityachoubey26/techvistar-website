@@ -178,8 +178,8 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
         className={cn(
           'container-custom relative z-10 hero-shell min-h-[100dvh] lg:h-[100svh] lg:min-h-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 md:pb-10',
           showAnnouncementBar
-            ? 'pt-[max(3.75rem,calc(env(safe-area-inset-top)+3.25rem))] sm:pt-[7rem] md:pt-[8rem] lg:pt-[9rem]'
-            : 'pt-[max(3.5rem,calc(env(safe-area-inset-top)+2.75rem))] sm:pt-[6rem] md:pt-[7rem] lg:pt-[8rem]'
+            ? 'pt-[max(4rem,calc(env(safe-area-inset-top)+3.25rem))] md:pt-[8rem] lg:pt-[9rem]'
+            : 'pt-[max(3.75rem,calc(env(safe-area-inset-top)+3rem))] md:pt-[7rem] lg:pt-[8rem]'
         )}
       >
         <div className="hero-main">
@@ -196,7 +196,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               {hero.badge?.trim() ? (
                 <motion.span
                   variants={fadeUp}
-                  className="mb-2.5 sm:mb-3.5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.2em] text-emerald-300"
+                  className="mb-2 md:mb-3.5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] md:tracking-[0.2em] text-emerald-300"
                 >
                   {hero.badge.trim()}
                 </motion.span>
@@ -208,25 +208,24 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
                 className={cn(
                   'hero-headline font-display font-extrabold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)]',
                   'w-full min-w-0 flex flex-col items-start gap-0',
-                  'text-[clamp(1.35rem,5.2vw+0.35rem,2.35rem)] leading-[1.18]',
-                  'sm:text-[clamp(1.6rem,4.2vw+0.5rem,3rem)] sm:leading-[1.14]',
+                  'max-md:text-[clamp(1.1rem,4.4vw+0.28rem,1.55rem)] max-md:leading-[1.26]',
                   'md:text-[clamp(1.85rem,3.2vw+0.65rem,3.5rem)] md:leading-[1.11]',
                   'lg:text-[clamp(2.1rem,2.8vw+0.75rem,4rem)] lg:leading-[1.08]',
                   'tracking-[-0.026em] md:tracking-[-0.032em] lg:tracking-[-0.035em]'
                 )}
               >
                 {line1 ? (
-                  <span className="block w-full max-w-[18ch] sm:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty]">
+                  <span className="block w-full max-w-[20ch] md:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty]">
                     {line1}
                   </span>
                 ) : null}
                 {line2 ? (
-                  <span className="block w-full max-w-[18ch] sm:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty] mt-0.5 sm:mt-1 md:mt-1.5">
+                  <span className="block w-full max-w-[20ch] md:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty] mt-0.5 md:mt-1.5">
                     {line2}
                   </span>
                 ) : null}
                 {accent ? (
-                  <span className="block w-full max-w-[18ch] sm:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty] mt-0.5 sm:mt-1 md:mt-1.5">
+                  <span className="block w-full max-w-[20ch] md:max-w-none md:whitespace-nowrap text-pretty [text-wrap:pretty] mt-0.5 md:mt-1.5">
                     <HeroHighlightText text={accent} animate={animateHighlight} />
                   </span>
                 ) : null}
@@ -235,7 +234,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               <motion.p
                 variants={fadeUp}
                 style={{ transform: 'translateZ(8px)' }}
-                className="hero-tagline mt-3 sm:mt-4 md:mt-5 max-w-xl text-zinc-200 font-medium text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] text-pretty"
+                className="hero-tagline mt-2.5 md:mt-5 max-w-[34ch] md:max-w-xl text-zinc-200 font-medium text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] text-pretty text-[0.875rem] md:text-base"
               >
                 {hero.tagline}
               </motion.p>
@@ -243,7 +242,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               <motion.div
                 variants={fadeUp}
                 style={{ transform: 'translateZ(20px)' }}
-                className="hero-cta-row mt-4 sm:mt-6 md:mt-7"
+                className="hero-cta-row mt-3.5 md:mt-7"
               >
                 <motion.div
                   whileHover={

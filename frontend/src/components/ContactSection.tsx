@@ -128,7 +128,7 @@ export const ContactSection = () => {
       {/* Background Radial Glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(90vw,620px)] w-[min(90vw,620px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/[0.04] blur-[100px] -z-10" />
 
-      <div className="container-custom relative z-10 max-w-6xl mx-auto px-6">
+      <div className="container-custom relative z-10 max-w-6xl mx-auto px-4 md:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -138,7 +138,7 @@ export const ContactSection = () => {
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3.5 py-1.5 rounded-full">
             {contactCta.badge}
           </span>
-          <h2 id="contact-heading" className="text-4xl md:text-5xl font-extrabold font-display text-slate-900 mt-5 tracking-tight">
+          <h2 id="contact-heading" className="text-[1.65rem] leading-tight md:text-5xl font-extrabold font-display text-slate-900 mt-4 md:mt-5 tracking-tight">
             {contactCta.heading}
             {contactCta.highlight ? (
               <>

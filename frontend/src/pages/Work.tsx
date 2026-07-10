@@ -180,7 +180,7 @@ export const Work = () => {
 
         {/* SECTION 3 — PROJECT FILTERS */}
         <section id="projects-grid" className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-y border-slate-200/80 py-4">
-          <div className="container-custom max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="container-custom max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-4 items-center justify-between">
             {/* Search Input */}
             <div className="relative w-full md:w-72">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -235,12 +235,12 @@ export const Work = () => {
         </section>
 
         {/* SECTION 2 — RECENT WORK / FEATURED PROJECTS */}
-        <section className="container-custom max-w-7xl mx-auto px-6 pt-16 md:pt-20 pb-20">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-20 pb-16 md:pb-20">
           <div className="text-center space-y-2 mb-12">
             <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
               Recent Work
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">Featured Projects</h2>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 font-display">Featured Projects</h2>
             <p className="text-sm text-slate-500 font-semibold">Innovative solutions that drive real business impact</p>
           </div>
 
@@ -286,9 +286,9 @@ export const Work = () => {
         </section>
 
         {/* SECTION 4 — PROJECT GRID */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-12">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-12">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-extrabold font-display text-slate-900 tracking-tight">
               Explore More Projects
             </h2>
             <p className="text-sm text-slate-500 font-semibold">
@@ -364,7 +364,7 @@ export const Work = () => {
         </section>
 
         {/* SECTION 5 — CLIENT SUCCESS */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/80">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 border-t border-slate-200/80">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Trusted by Businesses Across Industries</h2>
             <p className="text-xs sm:text-sm text-slate-500 font-semibold">Delivering high-performance architecture that drives product conversion.</p>
@@ -426,7 +426,7 @@ export const Work = () => {
         </section>
 
         {/* SECTION 6 — DEVELOPMENT PROCESS (UNTOUCHED) */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-16 border-t border-slate-200/80">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16 border-t border-slate-200/80">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900">Development Process</h2>
             <p className="text-xs sm:text-sm text-slate-500 font-semibold">Our structural path from product constraints to production deployment.</p>
@@ -494,7 +494,7 @@ export const Work = () => {
 
 
         {/* SECTION 10 — FINAL CTA */}
-        <section className="container-custom max-w-7xl mx-auto px-6 py-12">
+        <section className="container-custom max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-12">
           <motion.div 
             whileHover={{ y: -2 }}
             className="rounded-3xl bg-gradient-to-r from-emerald-600 via-[#10B981] to-emerald-700 border border-emerald-500/30 p-8 sm:p-12 text-center relative overflow-hidden shadow-[0_20px_50px_rgba(16,185,129,0.15)] text-white"

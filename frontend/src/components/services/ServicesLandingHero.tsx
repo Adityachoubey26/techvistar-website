@@ -16,7 +16,7 @@ export const ServicesLandingHero = ({
   onExplore,
 }: ServicesLandingHeroProps) => {
   return (
-    <section className="relative flex min-h-[78vh] items-center justify-center overflow-hidden bg-slate-950 pt-20">
+    <section className="relative flex min-h-[78vh] items-center justify-center overflow-hidden bg-slate-950 pt-[4.5rem] md:pt-20">
       {backgroundImage && (
         <motion.div
           className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25"
@@ -48,7 +48,7 @@ export const ServicesLandingHero = ({
         }}
       />
 
-      <div className="container relative z-10 mx-auto max-w-5xl px-6 text-center">
+      <div className="container relative z-10 mx-auto max-w-5xl px-4 md:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ export const ServicesLandingHero = ({
             </Badge>
           )}
 
-          <h1 className="font-display text-4xl font-black leading-[1.05] tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="font-display text-[1.75rem] font-black leading-[1.12] tracking-tighter text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {landing.title.split(' ').length > 2 ? (
               <>
                 {landing.title.split(' ').slice(0, -2).join(' ')}{' '}

@@ -178,13 +178,13 @@ const Careers = () => {
 
         {/* 2. Open Positions (Completely matching reference style) */}
         <section id="open-positions" className="pt-4 pb-12 md:pt-6 md:pb-16 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-6 md:space-y-8">
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl space-y-6 md:space-y-8">
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-emerald-600">
                 <Briefcase className="h-4.5 w-4.5" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Available Roles</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold font-display text-slate-900 tracking-tight">Open Positions</h2>
+              <h2 className="text-2xl md:text-4xl font-extrabold font-display text-slate-900 tracking-tight">Open Positions</h2>
             </div>
 
             {/* Filter Bar (One Rounded Container) */}
@@ -333,7 +333,7 @@ const Careers = () => {
 
         {/* 3. Why Join TechVistar (Exactly matching reference card design) */}
         <section className="pt-4 pb-12 md:pt-6 md:pb-16 bg-slate-50 border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-10 md:space-y-12">
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl space-y-10 md:space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Why Join TechVistar?</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">We empower people to do their best work and grow together.</p>
@@ -371,7 +371,7 @@ const Careers = () => {
 
         {/* 4. Hiring Process (Perfect horizontal step icons sequence) */}
         <section className="py-10 md:py-12 bg-white border-b border-slate-100">
-          <div className="container mx-auto px-6 max-w-7xl space-y-12">
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Our Hiring Process</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">Our simple and transparent hiring process</p>
@@ -406,7 +406,7 @@ const Careers = () => {
 
         {/* 5. Life at TechVistar */}
         <section id="life-at-techvistar" className="py-10 md:py-12 bg-slate-50">
-          <div className="container mx-auto px-6 max-w-7xl space-y-10">
+          <div className="container mx-auto px-4 md:px-6 max-w-7xl space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">{careers.culture.title}</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">{careers.culture.description}</p>
@@ -430,8 +430,8 @@ const Careers = () => {
         </section>
 
         {/* 6. FAQ Accordion Block */}
-        <section className="py-24 bg-white border-t border-slate-100">
-          <div className="container mx-auto px-6 max-w-4xl space-y-12">
+        <section className="py-16 md:py-24 bg-white border-t border-slate-100">
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl space-y-10 md:space-y-12">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-3xl font-extrabold font-display text-slate-900 tracking-tight">Frequently Asked Questions</h2>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold">Clear details about application guidelines and recruitment paths.</p>
@@ -473,7 +473,7 @@ const Careers = () => {
 
         {/* 7. Bottom CTA Block */}
         <section className="py-16 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white border-t border-slate-900">
-          <div className="container mx-auto px-6 max-w-4xl text-center space-y-6">
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl text-center space-y-6">
             <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight">{careers.cta.title}</h2>
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-lg mx-auto font-medium">
               {careers.cta.description}
