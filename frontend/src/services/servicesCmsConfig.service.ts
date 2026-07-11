@@ -19,7 +19,7 @@ export async function getAdminServicesCmsConfig(): Promise<ServicesCmsConfig & {
   return result.data;
 }
 
-export async function updateServicesCmsConfig(data: ServicesCmsConfig): Promise<ServicesCmsConfig> {
+export async function updateServicesCmsConfig(data: Partial<ServicesCmsConfig>): Promise<ServicesCmsConfig> {
   const response = await adminFetch(`${getApiBaseUrl()}/api/services/admin/config`, {
     method: 'PUT',
     body: JSON.stringify(data),

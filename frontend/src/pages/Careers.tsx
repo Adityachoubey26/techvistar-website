@@ -163,6 +163,7 @@ const Careers = () => {
           subtitle={careers.hero.eyebrow || 'Careers at TechVistar'}
           description={careers.hero.description}
           backgroundImage={heroBg}
+          bgPosition="right bottom"
         >
           <div className="flex flex-wrap items-center gap-4">
             <Button onClick={handleScrollToPositions} size="lg" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-12 px-6 rounded-xl shadow-lg shadow-emerald-500/20">

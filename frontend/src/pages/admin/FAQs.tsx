@@ -119,6 +119,7 @@ const FAQs = () => {
 
   const refreshFaqQueries = () => {
     queryClient.invalidateQueries({ queryKey: ["admin", "faqs"] });
+    queryClient.invalidateQueries({ queryKey: ["faqs"] });
     queryClient.invalidateQueries({ queryKey: ["activeFAQs"] });
   };
 

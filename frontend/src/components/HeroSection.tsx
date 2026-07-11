@@ -13,10 +13,116 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { HeroBackgroundMedia } from '@/components/HeroBackgroundMedia';
 import { useHomeCms } from '@/contexts/HomeCmsContext';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
+
+// Premium Enterprise 3D-style SVG components with custom linearGradients and shadows
+const AiChipIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <defs>
+      <linearGradient id="aiGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="50%" stopColor="#059669" />
+        <stop offset="100%" stopColor="#10b981" />
+      </linearGradient>
+      <linearGradient id="glowGrad" x1="12" y1="6" x2="12" y2="18" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#6ee7b7" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="#047857" stopOpacity="0.2" />
+      </linearGradient>
+    </defs>
+    <path d="M6 2V4M10 2V4M14 2V4M18 2V4" stroke="url(#aiGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+    <path d="M6 20V22M10 20V22M14 20V22M18 20V22" stroke="url(#aiGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+    <path d="M2 6H4M2 10H4M2 14H4M2 18H4" stroke="url(#aiGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+    <path d="M20 6H22M20 10H22M20 14H22M20 18H22" stroke="url(#aiGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+    <rect x="5" y="5" width="14" height="14" rx="3" fill="#09090b" stroke="url(#aiGrad)" strokeWidth="1.5" />
+    <rect x="8" y="8" width="8" height="8" rx="1.5" fill="url(#glowGrad)" />
+    <path d="M12 9V15M9 12H15M10.5 10.5L13.5 13.5M13.5 10.5L10.5 13.5" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="1.5" fill="#34d399" />
+  </svg>
+);
+
+const EnterpriseShieldIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <defs>
+      <linearGradient id="shieldGrad" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="100%" stopColor="#047857" />
+      </linearGradient>
+      <linearGradient id="shieldInnerGrad" x1="12" y1="5" x2="12" y2="19" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+        <stop offset="100%" stopColor="#064e3b" stopOpacity="0.1" />
+      </linearGradient>
+    </defs>
+    <path d="M12 2C7.5 2 3.5 3.5 3 7.5C3 13.5 8.5 19 12 21.5C15.5 19 21 13.5 21 7.5C20.5 3.5 16.5 2 12 2Z" fill="url(#shieldInnerGrad)" stroke="url(#shieldGrad)" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M12 3V20" stroke="url(#shieldGrad)" strokeWidth="1" opacity="0.5" />
+    <path d="M3.5 8.5C6 10 9.5 10.5 12 10.5M20.5 8.5C18 10 14.5 10.5 12 10.5" stroke="url(#shieldGrad)" strokeWidth="1" opacity="0.4" />
+    <circle cx="12" cy="11.5" r="3.5" fill="#09090b" stroke="url(#shieldGrad)" strokeWidth="1.25" />
+    <path d="M10.5 11.5L11.5 12.5L13.5 10.5" stroke="#34d399" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const CloudPlatformIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <defs>
+      <linearGradient id="cloudGrad" x1="2" y1="8" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="50%" stopColor="#10b981" />
+        <stop offset="100%" stopColor="#059669" />
+      </linearGradient>
+      <linearGradient id="dbGrad" x1="6" y1="13" x2="18" y2="21" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#a7f3d0" />
+        <stop offset="100%" stopColor="#047857" />
+      </linearGradient>
+    </defs>
+    <path d="M7 15.5C7 14.5 9 14 12 14C15 14 17 14.5 17 15.5V17.5C17 18.5 15 19 12 19C9 19 7 18.5 7 17.5V15.5Z" fill="#09090b" stroke="url(#dbGrad)" strokeWidth="1.25" />
+    <path d="M7 15.5C7 16.2 9 16.7 12 16.7C15 16.7 17 16.2 17 15.5" stroke="url(#dbGrad)" strokeWidth="1" />
+    <path d="M12 5C9.5 5 7.5 7 7.5 9.5C7.5 9.7 7.5 9.9 7.6 10.1C5.5 10.3 4 12 4 14C4 16.2 5.8 18 8 18H16.5C18.4 18 20 16.4 20 14.5C20 12.7 18.6 11.2 16.8 11C16.4 8.2 14.2 6 11.5 6C11.5 5.5 11.8 5 12 5Z" fill="rgba(9, 9, 11, 0.75)" stroke="url(#cloudGrad)" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M3 13.5C3 13.5 6 12 12 12C18 12 21 13.5 21 13.5" stroke="#34d399" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+    <circle cx="12" cy="9.5" r="1" fill="#34d399" />
+  </svg>
+);
+
+const ServerClusterIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <defs>
+      <linearGradient id="serverGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#34d399" />
+        <stop offset="100%" stopColor="#047857" />
+      </linearGradient>
+      <linearGradient id="slotGrad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#10b981" />
+        <stop offset="100%" stopColor="#065f46" />
+      </linearGradient>
+    </defs>
+    <rect x="4" y="3" width="16" height="4" rx="1" fill="#09090b" stroke="url(#serverGrad)" strokeWidth="1.25" />
+    <circle cx="7" cy="5" r="0.75" fill="#34d399" />
+    <line x1="10" y1="5" x2="17" y2="5" stroke="url(#slotGrad)" strokeWidth="1.5" strokeLinecap="round" />
+    <rect x="4" y="9.5" width="16" height="4" rx="1" fill="#09090b" stroke="url(#serverGrad)" strokeWidth="1.25" />
+    <circle cx="7" cy="11.5" r="0.75" fill="#34d399" />
+    <line x1="10" y1="11.5" x2="17" y2="11.5" stroke="url(#slotGrad)" strokeWidth="1.5" strokeLinecap="round" />
+    <rect x="4" y="16" width="16" height="4" rx="1" fill="#09090b" stroke="url(#serverGrad)" strokeWidth="1.25" />
+    <circle cx="7" cy="18" r="0.75" fill="#34d399" />
+    <line x1="10" y1="18" x2="17" y2="18" stroke="url(#slotGrad)" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M2 4V19" stroke="url(#serverGrad)" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+    <path d="M2 7H4M2 13.5H4M2 20H4" stroke="url(#serverGrad)" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+  </svg>
+);
 
 const spring = { type: 'spring' as const, stiffness: 420, damping: 36, mass: 0.8 };
 
 const springSmooth = { stiffness: 120, damping: 22, mass: 0.6 };
+
+const TALL_MOBILE_HERO_FEATURES = [
+  { icon: AiChipIcon, label: 'AI Powered', desc: 'Intelligent automation for modern businesses.' },
+  { icon: EnterpriseShieldIcon, label: 'Enterprise Ready', desc: 'Built for secure enterprise workloads.' },
+  { icon: CloudPlatformIcon, label: 'Cloud Native', desc: 'Modern cloud-first architecture.' },
+  { icon: ServerClusterIcon, label: 'Secure & Scalable', desc: 'Designed to scale without compromise.' },
+] as const;
+
+const TALL_MOBILE_METRICS = [
+  { value: '50+', label: 'Projects' },
+  { value: '15+', label: 'Industries' },
+  { value: '24/7', label: 'Support' },
+] as const;
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -124,7 +230,8 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="Introduction"
-      className="relative isolate min-h-[100dvh] lg:h-[100svh] lg:min-h-0 overflow-hidden bg-zinc-950 selection:bg-primary/30 [perspective:1400px]"
+      style={{ position: 'relative' }}
+      className="relative isolate min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 overflow-hidden bg-zinc-950 selection:bg-primary/30 [perspective:1400px]"
     >
       <HeroBackgroundMedia hero={hero} />
 
@@ -176,10 +283,10 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
       <motion.div
         style={{ opacity: contentOpacity, y: contentY }}
         className={cn(
-          'container-custom relative z-10 hero-shell min-h-[100dvh] lg:h-[100svh] lg:min-h-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 md:pb-10',
+          'container-custom relative z-10 hero-shell min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 md:pb-10',
           showAnnouncementBar
-            ? 'pt-[max(4rem,calc(env(safe-area-inset-top)+3.25rem))] md:pt-[8rem] lg:pt-[9rem]'
-            : 'pt-[max(3.75rem,calc(env(safe-area-inset-top)+3rem))] md:pt-[7rem] lg:pt-[8rem]'
+            ? 'max-md:pt-[calc(5.5rem+env(safe-area-inset-top,0px))] md:pt-[8rem] lg:pt-[9rem]'
+            : 'max-md:pt-[calc(5rem+env(safe-area-inset-top,0px))] md:pt-[7rem] lg:pt-[8rem]'
         )}
       >
         <div className="hero-main">
@@ -191,12 +298,12 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               initial="hidden"
               animate="visible"
               style={{ transformStyle: 'preserve-3d' }}
-              className="flex w-full min-w-0 flex-col items-start"
+              className="hero-copy-inner flex w-full min-w-0 flex-col items-start"
             >
               {hero.badge?.trim() ? (
                 <motion.span
                   variants={fadeUp}
-                  className="mb-2 md:mb-3.5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] md:tracking-[0.2em] text-emerald-300"
+                  className="hero-badge mb-1.5 md:mb-3.5 inline-flex w-fit max-w-full shrink-0 items-center gap-2 self-start overflow-visible whitespace-nowrap rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-emerald-300"
                 >
                   {hero.badge.trim()}
                 </motion.span>
@@ -234,7 +341,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               <motion.p
                 variants={fadeUp}
                 style={{ transform: 'translateZ(8px)' }}
-                className="hero-tagline mt-2.5 md:mt-5 max-w-[34ch] md:max-w-xl text-zinc-200 font-medium text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] text-pretty text-[0.875rem] md:text-base"
+                className="hero-tagline mt-1.5 md:mt-5 max-w-[34ch] md:max-w-xl text-zinc-200 font-medium text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] text-pretty text-[0.875rem] md:text-base"
               >
                 {hero.tagline}
               </motion.p>
@@ -242,7 +349,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
               <motion.div
                 variants={fadeUp}
                 style={{ transform: 'translateZ(20px)' }}
-                className="hero-cta-row mt-3.5 md:mt-7"
+                className="hero-cta-row mt-2 md:mt-7"
               >
                 <motion.div
                   whileHover={
@@ -282,18 +389,47 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
                   </Button>
                 </motion.div>
               </motion.div>
+
+              <div
+                className="hero-tall-features"
+                aria-label="Core capabilities"
+              >
+                <ul className="hero-tall-features-grid">
+                  {TALL_MOBILE_HERO_FEATURES.map(({ icon: Icon, label, desc }) => (
+                    <li key={label} className="hero-tall-features-item">
+                      <span className="hero-tall-features-icon" aria-hidden>
+                        <Icon className="h-4 w-4" strokeWidth={2} />
+                      </span>
+                      <div className="hero-tall-features-content">
+                        <span className="hero-tall-features-label">{label}</span>
+                        <p className="hero-tall-features-desc">{desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div className="hero-tall-stats-card" aria-label="Company highlights">
+                  {TALL_MOBILE_METRICS.map(({ value, label }) => (
+                    <AnimatedStat
+                      key={label}
+                      value={value}
+                      label={label}
+                      variant="hero-tall"
+                    />
+                  ))}
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </div>
 
-        <div className="w-full shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-5 md:gap-6">
+        <div className="hero-trust-footer w-full shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-5 md:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="text-left w-full min-w-0 md:flex-1"
           >
-            <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-zinc-400/90 font-bold mb-2 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+            <p className="hero-trust-label text-[10px] sm:text-xs uppercase tracking-[0.25em] text-zinc-400/90 font-bold mb-2 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
               Trusted by industry leaders
             </p>
             <div className="hero-trust-logos opacity-60 grayscale select-none">

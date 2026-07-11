@@ -196,9 +196,9 @@ export const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] h-20 flex items-center',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] h-[56px] md:h-20 flex items-center',
         isScrolled 
-          ? 'bg-white/90 backdrop-blur-md shadow-md shadow-slate-100/45 border-b border-slate-200/50' 
+          ? 'bg-white shadow-md shadow-slate-100/45 border-b border-slate-200/50' 
           : 'bg-white border-b border-slate-100'
       )}
     >
@@ -208,7 +208,7 @@ export const Navbar = () => {
           <img
             src={navLogo}
             alt={SITE.name}
-            className="h-9 w-9 md:h-10 md:w-10 rounded-full object-cover ring-2 ring-emerald-500/10 group-hover:ring-emerald-500/30 transition-all duration-300 shrink-0"
+            className="h-[34px] w-[34px] md:h-10 md:w-10 rounded-full object-cover ring-2 ring-emerald-500/10 group-hover:ring-emerald-500/30 transition-all duration-300 shrink-0"
           />
           <span className="text-base md:text-xl font-extrabold font-display tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors truncate max-w-[9.5rem] sm:max-w-[12rem] md:max-w-none">
             {companyName}

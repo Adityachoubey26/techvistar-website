@@ -1,10 +1,11 @@
-import { Loader2, Plus } from 'lucide-react';
-import { PageHeader } from '@/components/admin/common/PageHeader';
+import { useState } from 'react';
+import { Loader2, Plus, Image, BarChart2, Gift, Briefcase, FolderOpen, Phone, AlignJustify, Search } from 'lucide-react';
 import { SeoManager } from '@/components/admin/common/SeoManager';
 import { CmsImageField } from '@/components/admin/common/CmsImageField';
 import { CmsMediaField } from '@/components/admin/common/CmsMediaField';
-import { CmsTextFields } from '@/components/admin/common/CmsSettingsFields';
-import { CmsAccordionLayout, CmsStickySaveBar } from '@/components/admin/common/CmsAccordionLayout';
+import { CmsTextFields, CmsSectionCard } from '@/components/admin/common/CmsSettingsFields';
+import { CmsAccordionLayout } from '@/components/admin/common/CmsAccordionLayout';
+import { CmsPageLayout, CmsSectionAnchor } from '@/components/admin/common/CmsPageLayout';
 import { CmsSortableList } from '@/components/admin/common/CmsSortableList';
 import { usePagesCmsSettings } from '@/hooks/usePagesCmsSettings';
 import { seoFromItem } from '@/lib/seoAdmin';
@@ -15,8 +16,21 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import type { HomeCmsConfig, HomeStatItem, HomeBenefitCard } from '@/types/homeCms';
 
+const HOME_NAV_SECTIONS = [
+  { id: 'hero',      label: 'Hero',              icon: Image       },
+  { id: 'stats',     label: 'Stats',             icon: BarChart2   },
+  { id: 'benefits',  label: 'Benefits',          icon: Gift        },
+  { id: 'services',  label: 'Services Section',  icon: Briefcase   },
+  { id: 'portfolio', label: 'Portfolio Section', icon: FolderOpen  },
+  { id: 'contact',   label: 'Contact Section',   icon: Phone       },
+  { id: 'footer',    label: 'Footer',            icon: AlignJustify },
+  { id: 'seo',       label: 'SEO',               icon: Search      },
+];
+
 const HomeSettings = () => {
   const { form, setForm, isLoading, save, isSaving } = usePagesCmsSettings('home');
+  const [isDirty, setIsDirty] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   if (isLoading) {
     return (
@@ -26,11 +40,21 @@ const HomeSettings = () => {
     );
   }
 
-  const patchHero = <K extends keyof HomeCmsConfig['hero']>(key: K, value: HomeCmsConfig['hero'][K]) =>
+  const patchHero = <K extends keyof HomeCmsConfig['hero']>(key: K, value: HomeCmsConfig['hero'][K]) => {
     setForm((prev) => ({ ...prev, hero: { ...prev.hero, [key]: value } }));
+    setIsDirty(true);
+  };
 
-  const patchBlock = <K extends keyof HomeCmsConfig>(block: K, partial: Partial<HomeCmsConfig[K]>) =>
+  const patchBlock = <K extends keyof HomeCmsConfig>(block: K, partial: Partial<HomeCmsConfig[K]>) => {
     setForm((prev) => ({ ...prev, [block]: { ...prev[block], ...partial } }));
+    setIsDirty(true);
+  };
+
+  const handleSave = async () => {
+    await save();
+    setIsDirty(false);
+    setLastSaved(new Date());
+  };
 
   const sections = [
     {
@@ -482,14 +506,24 @@ const HomeSettings = () => {
   ];
 
   return (
-    <div className="relative max-w-4xl space-y-6 pb-24">
-      <PageHeader
-        title="Home CMS"
-        description="Manage every homepage section — hero, stats, benefits, featured content, portfolio, contact, footer, and SEO."
-      />
-      <CmsAccordionLayout sections={sections} />
-      <CmsStickySaveBar onSave={save} isSaving={isSaving} />
-    </div>
+    <CmsPageLayout
+      title="Home CMS"
+      description="Manage every homepage section — hero, stats, benefits, featured content, portfolio, contact, footer, and SEO."
+      sections={HOME_NAV_SECTIONS}
+      onSave={handleSave}
+      onDiscard={() => setIsDirty(false)}
+      isSaving={isSaving}
+      isDirty={isDirty}
+      lastSaved={lastSaved}
+    >
+      {sections.map((section) => (
+        <CmsSectionAnchor key={section.id} id={section.id}>
+          <CmsSectionCard title={section.title} description={section.description}>
+            {section.children}
+          </CmsSectionCard>
+        </CmsSectionAnchor>
+      ))}
+    </CmsPageLayout>
   );
 };
 

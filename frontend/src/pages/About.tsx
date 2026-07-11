@@ -24,7 +24,7 @@ import { PageSeo } from '@/components/common/PageSeo';
 import { buildCanonical } from '@/lib/seoResolve';
 import { ABOUT_COPY, ABOUT_PAGE } from '@/data';
 import { mergePagesCmsConfig, DEFAULT_ABOUT_CMS } from '@/types/pagesCms';
-import aboutBg from '../assets/about-bg.png';
+import aboutBg from '../assets/about-header.png';
 import logoImg from '@/assets/logo.webp';
 import { PageHeader } from '@/components/ui/PageHeader';
 
@@ -143,6 +143,7 @@ const About = () => {
         subtitle={about.hero.eyebrow || ABOUT_PAGE.hero.eyebrow}
         description={about.hero.description}
         backgroundImage={heroBg}
+        bgPosition="right bottom"
       />
 
             {/* Single structured document — tight vertical rhythm */}

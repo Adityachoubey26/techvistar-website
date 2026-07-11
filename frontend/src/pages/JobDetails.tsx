@@ -16,6 +16,7 @@ import { PageSeo } from '@/components/common/PageSeo';
 import { buildCanonical, seoFromApi } from '@/lib/seoResolve';
 import { stripHtmlToText } from '@/lib/sanitizeHtml';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { MobileBackButton } from '@/components/ui/MobileBackButton';
 
 export const JobDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -96,12 +97,7 @@ export const JobDetails = () => {
         title={
           <>
             <div className="mb-6">
-              <Link 
-                to="/careers" 
-                className="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors uppercase tracking-wider"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" /> Back to Careers
-              </Link>
+              <MobileBackButton to="/careers" label="Careers" />
             </div>
             {isLoading ? (
               <div className="h-10 w-2/3 bg-slate-800 rounded animate-pulse" />
