@@ -3,6 +3,8 @@ import { ArrowLeft, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SolutionDetail, resolveSolutionIcon } from '@/data/solutions';
 
+import { MobileBackButton } from '@/components/ui/MobileBackButton';
+
 interface SolutionHeroProps {
   solution: SolutionDetail;
 }
@@ -44,9 +46,7 @@ export const SolutionHero = ({ solution }: SolutionHeroProps) => {
 
       <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-12 xl:px-20 relative z-10 detail-page-gutter">
         
-        <Link to="/solutions" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-4 transition-colors font-medium">
-          <ArrowLeft className="mr-2 h-4 w-4" /> {backLinkText}
-        </Link>
+        <MobileBackButton to="/solutions" label="All Solutions" className="mb-4" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center mb-6">
           

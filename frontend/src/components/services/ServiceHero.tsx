@@ -16,6 +16,8 @@ import {
 import { Service, getServiceHeroImage } from '@/data/services';
 import { RichTextContent } from '@/components/common/RichTextContent';
 
+import { MobileBackButton } from '@/components/ui/MobileBackButton';
+
 interface ServiceHeroProps {
   service: Service;
 }
@@ -86,9 +88,7 @@ export const ServiceHero = ({ service }: ServiceHeroProps) => {
   return (
     <section className="bg-white border-b border-slate-200 pt-[4.5rem] pb-8 md:pt-28 md:pb-14 mb-6 md:mb-8">
       <div className="w-full mx-auto px-4 md:px-6 lg:px-12 xl:px-20 detail-page-gutter">
-        <Link to="/services" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-6 transition-colors font-medium">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to all services
-        </Link>
+        <MobileBackButton to="/services" label="All Services" className="mb-6" />
 
         {/* Main Grid: Centered Content */}
         <div className="flex flex-col gap-12 w-full relative z-10">

@@ -7,10 +7,12 @@ interface PageHeaderProps {
   subtitle?: React.ReactNode;
   description?: React.ReactNode;
   backgroundImage?: string;
+  bgPosition?: string;
+  bgSize?: string;
   children?: React.ReactNode;
 }
 
-export const PageHeader = ({ title, subtitle, description, backgroundImage, children }: PageHeaderProps) => {
+export const PageHeader = ({ title, subtitle, description, backgroundImage, bgPosition, bgSize, children }: PageHeaderProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -33,7 +35,7 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
       transition={{ duration: 0.6 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative overflow-hidden bg-zinc-950 pt-[4.5rem] pb-5 md:pt-24 md:pb-8 border-b border-zinc-900 text-white"
+      className="relative overflow-hidden bg-zinc-950 pt-20 pb-10 md:pt-24 md:pb-12 border-b border-zinc-900 text-white"
     >
       {/* Animated Mesh Waves + Mouse Parallax */}
       {backgroundImage && (
@@ -41,8 +43,8 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
           className="absolute inset-0 opacity-80 pointer-events-none z-0"
           style={{
             backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'auto 100%',
-            backgroundPosition: 'right',
+            backgroundSize: bgSize || 'auto 85%',
+            backgroundPosition: bgPosition || 'right center',
             backgroundRepeat: 'no-repeat',
           }}
           animate={{
@@ -59,8 +61,8 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
             className="absolute inset-0"
             style={{
               backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: 'auto 100%',
-              backgroundPosition: 'right',
+              backgroundSize: bgSize || 'auto 85%',
+              backgroundPosition: bgPosition || 'right center',
               backgroundRepeat: 'no-repeat',
             }}
             animate={{
@@ -149,7 +151,7 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-[1.65rem] leading-[1.15] md:text-5xl font-extrabold text-white mb-3 md:mb-4 font-display text-pretty"
+          className="text-4xl md:text-5xl font-extrabold text-white mb-4 font-display"
         >
           {title}
         </motion.h1>
@@ -158,7 +160,7 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-sm md:text-lg text-zinc-300 leading-relaxed max-w-2xl"
+            className="text-base md:text-lg text-zinc-300 leading-relaxed max-w-2xl"
           >
             {description}
           </motion.p>
@@ -168,7 +170,7 @@ export const PageHeader = ({ title, subtitle, description, backgroundImage, chil
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-5 md:mt-8"
+            className="mt-8"
           >
             {children}
           </motion.div>
