@@ -1,20 +1,54 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { ServicesLandingConfig } from '@/types/servicesCms';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { SolutionsLandingCmsConfig } from '@/types/pagesCms';
 
-interface ServicesLandingHeroProps {
-  landing: ServicesLandingConfig;
+interface SolutionsLandingHeroProps {
+  landing: SolutionsLandingCmsConfig;
   backgroundImage: string;
   onExplore?: () => void;
 }
 
-export const ServicesLandingHero = ({
+export const SolutionsLandingHero = ({
   landing,
   backgroundImage,
   onExplore,
-}: ServicesLandingHeroProps) => {
+}: SolutionsLandingHeroProps) => {
+  const hero = landing.hero;
+  const ctaText = hero.ctaText?.trim() || 'Explore Solutions';
+  const ctaLink = hero.ctaLink?.trim() || '#all-solutions';
+
+  const title = hero.title?.trim() || 'Enterprise Solutions';
+  const eyebrow = hero.eyebrow?.trim() || 'Our Capabilities';
+  const description =
+    hero.description?.trim() ||
+    'Deploying robust business automation, production-grade intelligence models, and highly secure cloud environments built to scale operations.';
+
+  const ctaButton =
+    ctaLink.startsWith('#') ? (
+      <Button
+        onClick={onExplore}
+        size="lg"
+        className="h-12 rounded-xl bg-emerald-600 px-6 font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-500"
+      >
+        {ctaText}
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
+    ) : (
+      <Button
+        asChild
+        size="lg"
+        className="h-12 rounded-xl bg-emerald-600 px-6 font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-500"
+      >
+        <Link to={ctaLink}>
+          {ctaText}
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
+      </Button>
+    );
+
   return (
     <section className="relative overflow-hidden bg-slate-950 pt-28 pb-10 md:pt-32 md:pb-12">
       {backgroundImage && (
@@ -48,29 +82,25 @@ export const ServicesLandingHero = ({
         }}
       />
 
-      <div className="container relative z-10 mx-auto max-w-5xl px-4 md:px-6 text-left">
+      <div className="container relative z-10 mx-auto max-w-5xl px-4 text-left md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           className="space-y-5"
         >
-          {landing.subtitle && (
+          {eyebrow && (
             <Badge className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
               <Sparkles className="mr-1.5 inline h-3 w-3" />
-              {landing.subtitle}
+              {eyebrow}
             </Badge>
           )}
 
-          <h1 className="text-4xl md:text-5xl font-extrabold font-display text-white mb-4">
-            {landing.title}
-          </h1>
+          <h1 className="mb-4 font-display text-4xl font-extrabold text-white md:text-5xl">{title}</h1>
 
-          {landing.description && (
-            <p className="max-w-2xl text-sm font-semibold leading-relaxed text-slate-300 sm:text-base md:text-lg">
-              {landing.description}
-            </p>
-          )}
+          <p className="max-w-2xl text-sm font-semibold leading-relaxed text-slate-300 sm:text-base md:text-lg">
+            {description}
+          </p>
         </motion.div>
 
         <motion.div
@@ -79,18 +109,11 @@ export const ServicesLandingHero = ({
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mt-8 flex flex-wrap items-center justify-start gap-4"
         >
-          <Button
-            onClick={onExplore}
-            size="lg"
-            className="h-12 rounded-xl bg-emerald-600 px-6 font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-500"
-          >
-            {landing.ctaText?.trim() || 'Explore Services'}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          {ctaButton}
         </motion.div>
       </div>
     </section>
   );
 };
 
-export default ServicesLandingHero;
+export default SolutionsLandingHero;

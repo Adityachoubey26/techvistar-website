@@ -191,10 +191,15 @@ const ContactSettings = () => {
   });
 
   // ── Mutations ───────────────────────────────────────────────────────────────
+  const refreshOfficeQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-offices'] });
+    queryClient.invalidateQueries({ queryKey: ['public-offices'] });
+  };
+
   const createMutation = useMutation({
     mutationFn: createOffice,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-offices'] });
+      refreshOfficeQueries();
       toast({ title: 'Office added successfully' });
       setIsOfficeModalOpen(false);
     },
@@ -206,7 +211,7 @@ const ContactSettings = () => {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<OfficeData> }) => updateOffice(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-offices'] });
+      refreshOfficeQueries();
       toast({ title: 'Office updated successfully' });
       setIsOfficeModalOpen(false);
     },
@@ -218,7 +223,7 @@ const ContactSettings = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteOffice,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-offices'] });
+      refreshOfficeQueries();
       toast({ title: 'Office deleted successfully' });
     },
     onError: (err: any) => {
@@ -228,7 +233,7 @@ const ContactSettings = () => {
 
   const reorderMutation = useMutation({
     mutationFn: reorderOffices,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-offices'] }),
+    onSuccess: () => refreshOfficeQueries(),
     onError: (err: any) => {
       toast({ title: 'Failed to reorder offices', description: err.message, variant: 'destructive' });
     },
