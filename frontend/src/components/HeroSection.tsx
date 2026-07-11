@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { HeroBackgroundMedia } from '@/components/HeroBackgroundMedia';
 import { useHomeCms } from '@/contexts/HomeCmsContext';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 
 // Premium Enterprise 3D-style SVG components with custom linearGradients and shadows
 const AiChipIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -229,6 +230,7 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       aria-label="Introduction"
+      style={{ position: 'relative' }}
       className="relative isolate min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 overflow-hidden bg-zinc-950 selection:bg-primary/30 [perspective:1400px]"
     >
       <HeroBackgroundMedia hero={hero} />
@@ -407,10 +409,12 @@ export const HeroSection = ({ showAnnouncementBar = false }: HeroSectionProps) =
                 </ul>
                 <div className="hero-tall-stats-card" aria-label="Company highlights">
                   {TALL_MOBILE_METRICS.map(({ value, label }) => (
-                    <div key={label} className="hero-tall-stats-item">
-                      <span className="hero-tall-stats-value">{value}</span>
-                      <span className="hero-tall-stats-label">{label}</span>
-                    </div>
+                    <AnimatedStat
+                      key={label}
+                      value={value}
+                      label={label}
+                      variant="hero-tall"
+                    />
                   ))}
                 </div>
               </div>

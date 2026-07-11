@@ -22,7 +22,9 @@ import { mergePagesCmsConfig, DEFAULT_CONTACT_CMS } from '@/types/pagesCms';
 import { seoFromItem } from '@/lib/seoAdmin';
 import { PageSeo } from '@/components/common/PageSeo';
 import { buildCanonical } from '@/lib/seoResolve';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 import contactBg from '../assets/contact-header.png';
+import { getActiveOffices } from '@/services/office.service';
 
 const renderContactHeroTitle = (title: string) => {
   const highlight = 'Great';
@@ -63,8 +65,11 @@ export const Contact = () => {
   const phoneHref = `tel:${contact.contactInfo.phone.replace(/\s/g, '')}`;
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showMapHyd, setShowMapHyd] = useState(false);
-  const [showMapDelhi, setShowMapDelhi] = useState(false);
+  const [mapToggles, setMapToggles] = useState<Record<string, boolean>>({});
+  const { data: offices = [] } = useQuery({
+    queryKey: ['public-offices'],
+    queryFn: getActiveOffices,
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -166,42 +171,30 @@ export const Contact = () => {
             <div className="lg:col-span-5 space-y-8">
               {/* Trust Badge Grid */}
               <div className="grid grid-cols-2 gap-4 border-y border-slate-200/80 py-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 leading-none">24 Hrs</div>
-                    <span className="text-[10px] text-slate-500 font-semibold uppercase">Response Time</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
-                    <Briefcase className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 leading-none">100+</div>
-                    <span className="text-[10px] text-slate-500 font-semibold uppercase">Projects Delivered</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 leading-none">98%</div>
-                    <span className="text-[10px] text-slate-500 font-semibold uppercase">Client Satisfaction</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900 leading-none">10+</div>
-                    <span className="text-[10px] text-slate-500 font-semibold uppercase">Industries Served</span>
-                  </div>
-                </div>
+                <AnimatedStat
+                  value="24 Hrs"
+                  label="Response Time"
+                  variant="contact-badge"
+                  icon={<Clock className="w-4 h-4" />}
+                />
+                <AnimatedStat
+                  value="100+"
+                  label="Projects Delivered"
+                  variant="contact-badge"
+                  icon={<Briefcase className="w-4 h-4" />}
+                />
+                <AnimatedStat
+                  value="98%"
+                  label="Client Satisfaction"
+                  variant="contact-badge"
+                  icon={<ShieldCheck className="w-4 h-4" />}
+                />
+                <AnimatedStat
+                  value="10+"
+                  label="Industries Served"
+                  variant="contact-badge"
+                  icon={<Building2 className="w-4 h-4" />}
+                />
               </div>
 
               {/* Actionable Info Cards */}
@@ -438,183 +431,91 @@ export const Contact = () => {
           </div>
 
           <div className="grid md:grid-cols-2 max-w-5xl mx-auto gap-8">
-            {/* Hyderabad office */}
-            <motion.div 
-              whileHover={{ y: -8, scale: 1.01 }}
-              className="group relative bg-white border border-slate-200/60 hover:border-emerald-500/30 rounded-[2rem] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col justify-between"
-            >
-              <div className="h-48 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
-                {showMapHyd ? (
-                  <div className="absolute inset-0 z-20">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.2750831610433!2d78.37346897597148!3d17.446549201103213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c555555%3A0xe54fb7a21396ac3!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                      className="w-full h-full border-0"
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowMapHyd(false);
-                      }}
-                      className="absolute top-3 right-3 z-30 bg-slate-950/80 hover:bg-slate-950 text-white rounded-full p-1.5 transition-colors shadow-md text-xs font-semibold px-2.5 py-1"
-                    >
-                      Close Map
-                    </button>
+            {offices.map((office) => {
+              const showMap = !!mapToggles[office.officeId];
+              return (
+                <motion.div 
+                  key={office._id}
+                  whileHover={{ y: -8, scale: 1.01 }}
+                  className="group relative bg-white border border-slate-200/60 hover:border-emerald-500/30 rounded-[2rem] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col justify-between"
+                >
+                  <div className="h-48 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
+                    {showMap ? (
+                      <div className="absolute inset-0 z-20">
+                        <iframe
+                          src={office.googleMapsUrl}
+                          className="w-full h-full border-0"
+                          allowFullScreen
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setMapToggles(prev => ({ ...prev, [office.officeId]: false }));
+                          }}
+                          className="absolute top-3 right-3 z-30 bg-slate-950/80 hover:bg-slate-950 text-white rounded-full p-1.5 transition-colors shadow-md text-xs font-semibold px-2.5 py-1"
+                        >
+                          Close Map
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <OfficeImage
+                          src={office.image}
+                          alt={office.imageAlt || office.name}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent z-10" />
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setMapToggles(prev => ({ ...prev, [office.officeId]: true }));
+                          }}
+                          className="absolute bottom-3 right-3 z-20 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-md flex items-center gap-1.5 hover:scale-105"
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Show Map</span>
+                        </button>
+                      </>
+                    )}
                   </div>
-                ) : (
-                  <>
-                    <OfficeImage
-                      src="https://images.unsplash.com/photo-1605007493699-af65834f8a00?q=80&w=800"
-                      alt="Hyderabad Skyline"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent z-10" />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowMapHyd(true);
-                      }}
-                      className="absolute bottom-3 right-3 z-20 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-md flex items-center gap-1.5 hover:scale-105"
-                    >
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>Show Map</span>
-                    </button>
-                  </>
-                )}
-              </div>
 
-              <div className="p-6 sm:p-8 space-y-5 bg-white relative z-20 flex-1 flex flex-col justify-between">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="font-display font-extrabold text-slate-900 text-xl group-hover:text-emerald-600 transition-colors duration-300">
-                      {contact.office.heading || "Hyderabad, Telangana"}
+                  <div className="p-6 sm:p-8 space-y-5 bg-white relative z-20 flex-1 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="font-display font-extrabold text-slate-900 text-xl group-hover:text-emerald-600 transition-colors duration-300">
+                          {office.name}
+                        </div>
+                        <span className="shrink-0 text-[9px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-wider border border-emerald-200/60">
+                          {office.badge}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-3 text-slate-500 group-hover:text-slate-600 transition-colors">
+                        <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-slate-300 group-hover:text-emerald-400 transition-colors duration-300" />
+                        <p className="text-sm font-semibold leading-relaxed whitespace-pre-line">
+                          {office.address}
+                        </p>
+                      </div>
                     </div>
-                    <span className="shrink-0 text-[9px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-widest border border-emerald-200/60">
-                      HEAD OFFICE
-                    </span>
-                  </div>
 
-                  <div className="flex gap-3 text-slate-500 group-hover:text-slate-600 transition-colors">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-slate-300 group-hover:text-emerald-400 transition-colors duration-300" />
-                    <p className="text-sm font-semibold leading-relaxed whitespace-pre-line">
-                      {contact.office.address || "HITEC City, Hyderabad, Telangana, India"}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 text-slate-500 group-hover:text-slate-600 transition-colors">
-                    <Clock className="w-4 h-4 shrink-0 mt-0.5 text-slate-300 group-hover:text-emerald-400 transition-colors duration-300" />
-                    <p className="text-xs font-semibold leading-relaxed">
-                      {contact.office.hours || "9:00 AM - 6:00 PM (Mon - Fri)"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <a 
-                    href="https://maps.google.com/?q=HITEC+City,+Hyderabad,+Telangana" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 hover:text-emerald-700 transition-colors group/link"
-                  >
-                    View on Maps
-                    <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1.5 transition-transform duration-300" />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* IIIT Delhi office */}
-            <motion.div 
-              whileHover={{ y: -8, scale: 1.01 }}
-              className="group relative bg-white border border-slate-200/60 hover:border-emerald-500/30 rounded-[2rem] overflow-hidden shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col justify-between"
-            >
-              <div className="h-48 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
-                {showMapDelhi ? (
-                  <div className="absolute inset-0 z-20">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.6461974797086!2d77.27027157585501!3d28.5398642878486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce3c16e028cd1%3A0x65c3df0a03ff2473!2sIndraprastha%20Institute%20of%20Information%20Technology%20Delhi%20(IIIT-Delhi)!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                      className="w-full h-full border-0"
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowMapDelhi(false);
-                      }}
-                      className="absolute top-3 right-3 z-30 bg-slate-950/80 hover:bg-slate-950 text-white rounded-full p-1.5 transition-colors shadow-md text-xs font-semibold px-2.5 py-1"
-                    >
-                      Close Map
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <OfficeImage
-                      src="https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=800"
-                      alt="IIIT Delhi Campus"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent z-10" />
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowMapDelhi(true);
-                      }}
-                      className="absolute bottom-3 right-3 z-20 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-md flex items-center gap-1.5 hover:scale-105"
-                    >
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>Show Map</span>
-                    </button>
-                  </>
-                )}
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-5 bg-white relative z-20 flex-1 flex flex-col justify-between">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="font-display font-extrabold text-slate-900 text-xl group-hover:text-emerald-600 transition-colors duration-300">
-                      IIIT Delhi
+                    <div className="pt-4 border-t border-slate-100">
+                      <a 
+                        href={`https://maps.google.com/?q=${encodeURIComponent(office.name + ' ' + office.address)}`}
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 hover:text-emerald-700 transition-colors group/link"
+                      >
+                        View on Maps
+                        <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1.5 transition-transform duration-300" />
+                      </a>
                     </div>
-                    <span className="shrink-0 text-[9px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-widest border border-emerald-200/60">
-                      INNOVATION HUB
-                    </span>
                   </div>
-
-                  <div className="flex gap-3 text-slate-500 group-hover:text-slate-600 transition-colors">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-slate-300 group-hover:text-emerald-400 transition-colors duration-300" />
-                    <p className="text-sm font-semibold leading-relaxed">
-                      Indraprastha Institute of Information Technology Delhi<br />
-                      Okhla Industrial Estate Phase III<br />
-                      New Delhi – 110020
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 text-slate-500 group-hover:text-slate-600 transition-colors">
-                    <Clock className="w-4 h-4 shrink-0 mt-0.5 text-slate-300 group-hover:text-emerald-400 transition-colors duration-300" />
-                    <p className="text-xs font-semibold leading-relaxed">
-                      9:00 AM - 5:30 PM (Mon - Fri)
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <a 
-                    href="https://maps.google.com/?q=Indraprastha+Institute+of+Information+Technology+Delhi" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 hover:text-emerald-700 transition-colors group/link"
-                  >
-                    View on Maps
-                    <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1.5 transition-transform duration-300" />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 

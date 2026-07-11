@@ -5,6 +5,7 @@ import { getIndustryHeroImage } from '@/data/industry.adapter';
 import { RichTextContent } from '@/components/common/RichTextContent';
 
 import { MobileBackButton } from '@/components/ui/MobileBackButton';
+import { AnimatedStat } from '@/components/ui/AnimatedStat';
 
 interface IndustryHeroProps {
   industry: Industry;
@@ -102,18 +103,14 @@ export const IndustryHero = ({ industry }: IndustryHeroProps) => {
                   const IconComponent = getStatIcon(stat.iconType);
                   const theme = getThemeClasses(stat.colorTheme);
                   return (
-                    <div
+                    <AnimatedStat
                       key={idx}
-                      className="flex items-center gap-2.5 rounded-xl border border-slate-100 bg-white p-3 shadow-sm transition-shadow hover:shadow-md"
-                    >
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${theme}`}>
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="mb-0.5 text-sm font-bold leading-none text-slate-900">{stat.value}</p>
-                        <p className="text-[10px] font-semibold leading-tight text-slate-500">{stat.label}</p>
-                      </div>
-                    </div>
+                      value={stat.value}
+                      label={stat.label}
+                      variant="hero-card"
+                      icon={<IconComponent className="h-4 w-4" />}
+                      themeIconClass={theme}
+                    />
                   );
                 })}
               </div>
