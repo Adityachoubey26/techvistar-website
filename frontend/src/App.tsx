@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { HomeCmsProvider } from "@/contexts/HomeCmsContext";
 import { WebsiteBrandingEffect } from "@/components/WebsiteBrandingEffect";
 import { RouteFallback } from "@/components/common/RouteFallback";
+import { Analytics } from "@/components/Analytics";
 
 // Public pages — code-split per route
 const Index = lazy(() => import("./pages/Index"));
@@ -136,6 +137,7 @@ const App = () => (
       <HomeCmsProvider>
       <WebsiteBrandingEffect />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Analytics />
         <PageTransitionLoader />
         <ScrollToHashElement />
         <Routes>
