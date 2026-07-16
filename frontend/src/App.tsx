@@ -39,6 +39,7 @@ const AdminAboutSettings = lazy(() => import("./pages/admin/AboutSettings"));
 const AdminContactSettings = lazy(() => import("./pages/admin/ContactSettings"));
 const AdminSolutionsLandingSettings = lazy(() => import("./pages/admin/SolutionsLandingSettings"));
 const AdminIndustriesLandingSettings = lazy(() => import("./pages/admin/IndustriesLandingSettings"));
+const AdminPortfolioLandingSettings = lazy(() => import("./pages/admin/PortfolioLandingSettings"));
 const AdminCareersLandingSettings = lazy(() => import("./pages/admin/CareersLandingSettings"));
 const AdminWebsiteSettings = lazy(() => import("./pages/admin/WebsiteSettings"));
 const AdminIndustries = lazy(() => import("./pages/admin/Industries"));
@@ -169,6 +170,7 @@ const App = () => (
               <Route path="contact-settings" element={withSuspense(<AdminContactSettings />)} />
               <Route path="solutions-landing" element={withSuspense(<AdminSolutionsLandingSettings />)} />
               <Route path="industries-landing" element={withSuspense(<AdminIndustriesLandingSettings />)} />
+              <Route path="portfolio-landing" element={withSuspense(<AdminPortfolioLandingSettings />)} />
               <Route path="careers-landing" element={withSuspense(<AdminCareersLandingSettings />)} />
               <Route path="website-settings" element={withSuspense(<AdminWebsiteSettings />)} />
               <Route path="page-seo" element={withSuspense(<AdminPageSeoSettings />)} />
