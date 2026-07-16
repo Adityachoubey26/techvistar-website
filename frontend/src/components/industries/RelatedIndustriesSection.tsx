@@ -14,7 +14,8 @@ interface RelatedIndustriesSectionProps {
 export const RelatedIndustriesSection = ({ industry }: RelatedIndustriesSectionProps) => {
   const { data: apiIndustries } = useQuery({
     queryKey: ['activeIndustries'],
-    queryFn: getActiveIndustries,
+    queryFn: () => getActiveIndustries(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const allIndustries = (apiIndustries || [])

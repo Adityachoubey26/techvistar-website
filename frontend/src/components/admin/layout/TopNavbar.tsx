@@ -35,8 +35,8 @@ export const TopNavbar = ({ onOpenSidebar, onOpenSearch }: TopNavbarProps) => {
     staleTime: 300000,
   });
   const { data: dashboard } = useQuery({
-    queryKey: ["admin", "dashboard", "analytics", range.from.toISOString(), range.to.toISOString()],
-    queryFn: () => getDashboardAnalytics({ from: range.from, to: range.to }),
+    queryKey: ["admin", "dashboard", "analytics", range.from.toISOString(), range.to.toISOString(), range.preset],
+    queryFn: () => getDashboardAnalytics({ from: range.from, to: range.to, preset: range.preset }),
     staleTime: 30_000,
     refetchInterval: 45_000,
     refetchOnWindowFocus: true,

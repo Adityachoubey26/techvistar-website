@@ -127,7 +127,11 @@ const EmptyChart = ({ message }: { message: string }) => (
 );
 
 const formatMetricValue = (value: number) => String(value).padStart(2, "0");
-const formatTrend = (trend: number) => `${trend >= 0 ? "+" : ""}${trend}%`;
+const formatTrend = (trend: number | null | undefined, status?: "ok" | "new" | "none") => {
+  if (status === "new") return "New";
+  if (status === "none" || trend == null) return "—";
+  return `${trend >= 0 ? "+" : ""}${trend}%`;
+};
 
 const mapActivityToTimeline = (activity: DashboardRecentActivity) => {
   const Icon = ACTIVITY_ICONS[activity.type] ?? FileText;
@@ -155,8 +159,8 @@ const Dashboard = () => {
   });
 
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "dashboard", "analytics", range.from.toISOString(), range.to.toISOString()],
-    queryFn: () => getDashboardAnalytics({ from: range.from, to: range.to }),
+    queryKey: ["admin", "dashboard", "analytics", range.from.toISOString(), range.to.toISOString(), range.preset],
+    queryFn: () => getDashboardAnalytics({ from: range.from, to: range.to, preset: range.preset }),
     staleTime: 30_000,
     refetchInterval: 45_000,
     refetchOnWindowFocus: true,
@@ -219,6 +223,7 @@ const Dashboard = () => {
     description: metric.description,
     icon: METRIC_ICONS[metric.key] ?? Package,
     trend: metric.trend,
+    trendStatus: metric.trendStatus ?? "ok",
     data: metric.series.map((point) => ({ value: point.value })),
     isOnlineIndicator: false,
   }));
@@ -304,6 +309,7 @@ const Dashboard = () => {
             description={item.description}
             Icon={item.icon}
             trend={item.trend}
+            trendStatus={item.trendStatus}
             data={item.data}
             isOnlineIndicator={item.isOnlineIndicator}
           />
@@ -325,8 +331,23 @@ const Dashboard = () => {
                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">{metric.label}</p>
                   <div className="flex items-baseline gap-1">
                     <span className="text-sm font-bold text-slate-800">{metric.value.toLocaleString()}</span>
-                    <span className={`text-[9px] font-bold flex items-center ${metric.trend >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                      <ArrowUpRight className={`w-2 h-2 ${metric.trend < 0 ? "rotate-90" : ""}`} /> {formatTrend(metric.trend)}
+                    <span
+                      className={`flex items-center text-[9px] font-bold ${
+                        metric.trendStatus === "new"
+                          ? "text-emerald-600"
+                          : metric.trendStatus === "none" || metric.trend == null
+                            ? "text-slate-400"
+                            : (metric.trend ?? 0) >= 0
+                              ? "text-emerald-600"
+                              : "text-red-600"
+                      }`}
+                    >
+                      {metric.trendStatus === "ok" && (metric.trend ?? 0) < 0 ? (
+                        <ArrowUpRight className="h-2 w-2 rotate-90" />
+                      ) : metric.trendStatus === "ok" ? (
+                        <ArrowUpRight className="h-2 w-2" />
+                      ) : null}{" "}
+                      {formatTrend(metric.trend, metric.trendStatus)}
                     </span>
                   </div>
                 </div>
@@ -538,36 +559,57 @@ const Dashboard = () => {
       <div className="grid gap-6 grid-cols-1 xl:grid-cols-3">
         {/* Recent CMS Activity Timeline */}
         <SectionCard title="Recent Activity">
-          <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1 relative pl-9 my-1 py-1">
-            <div className="absolute left-[20px] top-0 bottom-0 w-[1px] bg-slate-100 pointer-events-none" />
-            
+          <div className="my-1 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
             {recentTimeline.length > 0 ? (
-              recentTimeline.map((activity, i) => (
-                <div key={i} className="relative group pb-1">
-                  {/* Timeline icon dot */}
-                  <span className={`absolute left-[6px] top-0.5 flex h-7 w-7 items-center justify-center rounded-full border border-white ring-4 ring-white shadow-sm transition-all duration-300 group-hover:scale-105 ${activity.color}`}>
-                    <activity.icon className="w-3.5 h-3.5" />
-                  </span>
+              <div className="space-y-0">
+                {recentTimeline.map((activity, i) => {
+                  const Icon = activity.icon;
+                  const isLast = i === recentTimeline.length - 1;
+                  return (
+                    <div key={`${activity.href}-${activity.time}-${i}`} className="relative flex gap-3">
+                      {/* Timeline column: fixed icon + centered rail */}
+                      <div className="relative flex w-10 shrink-0 flex-col items-center">
+                        {!isLast && (
+                          <div
+                            className="absolute left-1/2 top-10 bottom-0 w-px -translate-x-1/2 bg-slate-100"
+                            aria-hidden
+                          />
+                        )}
+                        <span
+                          className={`relative z-[1] flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm ${activity.color}`}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </span>
+                      </div>
 
-                  <button
-                    type="button"
-                    onClick={() => navigate(activity.href)}
-                    className="flex flex-col w-full text-left rounded-xl p-2.5 border border-transparent hover:border-slate-100 hover:bg-slate-50/50 transition-all duration-200"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <p className="text-xs font-semibold text-slate-700 group-hover:text-emerald-600 transition-colors leading-tight">
-                        {activity.event}
-                      </p>
-                      <span className="text-[9px] font-medium text-slate-400 shrink-0 ml-2">{activity.time}</span>
+                      {/* Content: title never overlaps icon; timestamp stays right */}
+                      <button
+                        type="button"
+                        onClick={() => navigate(activity.href)}
+                        className={`min-w-0 flex-1 rounded-xl border border-transparent p-2 text-left transition-all duration-200 hover:border-slate-100 hover:bg-slate-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 ${
+                          isLast ? "pb-2" : "pb-4"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-xs font-semibold leading-snug text-slate-700 transition-colors hover:text-emerald-600">
+                              {activity.event}
+                            </p>
+                            <p className="mt-1 truncate text-[10px] text-slate-400">
+                              Action by <span className="font-semibold text-slate-500">{activity.user}</span>
+                            </p>
+                          </div>
+                          <span className="shrink-0 whitespace-nowrap pt-0.5 text-[9px] font-medium text-slate-400">
+                            {activity.time}
+                          </span>
+                        </div>
+                      </button>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1">
-                      Action by <span className="font-semibold text-slate-500">{activity.user}</span>
-                    </p>
-                  </button>
-                </div>
-              ))
+                  );
+                })}
+              </div>
             ) : (
-              <p className="text-xs font-medium text-slate-400 text-center py-12">No CMS activity logged yet.</p>
+              <p className="py-12 text-center text-xs font-medium text-slate-400">No CMS activity logged yet.</p>
             )}
           </div>
         </SectionCard>

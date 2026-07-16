@@ -16,6 +16,7 @@ import {
 } from "date-fns";
 
 export type DashboardPresetId =
+  | "allTime"
   | "today"
   | "yesterday"
   | "last7"
@@ -37,9 +38,13 @@ type Ctx = {
   setCustomRange: (from: Date, to: Date) => void;
 };
 
-const STORAGE_KEY = "techvistar-dashboard-header-range";
+const STORAGE_KEY = "techvistar-dashboard-header-range-v3";
+
+/** Far-past bound used only for API serialization when All Time is selected. */
+const ALL_TIME_FROM = new Date("2000-01-01T00:00:00.000Z");
 
 export const DASHBOARD_PRESETS: Array<{ id: DashboardPresetId; label: string }> = [
+  { id: "allTime", label: "All Time" },
   { id: "today", label: "Today" },
   { id: "yesterday", label: "Yesterday" },
   { id: "last7", label: "Last 7 Days" },
@@ -52,6 +57,8 @@ export const DASHBOARD_PRESETS: Array<{ id: DashboardPresetId; label: string }> 
 
 export function resolvePresetRange(preset: DashboardPresetId, now = new Date()): { from: Date; to: Date } {
   switch (preset) {
+    case "allTime":
+      return { from: ALL_TIME_FROM, to: endOfDay(now) };
     case "today":
       return { from: startOfDay(now), to: endOfDay(now) };
     case "yesterday": {
@@ -71,7 +78,7 @@ export function resolvePresetRange(preset: DashboardPresetId, now = new Date()):
       return { from: startOfMonth(prev), to: endOfMonth(prev) };
     }
     default:
-      return { from: startOfDay(subDays(now, 6)), to: endOfDay(now) };
+      return { from: ALL_TIME_FROM, to: endOfDay(now) };
   }
 }
 
@@ -94,14 +101,14 @@ function readStored(): DashboardRangeState {
   } catch {
     /* ignore */
   }
-  return { preset: "last7", ...resolvePresetRange("last7") };
+  return { preset: "allTime", ...resolvePresetRange("allTime") };
 }
 
 const DashboardRangeContext = createContext<Ctx | null>(null);
 
 export function DashboardRangeProvider({ children }: { children: ReactNode }) {
   const [range, setRange] = useState<DashboardRangeState>(() =>
-    typeof window !== "undefined" ? readStored() : { preset: "last7", ...resolvePresetRange("last7") },
+    typeof window !== "undefined" ? readStored() : { preset: "allTime", ...resolvePresetRange("allTime") },
   );
 
   const persist = useCallback((next: DashboardRangeState) => {

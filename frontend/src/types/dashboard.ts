@@ -3,7 +3,10 @@ export type DashboardMetric = {
   title: string;
   value: number;
   description: string;
-  trend: number;
+  /** Percentage delta when trendStatus === 'ok' */
+  trend: number | null;
+  /** ok = show %; new = first activity; none = cannot compare (e.g. All Time) */
+  trendStatus: 'ok' | 'new' | 'none';
   series: Array<{ label: string; value: number }>;
 };
 
@@ -47,7 +50,13 @@ export type DashboardAnalytics = {
   generatedAt: string;
   metrics: DashboardMetric[];
   platformOverview: {
-    metrics: Array<{ key: string; label: string; value: number; trend: number }>;
+    metrics: Array<{
+      key: string;
+      label: string;
+      value: number;
+      trend: number | null;
+      trendStatus: 'ok' | 'new' | 'none';
+    }>;
     series: Array<{
       label: string;
       contacts: number;

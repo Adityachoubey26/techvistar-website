@@ -14,14 +14,19 @@ import { PagesCmsConfig, type IPagesCmsConfig } from '@/models/PagesCmsConfig';
 import {
   aggregateMonthlySeries,
   aggregateSummary,
+  buildAnalyticsBuckets,
   buildExtendedMonthlyGrowth,
   buildMonthBuckets,
-  calculateTrend,
+  buildPreviousEquivalentRange,
+  calculatePeriodTrend,
+  dateFieldMatch,
   mergeMonthlySeries,
   RECENT_ACTIVITY_LIMIT,
   RECENT_LIST_LIMIT,
   toStatusData,
+  type DashboardDateRange,
   type MetricSeriesPoint,
+  type PeriodTrendResult,
 } from '@/utils/dashboard.aggregations';
 import { getWebsiteHealth, type WebsiteHealth } from '@/utils/dashboard.health';
 import { getSeoAnalytics, type SeoAnalytics } from '@/utils/dashboard.seo';
@@ -37,7 +42,8 @@ type DashboardMetric = {
   title: string;
   value: number;
   description: string;
-  trend: number;
+  trend: number | null;
+  trendStatus: 'ok' | 'new' | 'none';
   series: MetricSeriesPoint[];
 };
 
@@ -56,7 +62,8 @@ type PlatformOverviewMetric = {
   key: string;
   label: string;
   value: number;
-  trend: number;
+  trend: number | null;
+  trendStatus: 'ok' | 'new' | 'none';
 };
 
 export type DashboardResponse = {
@@ -140,46 +147,33 @@ function buildMetric(
   value: number,
   description: string,
   series: MetricSeriesPoint[],
+  periodTrend?: PeriodTrendResult,
 ): DashboardMetric {
+  const trend = periodTrend ?? { value: null, status: 'none' as const };
   return {
     key,
     title,
     value,
     description,
-    trend: calculateTrend(series),
+    trend: trend.value,
+    trendStatus: trend.status,
     series,
   };
 }
 
-function mergeRecentActivity(
-  activity: DashboardRecentActivity[],
-  cmsUpdates: Array<{ type: string; title: string; updatedBy: string; updatedAt: string }>,
-): DashboardRecentActivity[] {
-  const hrefByType: Record<string, string> = {
-    service: '/admin/services',
-    solution: '/admin/solutions',
-    industry: '/admin/industries',
-    portfolio: '/admin/portfolio',
-    'pages-cms': '/admin/pages',
-  };
-
-  const cmsActivity = cmsUpdates.map((item) => ({
-    type: item.type,
-    title: item.title,
-    subtitle: item.updatedBy,
-    status: 'updated',
-    href: hrefByType[item.type] ?? '/admin/pages',
-    createdAt: item.updatedAt,
-  }));
-
-  return [...activity, ...cmsActivity]
-    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
-    .slice(0, RECENT_ACTIVITY_LIMIT);
+function asPlatformTrend(result: PeriodTrendResult): Pick<PlatformOverviewMetric, 'trend' | 'trendStatus'> {
+  return { trend: result.value, trendStatus: result.status };
 }
 
-async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<DashboardRecentActivity[]> {
+async function getRecentActivity(
+  limit = RECENT_ACTIVITY_LIMIT,
+  range?: DashboardDateRange | null,
+): Promise<DashboardRecentActivity[]> {
+  const createdAtMatch = dateFieldMatch(range, 'createdAt');
+  const baseMatch = { isDeleted: { $ne: true }, ...createdAtMatch };
+
   const recent = await Service.aggregate([
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: baseMatch },
     { $sort: { createdAt: -1 } },
     { $limit: limit },
     {
@@ -196,7 +190,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'solutions',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -216,7 +210,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'industries',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -236,7 +230,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'projects',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -256,7 +250,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'jobs',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -276,7 +270,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'jobapplications',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -296,7 +290,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'contacts',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -316,7 +310,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'newsletters',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -336,7 +330,7 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
       $unionWith: {
         coll: 'faqs',
         pipeline: [
-          { $match: { isDeleted: { $ne: true } } },
+          { $match: baseMatch },
           { $sort: { createdAt: -1 } },
           { $limit: limit },
           {
@@ -376,9 +370,9 @@ async function getRecentActivity(limit = RECENT_ACTIVITY_LIMIT): Promise<Dashboa
   }));
 }
 
-async function getRecentContacts(limit = RECENT_LIST_LIMIT) {
+async function getRecentContacts(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
   return Contact.aggregate([
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: { isDeleted: { $ne: true }, ...dateFieldMatch(range, 'createdAt') } },
     { $sort: { createdAt: -1 } },
     { $limit: limit },
     {
@@ -394,9 +388,9 @@ async function getRecentContacts(limit = RECENT_LIST_LIMIT) {
   ]);
 }
 
-async function getRecentApplications(limit = RECENT_LIST_LIMIT) {
+async function getRecentApplications(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
   return JobApplication.aggregate([
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: { isDeleted: { $ne: true }, ...dateFieldMatch(range, 'createdAt') } },
     { $sort: { createdAt: -1 } },
     { $limit: limit },
     {
@@ -421,9 +415,9 @@ async function getRecentApplications(limit = RECENT_LIST_LIMIT) {
   ]);
 }
 
-async function getRecentNewsletter(limit = RECENT_LIST_LIMIT) {
+async function getRecentNewsletter(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
   return Newsletter.aggregate([
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: { isDeleted: { $ne: true }, ...dateFieldMatch(range, 'createdAt') } },
     { $sort: { createdAt: -1 } },
     { $limit: limit },
     {
@@ -438,9 +432,9 @@ async function getRecentNewsletter(limit = RECENT_LIST_LIMIT) {
   ]);
 }
 
-async function getRecentPortfolio(limit = RECENT_LIST_LIMIT) {
+async function getRecentPortfolio(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
   return ProjectModel.aggregate([
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: { isDeleted: { $ne: true }, ...dateFieldMatch(range, 'createdAt') } },
     { $sort: { createdAt: -1 } },
     { $limit: limit },
     {
@@ -455,9 +449,10 @@ async function getRecentPortfolio(limit = RECENT_LIST_LIMIT) {
   ]);
 }
 
-async function getRecentCmsUpdates(limit = RECENT_LIST_LIMIT) {
+async function getRecentCmsUpdates(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
+  const updatedAtMatch = dateFieldMatch(range, 'updatedAt');
   const contentUpdatePipeline = (type: string) => [
-    { $match: { isDeleted: { $ne: true } } },
+    { $match: { isDeleted: { $ne: true }, ...updatedAtMatch } },
     { $sort: { updatedAt: -1 as const } },
     { $limit: limit },
     {
@@ -494,6 +489,7 @@ async function getRecentCmsUpdates(limit = RECENT_LIST_LIMIT) {
       $unionWith: {
         coll: 'pagescmsconfigs',
         pipeline: [
+          { $match: updatedAtMatch },
           { $sort: { updatedAt: -1 as const } },
           { $limit: limit },
           {
@@ -522,8 +518,9 @@ async function getRecentCmsUpdates(limit = RECENT_LIST_LIMIT) {
   return recent;
 }
 
-async function getLatestAdminActivity(limit = RECENT_LIST_LIMIT) {
+async function getLatestAdminActivity(limit = RECENT_LIST_LIMIT, range?: DashboardDateRange | null) {
   return Admin.aggregate([
+    { $match: dateFieldMatch(range, 'updatedAt') },
     { $sort: { updatedAt: -1 } },
     { $limit: limit },
     {
@@ -565,8 +562,33 @@ async function getStorageUsage(): Promise<DashboardResponse['storageUsage']> {
   }
 }
 
-export async function getDashboardSummary(): Promise<DashboardResponse> {
-  const monthBuckets = buildMonthBuckets();
+export async function getDashboardSummary(
+  range?: DashboardDateRange | null,
+  preset?: string | null,
+): Promise<DashboardResponse> {
+  const isAllTime = preset === 'allTime' || !range;
+  const analyticsRange: DashboardDateRange | null = isAllTime ? null : range!;
+  /** Fixed window for inventory KPI sparklines — independent of date filter. */
+  const inventoryBuckets = buildMonthBuckets(6);
+  /** Analytics charts/feeds follow the selected range (or 12 months for All Time). */
+  const analyticsBuckets = isAllTime ? buildMonthBuckets(12) : buildAnalyticsBuckets(analyticsRange);
+  const previousRange = analyticsRange
+    ? buildPreviousEquivalentRange(analyticsRange, preset)
+    : null;
+
+  /** Analytics-only match. Inventory CMS counts stay unscoped. */
+  const createdInRangeMatch: Record<string, unknown> = {
+    isDeleted: { $ne: true },
+    ...dateFieldMatch(analyticsRange, 'createdAt'),
+  };
+  const createdInPreviousMatch: Record<string, unknown> = {
+    isDeleted: { $ne: true },
+    ...(previousRange ? dateFieldMatch(previousRange, 'createdAt') : {}),
+  };
+
+  const noneTrend = (): PeriodTrendResult => ({ value: null, status: 'none' });
+  const periodTrend = (current: number, previous: number): PeriodTrendResult =>
+    isAllTime || !previousRange ? noneTrend() : calculatePeriodTrend(current, previous);
 
   const [
     servicesSummary,
@@ -580,6 +602,7 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
     faqsSummary,
     officesSummary,
     adminsSummary,
+    jobsInRangeSummary,
     servicesSeries,
     solutionsSeries,
     industriesSeries,
@@ -588,11 +611,20 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
     applicationsSeries,
     contactsSeries,
     newslettersSeries,
-    faqsSeries,
+    servicesInvSeries,
+    solutionsInvSeries,
+    industriesInvSeries,
+    projectsInvSeries,
+    faqsInvSeries,
+    adminsInvSeries,
     servicesUpdatedSeries,
     solutionsUpdatedSeries,
     industriesUpdatedSeries,
     projectsUpdatedSeries,
+    prevJobsCreated,
+    prevApplicationsCreated,
+    prevContactsCreated,
+    prevNewslettersCreated,
     recentActivityRaw,
     recentContacts,
     recentApplications,
@@ -605,6 +637,7 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
     databaseStats,
     averageContactResponseHours,
   ] = await Promise.all([
+    // —— Global CMS inventory (never date-filtered) ——
     aggregateSummary(Service, [
       { key: 'active', condition: { $eq: ['$status', 'active'] } },
       { key: 'draft', condition: { $eq: ['$status', 'draft'] } },
@@ -632,23 +665,36 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       { key: 'draft', condition: { $eq: ['$status', 'draft'] } },
       { key: 'featured', condition: { $eq: ['$featured', true] } },
     ]),
-    aggregateSummary(JobApplication, [
-      { key: 'pending', condition: { $eq: ['$status', 'Pending'] } },
-      { key: 'shortlisted', condition: { $eq: ['$status', 'Shortlisted'] } },
-      { key: 'interview', condition: { $eq: ['$status', 'Interview'] } },
-      { key: 'rejected', condition: { $eq: ['$status', 'Rejected'] } },
-      { key: 'selected', condition: { $eq: ['$status', 'Selected'] } },
-    ]),
-    aggregateSummary(Contact, [
-      { key: 'new', condition: { $eq: ['$status', 'new'] } },
-      { key: 'inProgress', condition: { $eq: ['$status', 'in-progress'] } },
-      { key: 'resolved', condition: { $eq: ['$status', 'resolved'] } },
-      { key: 'archived', condition: { $eq: ['$status', 'archived'] } },
-    ]),
-    aggregateSummary(Newsletter, [
-      { key: 'subscribed', condition: { $eq: ['$status', 'subscribed'] } },
-      { key: 'unsubscribed', condition: { $eq: ['$status', 'unsubscribed'] } },
-    ]),
+    // —— Analytical metrics (scoped to selected date range) ——
+    aggregateSummary(
+      JobApplication,
+      [
+        { key: 'pending', condition: { $eq: ['$status', 'Pending'] } },
+        { key: 'shortlisted', condition: { $eq: ['$status', 'Shortlisted'] } },
+        { key: 'interview', condition: { $eq: ['$status', 'Interview'] } },
+        { key: 'rejected', condition: { $eq: ['$status', 'Rejected'] } },
+        { key: 'selected', condition: { $eq: ['$status', 'Selected'] } },
+      ],
+      createdInRangeMatch,
+    ),
+    aggregateSummary(
+      Contact,
+      [
+        { key: 'new', condition: { $eq: ['$status', 'new'] } },
+        { key: 'inProgress', condition: { $eq: ['$status', 'in-progress'] } },
+        { key: 'resolved', condition: { $eq: ['$status', 'resolved'] } },
+        { key: 'archived', condition: { $eq: ['$status', 'archived'] } },
+      ],
+      createdInRangeMatch,
+    ),
+    aggregateSummary(
+      Newsletter,
+      [
+        { key: 'subscribed', condition: { $eq: ['$status', 'subscribed'] } },
+        { key: 'unsubscribed', condition: { $eq: ['$status', 'unsubscribed'] } },
+      ],
+      createdInRangeMatch,
+    ),
     aggregateSummary(FAQModel, [
       { key: 'active', condition: { $eq: ['$status', 'active'] } },
       { key: 'inactive', condition: { $eq: ['$status', 'inactive'] } },
@@ -659,26 +705,47 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       { key: 'inactive', condition: { $eq: ['$isActive', false] } },
     ]),
     aggregateSummary(Admin, []),
-    aggregateMonthlySeries(Service, monthBuckets),
-    aggregateMonthlySeries(Solution, monthBuckets),
-    aggregateMonthlySeries(Industry, monthBuckets),
-    aggregateMonthlySeries(ProjectModel, monthBuckets),
-    aggregateMonthlySeries(Job, monthBuckets),
-    aggregateMonthlySeries(JobApplication, monthBuckets),
-    aggregateMonthlySeries(Contact, monthBuckets),
-    aggregateMonthlySeries(Newsletter, monthBuckets),
-    aggregateMonthlySeries(FAQModel, monthBuckets),
-    aggregateMonthlySeries(Service, monthBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
-    aggregateMonthlySeries(Solution, monthBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
-    aggregateMonthlySeries(Industry, monthBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
-    aggregateMonthlySeries(ProjectModel, monthBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
-    getRecentActivity(),
-    getRecentContacts(),
-    getRecentApplications(),
-    getRecentNewsletter(),
-    getRecentPortfolio(),
-    getRecentCmsUpdates(),
-    getLatestAdminActivity(),
+    aggregateSummary(
+      Job,
+      [
+        { key: 'active', condition: { $eq: ['$status', 'active'] } },
+        { key: 'closed', condition: { $eq: ['$status', 'closed'] } },
+        { key: 'draft', condition: { $eq: ['$status', 'draft'] } },
+        { key: 'featured', condition: { $eq: ['$featured', true] } },
+      ],
+      createdInRangeMatch,
+    ),
+    aggregateMonthlySeries(Service, analyticsBuckets),
+    aggregateMonthlySeries(Solution, analyticsBuckets),
+    aggregateMonthlySeries(Industry, analyticsBuckets),
+    aggregateMonthlySeries(ProjectModel, analyticsBuckets),
+    aggregateMonthlySeries(Job, analyticsBuckets),
+    aggregateMonthlySeries(JobApplication, analyticsBuckets),
+    aggregateMonthlySeries(Contact, analyticsBuckets),
+    aggregateMonthlySeries(Newsletter, analyticsBuckets),
+    // Inventory KPI sparklines — fixed 6-month window, ignore date filter
+    aggregateMonthlySeries(Service, inventoryBuckets),
+    aggregateMonthlySeries(Solution, inventoryBuckets),
+    aggregateMonthlySeries(Industry, inventoryBuckets),
+    aggregateMonthlySeries(ProjectModel, inventoryBuckets),
+    aggregateMonthlySeries(FAQModel, inventoryBuckets),
+    aggregateMonthlySeries(Admin, inventoryBuckets, {}),
+    aggregateMonthlySeries(Service, analyticsBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
+    aggregateMonthlySeries(Solution, analyticsBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
+    aggregateMonthlySeries(Industry, analyticsBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
+    aggregateMonthlySeries(ProjectModel, analyticsBuckets, { isDeleted: { $ne: true } }, 'updatedAt'),
+    // Previous-equivalent period create counts (analytics trends only)
+    aggregateSummary(Job, [], createdInPreviousMatch),
+    aggregateSummary(JobApplication, [], createdInPreviousMatch),
+    aggregateSummary(Contact, [], createdInPreviousMatch),
+    aggregateSummary(Newsletter, [], createdInPreviousMatch),
+    getRecentActivity(RECENT_ACTIVITY_LIMIT, analyticsRange),
+    getRecentContacts(RECENT_LIST_LIMIT, analyticsRange),
+    getRecentApplications(RECENT_LIST_LIMIT, analyticsRange),
+    getRecentNewsletter(RECENT_LIST_LIMIT, analyticsRange),
+    getRecentPortfolio(RECENT_LIST_LIMIT, analyticsRange),
+    getRecentCmsUpdates(RECENT_LIST_LIMIT, analyticsRange),
+    getLatestAdminActivity(RECENT_LIST_LIMIT, analyticsRange),
     PagesCmsConfig.findOne({ configKey: 'global' }).lean(),
     getStorageUsage(),
     getDatabaseStats(),
@@ -711,7 +778,17 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
     }
   }
 
-  const recentActivity = mergeRecentActivity(recentActivityRaw, recentCmsUpdates);
+  /**
+   * Recent Activity must use the same createdAt range filter as analytics KPI cards.
+   * CMS updates (updatedAt) are returned separately as `recentCmsUpdates` — merging them
+   * here previously made updated inventory look like "today's activity" while create-based
+   * KPIs (applications/jobs/contacts/newsletter) correctly stayed at 0.
+   */
+  const recentActivity = recentActivityRaw;
+
+  // Inventory sparklines: MoM within fixed 6-month window (independent of date filter)
+  const inventoryMoM = (series: MetricSeriesPoint[]) =>
+    calculatePeriodTrend(series.at(-1)?.value ?? 0, series.at(-2)?.value ?? 0);
 
   const metrics = [
     buildMetric(
@@ -719,42 +796,48 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       'Total Services',
       servicesSummary.total,
       buildSeriesDescription(`Active ${servicesSummary.active}`, [`Draft ${servicesSummary.draft}`, `Featured ${servicesSummary.featured}`]),
-      servicesSeries,
+      servicesInvSeries,
+      inventoryMoM(servicesInvSeries),
     ),
     buildMetric(
       'industries',
       'Total Industries',
       industriesSummary.total,
       buildSeriesDescription(`Active ${industriesSummary.active}`, [`Draft ${industriesSummary.draft}`, `Featured ${industriesSummary.featured}`]),
-      industriesSeries,
+      industriesInvSeries,
+      inventoryMoM(industriesInvSeries),
     ),
     buildMetric(
       'solutions',
       'Total Solutions',
       solutionsSummary.total,
       buildSeriesDescription(`Active ${solutionsSummary.active}`, [`Draft ${solutionsSummary.draft}`, `Featured ${solutionsSummary.featured}`]),
-      solutionsSeries,
+      solutionsInvSeries,
+      inventoryMoM(solutionsInvSeries),
     ),
     buildMetric(
       'projects',
       'Portfolio Projects',
       projectsSummary.total,
       buildSeriesDescription(`Completed ${projectsSummary.completed}`, [`In progress ${projectsSummary.inProgress}`, `Featured ${projectsSummary.featured}`]),
-      projectsSeries,
+      projectsInvSeries,
+      inventoryMoM(projectsInvSeries),
     ),
     buildMetric(
       'faqs',
       'Total FAQs',
       faqsSummary.total,
       buildSeriesDescription(`Active ${faqsSummary.active}`, [`Inactive ${faqsSummary.inactive}`, `Featured ${faqsSummary.featured}`]),
-      faqsSeries,
+      faqsInvSeries,
+      inventoryMoM(faqsInvSeries),
     ),
     buildMetric(
       'jobs',
       'Total Jobs',
-      jobsSummary.total,
-      buildSeriesDescription(`Active ${jobsSummary.active}`, [`Closed ${jobsSummary.closed}`, `Featured ${jobsSummary.featured}`]),
+      jobsInRangeSummary.total,
+      buildSeriesDescription(`Active ${jobsInRangeSummary.active}`, [`Closed ${jobsInRangeSummary.closed}`, `Featured ${jobsInRangeSummary.featured}`]),
       jobsSeries,
+      periodTrend(jobsInRangeSummary.total, prevJobsCreated.total),
     ),
     buildMetric(
       'applications',
@@ -762,6 +845,7 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       applicationsSummary.total,
       buildSeriesDescription(`Pending ${applicationsSummary.pending}`, [`Shortlisted ${applicationsSummary.shortlisted}`, `Interview ${applicationsSummary.interview}`]),
       applicationsSeries,
+      periodTrend(applicationsSummary.total, prevApplicationsCreated.total),
     ),
     buildMetric(
       'contacts',
@@ -769,6 +853,7 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       contactsSummary.total,
       buildSeriesDescription(`New ${contactsSummary.new}`, [`Resolved ${contactsSummary.resolved}`, `Archived ${contactsSummary.archived}`]),
       contactsSeries,
+      periodTrend(contactsSummary.total, prevContactsCreated.total),
     ),
     buildMetric(
       'newsletter',
@@ -776,13 +861,15 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       newslettersSummary.total,
       buildSeriesDescription(`Subscribed ${newslettersSummary.subscribed}`, [`Unsubscribed ${newslettersSummary.unsubscribed}`]),
       newslettersSeries,
+      periodTrend(newslettersSummary.total, prevNewslettersCreated.total),
     ),
     buildMetric(
       'admins',
       'Active Admins',
       adminsSummary.total,
       buildSeriesDescription(`${adminsSummary.total} registered`, [`Offices ${officesSummary.active}`]),
-      [{ label: 'Now', value: adminsSummary.total }],
+      adminsInvSeries,
+      inventoryMoM(adminsInvSeries),
     ),
   ];
 
@@ -801,10 +888,8 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
   const inboundTotal =
     contactsSummary.total + applicationsSummary.total + newslettersSummary.subscribed;
 
-  const inboundSeries = contactsSeries.map((point, index) => ({
-    label: point.label,
-    value: point.value + (applicationsSeries[index]?.value ?? 0) + (newslettersSeries[index]?.value ?? 0),
-  }));
+  const prevInboundTotal =
+    prevContactsCreated.total + prevApplicationsCreated.total + prevNewslettersCreated.total;
 
   const platformOverview = {
     metrics: [
@@ -812,25 +897,25 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
         key: 'inbound',
         label: 'Total Inbound',
         value: inboundTotal,
-        trend: calculateTrend(inboundSeries),
+        ...asPlatformTrend(periodTrend(inboundTotal, prevInboundTotal)),
       },
       {
         key: 'contacts',
         label: 'Contacts',
         value: contactsSummary.total,
-        trend: calculateTrend(contactsSeries),
+        ...asPlatformTrend(periodTrend(contactsSummary.total, prevContactsCreated.total)),
       },
       {
         key: 'applications',
         label: 'Applications',
         value: applicationsSummary.total,
-        trend: calculateTrend(applicationsSeries),
+        ...asPlatformTrend(periodTrend(applicationsSummary.total, prevApplicationsCreated.total)),
       },
       {
         key: 'subscribers',
         label: 'Subscribers',
         value: newslettersSummary.subscribed,
-        trend: calculateTrend(newslettersSeries),
+        ...asPlatformTrend(periodTrend(newslettersSummary.total, prevNewslettersCreated.total)),
       },
     ],
     series: monthlyGrowth.map((row) => ({
@@ -869,9 +954,9 @@ export async function getDashboardSummary(): Promise<DashboardResponse> {
       { name: 'Archived', value: contactsSummary.archived },
     ]),
     jobStatus: toStatusData([
-      { name: 'Active', value: jobsSummary.active },
-      { name: 'Closed', value: jobsSummary.closed },
-      { name: 'Draft', value: jobsSummary.draft },
+      { name: 'Active', value: jobsInRangeSummary.active },
+      { name: 'Closed', value: jobsInRangeSummary.closed },
+      { name: 'Draft', value: jobsInRangeSummary.draft },
     ]),
     projectStatus: toStatusData([
       { name: 'Completed', value: projectsSummary.completed },

@@ -11,6 +11,7 @@ interface ApiEnvelope<T> {
 export type DashboardAnalyticsQuery = {
   from?: Date | string;
   to?: Date | string;
+  preset?: string;
 };
 
 export async function getDashboardAnalytics(
@@ -22,6 +23,9 @@ export async function getDashboardAnalytics(
   }
   if (query?.to) {
     params.set('to', query.to instanceof Date ? query.to.toISOString() : query.to);
+  }
+  if (query?.preset) {
+    params.set('preset', query.preset);
   }
   const qs = params.toString();
   const response = await adminFetch(

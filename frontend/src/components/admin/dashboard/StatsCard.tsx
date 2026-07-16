@@ -10,7 +10,8 @@ type StatsCardProps = {
   value: string;
   description: string;
   Icon?: LucideIcon;
-  trend?: number;
+  trend?: number | null;
+  trendStatus?: "ok" | "new" | "none";
   data?: any[];
   isOnlineIndicator?: boolean;
 };
@@ -91,10 +92,13 @@ export const StatsCard = ({
   description,
   Icon,
   trend,
+  trendStatus = "ok",
   data = [],
   isOnlineIndicator = false,
 }: StatsCardProps) => {
-  const hasTrend = typeof trend === 'number';
+  const hasTrend = trendStatus === "ok" && typeof trend === "number";
+  const showNew = trendStatus === "new";
+  const showNone = trendStatus === "none";
   const isPositive = (trend ?? 0) >= 0;
   const chartData = data.length > 0 ? data : [{ value: 0 }];
   const numericValue = Number(value) || 0;
@@ -160,12 +164,20 @@ export const StatsCard = ({
             </div>
           ) : hasTrend ? (
             <div className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-md border w-fit ${
-              isPositive 
-                ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
-                : 'bg-red-50 text-red-600 border-red-100/50'
+              isPositive
+                ? "bg-emerald-50 text-emerald-600 border-emerald-100/50"
+                : "bg-red-50 text-red-600 border-red-100/50"
             }`}>
-              {isPositive ? "+" : "-"}
-              {Math.abs(trend ?? 0)}% <span className="font-normal text-slate-400 ml-0.5">vs last 7d</span>
+              {(trend ?? 0) > 0 ? "+" : ""}
+              {trend ?? 0}% <span className="font-normal text-slate-400 ml-0.5">vs prior</span>
+            </div>
+          ) : showNew ? (
+            <div className="flex w-fit items-center rounded-md border border-emerald-100/50 bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">
+              New
+            </div>
+          ) : showNone ? (
+            <div className="flex w-fit items-center rounded-md border border-slate-100 bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-400">
+              —
             </div>
           ) : (
             <p className="text-[10px] font-medium text-slate-400">{description}</p>
