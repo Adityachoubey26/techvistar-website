@@ -9,6 +9,7 @@ import { HomeCmsProvider } from "@/contexts/HomeCmsContext";
 import { WebsiteBrandingEffect } from "@/components/WebsiteBrandingEffect";
 import { RouteFallback } from "@/components/common/RouteFallback";
 import { Analytics } from "@/components/Analytics";
+import { ClickSpark } from "@/components/ui/ClickSpark";
 
 // Public pages — code-split per route
 const Index = lazy(() => import("./pages/Index"));
@@ -114,17 +115,43 @@ const ScrollToHashElement = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    if (hash) {
-      const element = document.getElementById(hash.replace("#", ""));
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const section = hash.replace("#", "").toLowerCase();
+    if (section !== "contact" && section !== "services") {
+      const element = document.getElementById(section);
       if (element) {
         const timer = setTimeout(() => {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
         return () => clearTimeout(timer);
       }
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
+
+    let cancelled = false;
+    const run = async () => {
+      // Wait for lazy homepage sections to mount.
+      for (let attempt = 0; attempt < 20 && !cancelled; attempt += 1) {
+        if (document.getElementById(section)) break;
+        await new Promise((resolve) => setTimeout(resolve, 80));
+      }
+      if (cancelled) return;
+      const { scrollToHomeSection } = await import("@/lib/heroScroll");
+      await scrollToHomeSection(section as "contact" | "services");
+    };
+
+    const timer = setTimeout(() => {
+      void run();
+    }, 120);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [pathname, hash]);
 
   return null;
@@ -135,6 +162,15 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ClickSpark
+        sparkColor="#14B8A6"
+        sparkSize={8}
+        sparkRadius={18}
+        sparkCount={8}
+        duration={420}
+        extraScale={1}
+        easing="ease-out"
+      />
       <HomeCmsProvider>
       <WebsiteBrandingEffect />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

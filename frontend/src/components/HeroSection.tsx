@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useCallback, type MouseEvent } from 'react';
 import {
   motion,
   useScroll,
@@ -10,8 +10,12 @@ import {
 } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { HeroBackgroundMedia } from '@/components/HeroBackgroundMedia';
+import { HeroBrandMarquee } from '@/components/hero/HeroBrandLogos';
+import { HeroScrollIndicator } from '@/components/hero/HeroScrollIndicator';
+import { HeroStatsStrip } from '@/components/hero/HeroStatsStrip';
 import { useHomeCms } from '@/contexts/HomeCmsContext';
 import { useQuery } from '@tanstack/react-query';
 import { getPublicPagesConfig } from '@/services/pages.service';
@@ -19,6 +23,11 @@ import { mergePagesCmsConfig } from '@/types/pagesCms';
 import { useMobileViewport } from '@/hooks/useMobileViewport';
 import { useLargeTabletViewport } from '@/hooks/useLargeTabletViewport';
 import { resolveHomeHeroContent } from '@/lib/resolveHomeHeroContent';
+import {
+  isHomePath,
+  resolveHeroSection,
+  scrollToHomeSection,
+} from '@/lib/heroScroll';
 import { DEFAULT_HOME_CMS } from '@/types/homeCms';
 import { AnimatedStat } from '@/components/ui/AnimatedStat';
 import { getCmsIcon } from '@/lib/cmsIcons';
@@ -83,6 +92,8 @@ type HeroSectionProps = {
 export const HeroSection = (_props: HeroSectionProps = {}) => {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -207,6 +218,38 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
       ? { maxWidth: display.maxWidth.includes('px') ? display.maxWidth : `${display.maxWidth}px` }
       : undefined;
 
+  const goToSection = useCallback(
+    async (section: 'contact' | 'services') => {
+      if (isHomePath(location.pathname)) {
+        await scrollToHomeSection(section);
+        return;
+      }
+      navigate(`/#${section}`);
+    },
+    [location.pathname, navigate],
+  );
+
+  const handleHeroCta = useCallback(
+    (event: MouseEvent, label: string, href: string, preferred?: 'contact' | 'services') => {
+      const section = resolveHeroSection(label, href, preferred);
+      if (!section) return;
+      event.preventDefault();
+      void goToSection(section);
+    },
+    [goToSection],
+  );
+
+  const handleScrollNext = useCallback(() => {
+    void goToSection('services');
+  }, [goToSection]);
+
+  const primaryHref =
+    display.ctaPrimaryLink?.trim() ||
+    (resolveHeroSection(display.ctaPrimary, '') === 'contact' ? '/#contact' : '/#services');
+  const secondaryHref =
+    display.ctaSecondaryLink?.trim() ||
+    (resolveHeroSection(display.ctaSecondary, '') === 'services' ? '/#services' : '/#contact');
+
   return (
     <section
       id="home"
@@ -225,6 +268,45 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
       )}
     >
       <HeroBackgroundMedia hero={hero} />
+
+      {/* Subtle animated green radial glow + soft vignette */}
+      <div className="pointer-events-none absolute inset-0 -z-[12]" aria-hidden>
+        <div
+          className={cn(
+            'absolute left-1/2 top-[42%] h-[min(100vw,640px)] w-[min(100vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full',
+            'bg-[radial-gradient(circle,rgba(16,185,129,0.18)_0%,rgba(16,185,129,0.06)_42%,transparent_70%)]',
+            'motion-reduce:animate-none animate-glow-pulse will-change-transform',
+          )}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.45)_100%)]" />
+      </div>
+
+      {/* Tiny floating particles */}
+      {!reduceMotion ? (
+        <div className="pointer-events-none absolute inset-0 -z-[11] overflow-hidden" aria-hidden>
+          {[
+            { top: '18%', left: '12%', size: 2, delay: '0s', dur: '9s' },
+            { top: '28%', left: '78%', size: 2.5, delay: '1.2s', dur: '11s' },
+            { top: '55%', left: '22%', size: 1.5, delay: '0.6s', dur: '8s' },
+            { top: '62%', left: '68%', size: 2, delay: '2s', dur: '10s' },
+            { top: '40%', left: '48%', size: 1.5, delay: '1.6s', dur: '12s' },
+            { top: '72%', left: '38%', size: 2, delay: '0.3s', dur: '9.5s' },
+          ].map((p, i) => (
+            <span
+              key={i}
+              className="hero-particle absolute rounded-full bg-emerald-300/40 shadow-[0_0_8px_rgba(52,211,153,0.35)]"
+              style={{
+                top: p.top,
+                left: p.left,
+                width: p.size,
+                height: p.size,
+                animationDelay: p.delay,
+                animationDuration: p.dur,
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
 
       <div
         className="pointer-events-none absolute inset-0 -z-[11] overflow-hidden"
@@ -357,39 +439,67 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
                   whileHover={
                     prefersReducedMotion
                       ? undefined
-                      : { scale: 1.04, z: 30, transition: { type: 'spring', stiffness: 400, damping: 20 } }
+                      : { y: -3, transition: { type: 'spring', stiffness: 420, damping: 22 } }
                   }
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.95 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
                   <Button
                     size="lg"
-                    className="h-11 sm:h-12 w-full lg:w-auto min-w-0 lg:min-w-[11.5rem] rounded-lg border-0 bg-primary px-6 sm:px-8 text-[0.9375rem] sm:text-base font-semibold text-primary-foreground shadow-[0_12px_40px_-12px_rgba(34,197,94,0.45)] transition-shadow hover:bg-primary/92 hover:shadow-[0_16px_48px_-10px_rgba(34,197,94,0.4)]"
+                    className={cn(
+                      'hero-cta-primary group h-11 sm:h-12 w-full lg:w-auto min-w-0 lg:min-w-[11.5rem] rounded-lg border-0',
+                      'bg-primary px-6 sm:px-8 text-[0.9375rem] sm:text-base font-semibold text-primary-foreground',
+                      'shadow-[0_12px_40px_-12px_rgba(34,197,94,0.45)]',
+                      'transition-[background-color,box-shadow,transform] duration-300',
+                      'hover:bg-emerald-400 hover:shadow-[0_18px_44px_-10px_rgba(34,197,94,0.55)]',
+                      'focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
+                    )}
                     asChild
                   >
-                    <Link to={display.ctaPrimaryLink} className="inline-flex items-center justify-center">
+                    <Link
+                      to="/#contact"
+                      className="inline-flex items-center justify-center gap-2"
+                      onClick={(e) => handleHeroCta(e, display.ctaPrimary, primaryHref, 'contact')}
+                    >
                       <span>{display.ctaPrimary}</span>
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
                     </Link>
                   </Button>
                 </motion.div>
                 <motion.div
                   whileHover={
-                    prefersReducedMotion ? undefined : { scale: 1.03, z: 20, y: -2 }
+                    prefersReducedMotion ? undefined : { y: -2, transition: { type: 'spring', stiffness: 400, damping: 24 } }
                   }
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.96 }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
                   <Button
                     variant="outline"
                     size="lg"
-                    className="h-11 sm:h-12 w-full lg:w-auto min-w-0 lg:min-w-[11.5rem] rounded-lg border-white/15 bg-zinc-950/60 px-6 sm:px-8 text-[0.9375rem] sm:text-base font-semibold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-colors hover:border-white/25 hover:bg-white/5"
+                    className={cn(
+                      'hero-cta-secondary group h-11 sm:h-12 w-full lg:w-auto min-w-0 lg:min-w-[11.5rem] rounded-lg',
+                      'border-white/20 bg-white/[0.06] px-6 sm:px-8 text-[0.9375rem] sm:text-base font-semibold text-white',
+                      'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-md',
+                      'transition-[border-color,background-color,box-shadow,backdrop-filter] duration-300',
+                      'hover:border-emerald-400/45 hover:bg-white/[0.1] hover:shadow-[0_0_24px_rgba(16,185,129,0.18)] hover:backdrop-blur-xl',
+                      'focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
+                    )}
                     asChild
                   >
-                    <Link to={display.ctaSecondaryLink} className="inline-flex items-center justify-center">
+                    <Link
+                      to="/#services"
+                      className="inline-flex items-center justify-center gap-2"
+                      onClick={(e) => handleHeroCta(e, display.ctaSecondary, secondaryHref, 'services')}
+                    >
                       <span>{display.ctaSecondary}</span>
+                      <ArrowRight className="h-4 w-4 opacity-80 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
                     </Link>
                   </Button>
                 </motion.div>
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="mt-4 hidden w-full md:mt-6 md:block lg:mt-7">
+                <HeroStatsStrip />
               </motion.div>
             </motion.div>
           </motion.div>
@@ -459,26 +569,7 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
                     />
                   ))
                 ) : (
-                  <>
-                    <svg className="h-4 w-auto text-white/80" viewBox="0 0 100 24" fill="currentColor" aria-hidden>
-                      <path d="M12 4L4 18h16L12 4zm0 3.5l5.5 9.5H6.5L12 7.5z" fillRule="evenodd" />
-                      <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">ACME</text>
-                    </svg>
-                    <svg className="h-4 w-auto text-white/80" viewBox="0 0 110 24" fill="currentColor" aria-hidden>
-                      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
-                      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" />
-                      <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">GLOBEX</text>
-                    </svg>
-                    <svg className="h-4 w-auto text-white/80" viewBox="0 0 110 24" fill="currentColor" aria-hidden>
-                      <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
-                      <circle cx="12" cy="12" r="3" fill="currentColor" />
-                      <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">INITECH</text>
-                    </svg>
-                    <svg className="h-4 w-auto text-white/80" viewBox="0 0 120 24" fill="currentColor" aria-hidden>
-                      <polygon points="12,3 20,8 20,16 12,21 4,16 4,8" stroke="currentColor" strokeWidth="2" fill="none" />
-                      <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">UMBRELLA</text>
-                    </svg>
-                  </>
+                  <HeroBrandMarquee label="" className="hero-ipad-inline-marquee" />
                 )}
               </div>
             </div>
@@ -489,64 +580,30 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
             transition={{ delay: 0.5, duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="text-left w-full min-w-0 md:flex-1"
           >
-            <p className="hero-trust-label text-[10px] sm:text-xs uppercase tracking-[0.25em] text-zinc-400/90 font-bold mb-2 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-              Trusted by industry leaders
-            </p>
-            <div className="hero-trust-logos opacity-60 grayscale select-none">
-              {sortedTrustLogos.length > 0 ? (
-                sortedTrustLogos.map((logo) => (
-                    <img key={logo.url + logo.alt} src={logo.url} alt={logo.alt} className="h-4 sm:h-5 w-auto object-contain" loading="lazy" />
-                  ))
-              ) : (
-                <>
-              <svg className="h-4 sm:h-5 w-auto text-white/80 hover:text-white hover:opacity-100 transition-all duration-300" viewBox="0 0 100 24" fill="currentColor">
-                <path d="M12 4L4 18h16L12 4zm0 3.5l5.5 9.5H6.5L12 7.5z" fillRule="evenodd" />
-                <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">ACME</text>
-              </svg>
-              <svg className="h-4 sm:h-5 w-auto text-white/80 hover:text-white hover:opacity-100 transition-all duration-300" viewBox="0 0 110 24" fill="currentColor">
-                <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" />
-                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2" />
-                <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">GLOBEX</text>
-              </svg>
-              <svg className="h-4 sm:h-5 w-auto text-white/80 hover:text-white hover:opacity-100 transition-all duration-300" viewBox="0 0 110 24" fill="currentColor">
-                <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
-                <circle cx="12" cy="12" r="3" fill="currentColor" />
-                <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">INITECH</text>
-              </svg>
-              <svg className="h-4 sm:h-5 w-auto text-white/80 hover:text-white hover:opacity-100 transition-all duration-300" viewBox="0 0 120 24" fill="currentColor">
-                <polygon points="12,3 20,8 20,16 12,21 4,16 4,8" stroke="currentColor" strokeWidth="2" fill="none" />
-                <text x="28" y="17" className="text-[11px] font-black font-sans tracking-[0.1em]" fill="currentColor">UMBRELLA</text>
-              </svg>
-                </>
-              )}
-            </div>
+            {sortedTrustLogos.length > 0 ? (
+              <>
+                <p className="hero-trust-label text-[10px] sm:text-xs uppercase tracking-[0.25em] text-zinc-400/90 font-bold mb-2 sm:mb-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                  Trusted by industry leaders
+                </p>
+                <div className="hero-trust-logos opacity-60 grayscale select-none">
+                  {sortedTrustLogos.map((logo) => (
+                    <img
+                      key={logo.url + logo.alt}
+                      src={logo.url}
+                      alt={logo.alt}
+                      className="h-4 sm:h-5 w-auto object-contain opacity-[0.6] transition-[opacity,transform] duration-300 hover:opacity-100 hover:-translate-y-[3px] hover:scale-105"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <HeroBrandMarquee />
+            )}
           </motion.div>
 
           {hero.showScrollIndicator ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="hidden md:flex items-center gap-3 text-zinc-400 text-xs font-semibold tracking-wider cursor-pointer select-none"
-            onClick={() => {
-              document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <span>Explore TechVistar</span>
-            <div className="w-6 h-10 rounded-full border-2 border-zinc-500/60 p-1 flex justify-center">
-              <motion.div
-                animate={{
-                  y: [0, 12, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="w-1 h-2 rounded-full bg-emerald-400"
-              />
-            </div>
-          </motion.div>
+            <HeroScrollIndicator onScrollNext={handleScrollNext} />
           ) : null}
         </div>
       </motion.div>
