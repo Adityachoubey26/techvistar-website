@@ -8,8 +8,25 @@ interface ApiEnvelope<T> {
   data: T;
 }
 
-export async function getDashboardAnalytics(): Promise<DashboardAnalytics> {
-  const response = await adminFetch(`${getApiBaseUrl()}/api/admin/dashboard`);
+export type DashboardAnalyticsQuery = {
+  from?: Date | string;
+  to?: Date | string;
+};
+
+export async function getDashboardAnalytics(
+  query?: DashboardAnalyticsQuery,
+): Promise<DashboardAnalytics> {
+  const params = new URLSearchParams();
+  if (query?.from) {
+    params.set('from', query.from instanceof Date ? query.from.toISOString() : query.from);
+  }
+  if (query?.to) {
+    params.set('to', query.to instanceof Date ? query.to.toISOString() : query.to);
+  }
+  const qs = params.toString();
+  const response = await adminFetch(
+    `${getApiBaseUrl()}/api/admin/dashboard${qs ? `?${qs}` : ''}`,
+  );
 
   if (!response.ok) {
     throw new Error(await readApiError(response, 'Failed to load dashboard analytics'));

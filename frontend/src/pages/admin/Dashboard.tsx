@@ -12,10 +12,13 @@ import {
   PieChart, Pie, Cell, BarChart, Bar
 } from "recharts";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDashboardAnalytics } from "@/services/dashboard.service";
 import type { DashboardMetric, DashboardRecentActivity } from "@/types/dashboard";
 import { format } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { useDashboardRange } from "@/contexts/DashboardRangeContext";
+import { getCurrentAdmin } from "@/services/auth.service";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -141,14 +144,37 @@ const mapActivityToTimeline = (activity: DashboardRecentActivity) => {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { range } = useDashboardRange();
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const { data: admin } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: getCurrentAdmin,
+    staleTime: 300000,
+    retry: false,
+  });
 
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "dashboard", "analytics"],
-    queryFn: getDashboardAnalytics,
-    staleTime: 60_000,
+    queryKey: ["admin", "dashboard", "analytics", range.from.toISOString(), range.to.toISOString()],
+    queryFn: () => getDashboardAnalytics({ from: range.from, to: range.to }),
+    staleTime: 30_000,
+    refetchInterval: 45_000,
+    refetchOnWindowFocus: true,
     retry: 5,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
   });
+
+  useEffect(() => {
+    if (data?.generatedAt) setLastSyncedAt(new Date(data.generatedAt));
+  }, [data?.generatedAt]);
+
+  const handleSync = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["admin"] }),
+      refetch(),
+    ]);
+    setLastSyncedAt(new Date());
+  }, [queryClient, refetch]);
 
   if (!data && !isError) {
     return (
@@ -255,8 +281,11 @@ const Dashboard = () => {
     <div className="space-y-6 pb-10 bg-slate-50/50 rounded-3xl p-1 sm:p-2">
       <DashboardHeader
         description={`Live analytics from MongoDB · Last updated ${generatedLabel}`}
-        onRefresh={() => refetch()}
+        onRefresh={handleSync}
         isRefreshing={isFetching}
+        lastSyncedAt={lastSyncedAt}
+        analytics={data}
+        adminName={admin?.name ?? "Admin"}
       />
 
       {/* Grid of 10 Cards - 5 columns on large screen */}
