@@ -70,6 +70,24 @@ const industryCapabilityCardSchema = {
   imagePublicId: { type: String, trim: true, default: '' },
 };
 
+/** About page focus / industries-serve cards (includes order + active) */
+const aboutContentCardSchema = {
+  icon: { type: String, trim: true, default: 'Globe' },
+  title: { type: String, trim: true, default: '' },
+  description: { type: String, trim: true, default: '' },
+  color: { type: String, trim: true, default: 'emerald' },
+  image: { type: String, trim: true, default: '' },
+  imagePublicId: { type: String, trim: true, default: '' },
+  displayOrder: { type: Number, default: 0 },
+  active: { type: Boolean, default: true },
+};
+
+const aboutCardsSectionSchema = {
+  heading: { type: String, trim: true, default: '' },
+  description: { type: String, trim: true, default: '' },
+  cards: { type: [aboutContentCardSchema], default: [] },
+};
+
 const sidebarDefaultsSchema = {
   summaryTitle: { type: String, trim: true, default: '' },
   responseTimeTitle: { type: String, trim: true, default: '' },
@@ -294,10 +312,8 @@ const pagesCmsConfigSchema = new Schema<IPagesCmsConfig>(
         title: { type: String, trim: true, default: 'Vision' },
         text: { type: String, trim: true, default: '' },
       },
-      teamSection: {
-        heading: { type: String, trim: true, default: 'Our team' },
-        description: { type: String, trim: true, default: '' },
-      },
+      focusAreas: aboutCardsSectionSchema,
+      industriesServe: aboutCardsSectionSchema,
       cta: {
         text: { type: String, trim: true, default: '' },
         buttonText: { type: String, trim: true, default: 'Contact us' },
