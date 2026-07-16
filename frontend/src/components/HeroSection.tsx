@@ -3,8 +3,6 @@ import {
   motion,
   useScroll,
   useTransform,
-  useSpring,
-  useMotionValue,
   useReducedMotion,
   type Variants,
 } from 'framer-motion';
@@ -25,16 +23,13 @@ import { useLargeTabletViewport } from '@/hooks/useLargeTabletViewport';
 import { resolveHomeHeroContent } from '@/lib/resolveHomeHeroContent';
 import {
   isHomePath,
-  resolveHeroSection,
-  scrollToHomeSection,
+  scrollToContactSection,
 } from '@/lib/heroScroll';
 import { DEFAULT_HOME_CMS } from '@/types/homeCms';
 import { AnimatedStat } from '@/components/ui/AnimatedStat';
 import { getCmsIcon } from '@/lib/cmsIcons';
 
 const spring = { type: 'spring' as const, stiffness: 420, damping: 36, mass: 0.8 };
-
-const springSmooth = { stiffness: 120, damping: 22, mass: 0.6 };
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -76,8 +71,8 @@ function HeroHighlightText({
   return (
     <motion.span
       className="hero-highlight-text inline-block font-black"
-      animate={{ y: [0, -3, 0], scale: [1, 1.015, 1] }}
-      transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+      animate={{ y: [0, -2, 0] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
     >
       {trimmed}
     </motion.span>
@@ -95,12 +90,6 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const parallaxX = useSpring(useTransform(mouseX, [-0.5, 0.5], [18, -18]), springSmooth);
-  const parallaxY = useSpring(useTransform(mouseY, [-0.5, 0.5], [14, -14]), springSmooth);
-
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
@@ -108,25 +97,6 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
 
   const contentOpacity = useTransform(scrollYProgress, [0, 0.28], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.28], [0, 36]);
-
-  const glowScale = useSpring(useTransform(scrollYProgress, [0, 0.5], [1, 1.12]), { stiffness: 80, damping: 35 });
-  const glowRotateX = useTransform(scrollYProgress, [0, 0.5], [0, 8]);
-  const ringParallaxX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-24, 24]), springSmooth);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (prefersReducedMotion) return;
-    const el = e.currentTarget;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
 
   const reduceMotion = prefersReducedMotion === true;
   const cms = useHomeCms();
@@ -218,48 +188,56 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
       ? { maxWidth: display.maxWidth.includes('px') ? display.maxWidth : `${display.maxWidth}px` }
       : undefined;
 
-  const goToSection = useCallback(
-    async (section: 'contact' | 'services') => {
-      if (isHomePath(location.pathname)) {
-        await scrollToHomeSection(section);
-        return;
-      }
-      navigate(`/#${section}`);
+  const goToContact = useCallback(async () => {
+    if (isHomePath(location.pathname)) {
+      await scrollToContactSection();
+      return;
+    }
+    navigate('/#contact');
+  }, [location.pathname, navigate]);
+
+  const goToServicesPage = useCallback(() => {
+    if (location.pathname === '/services') {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      return;
+    }
+    navigate('/services');
+  }, [location.pathname, navigate, prefersReducedMotion]);
+
+  const handlePrimaryCta = useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault();
+      void goToContact();
     },
-    [location.pathname, navigate],
+    [goToContact],
   );
 
-  const handleHeroCta = useCallback(
-    (event: MouseEvent, label: string, href: string, preferred?: 'contact' | 'services') => {
-      const section = resolveHeroSection(label, href, preferred);
-      if (!section) return;
+  const handleSecondaryCta = useCallback(
+    (event: MouseEvent) => {
       event.preventDefault();
-      void goToSection(section);
+      goToServicesPage();
     },
-    [goToSection],
+    [goToServicesPage],
   );
 
   const handleScrollNext = useCallback(() => {
-    void goToSection('services');
-  }, [goToSection]);
-
-  const primaryHref =
-    display.ctaPrimaryLink?.trim() ||
-    (resolveHeroSection(display.ctaPrimary, '') === 'contact' ? '/#contact' : '/#services');
-  const secondaryHref =
-    display.ctaSecondaryLink?.trim() ||
-    (resolveHeroSection(display.ctaSecondary, '') === 'services' ? '/#services' : '/#contact');
+    const services = document.getElementById('services');
+    if (services) {
+      const top = services.getBoundingClientRect().top + window.scrollY - 96;
+      window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      return;
+    }
+    void goToServicesPage();
+  }, [goToServicesPage, prefersReducedMotion]);
 
   return (
     <section
       id="home"
       ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       aria-label="Introduction"
       style={{ position: 'relative' }}
       className={cn(
-        'relative isolate min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 overflow-hidden bg-zinc-950 selection:bg-primary/30 [perspective:1400px]',
+        'relative isolate min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 overflow-hidden bg-zinc-950 selection:bg-primary/30',
         showIpadProEnrichment && 'hero-ipad-pro-enriched',
         enrichmentControlsActive && ipadProHero.showFeatureCards && 'hero-show-feature-cards',
         enrichmentControlsActive && ipadProHero.showMetrics && 'hero-show-metrics',
@@ -269,80 +247,32 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
     >
       <HeroBackgroundMedia hero={hero} />
 
-      {/* Subtle animated green radial glow + soft vignette */}
+      {/* Soft static vignette + green wash (no continuous animation — keeps GPU calm) */}
       <div className="pointer-events-none absolute inset-0 -z-[12]" aria-hidden>
-        <div
-          className={cn(
-            'absolute left-1/2 top-[42%] h-[min(100vw,640px)] w-[min(100vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full',
-            'bg-[radial-gradient(circle,rgba(16,185,129,0.18)_0%,rgba(16,185,129,0.06)_42%,transparent_70%)]',
-            'motion-reduce:animate-none animate-glow-pulse will-change-transform',
-          )}
-        />
+        <div className="absolute left-1/2 top-[42%] h-[min(100vw,640px)] w-[min(100vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.14)_0%,rgba(16,185,129,0.05)_42%,transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.45)_100%)]" />
       </div>
-
-      {/* Tiny floating particles */}
-      {!reduceMotion ? (
-        <div className="pointer-events-none absolute inset-0 -z-[11] overflow-hidden" aria-hidden>
-          {[
-            { top: '18%', left: '12%', size: 2, delay: '0s', dur: '9s' },
-            { top: '28%', left: '78%', size: 2.5, delay: '1.2s', dur: '11s' },
-            { top: '55%', left: '22%', size: 1.5, delay: '0.6s', dur: '8s' },
-            { top: '62%', left: '68%', size: 2, delay: '2s', dur: '10s' },
-            { top: '40%', left: '48%', size: 1.5, delay: '1.6s', dur: '12s' },
-            { top: '72%', left: '38%', size: 2, delay: '0.3s', dur: '9.5s' },
-          ].map((p, i) => (
-            <span
-              key={i}
-              className="hero-particle absolute rounded-full bg-emerald-300/40 shadow-[0_0_8px_rgba(52,211,153,0.35)]"
-              style={{
-                top: p.top,
-                left: p.left,
-                width: p.size,
-                height: p.size,
-                animationDelay: p.delay,
-                animationDuration: p.dur,
-              }}
-            />
-          ))}
-        </div>
-      ) : null}
 
       <div
         className="pointer-events-none absolute inset-0 -z-[11] overflow-hidden"
         aria-hidden
       >
         <div
-          className="absolute left-0 top-0 h-[min(92vmin,680px)] w-[min(92vmin,680px)] rounded-full bg-gradient-to-br from-emerald-400/25 via-primary/20 to-teal-600/15 blur-[min(100px,14vw)] motion-reduce:animate-none animate-hero-circle-orbit will-change-transform"
+          className="absolute left-0 top-0 h-[min(92vmin,680px)] w-[min(92vmin,680px)] rounded-full bg-gradient-to-br from-emerald-400/20 via-primary/15 to-teal-600/10 blur-[min(80px,12vw)] motion-reduce:animate-none"
         />
       </div>
 
-      <motion.div
-        style={{ x: prefersReducedMotion ? 0 : parallaxX, y: prefersReducedMotion ? 0 : parallaxY }}
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.45] [background-image:radial-gradient(rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:32px_32px] motion-reduce:animate-none animate-hero-starfield-drift will-change-transform"
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35] [background-image:radial-gradient(rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:32px_32px]"
         aria-hidden
       />
 
-      <motion.div
-        style={{
-          scale: glowScale,
-          rotateX: prefersReducedMotion ? 0 : glowRotateX,
-        }}
-        className="pointer-events-none absolute left-1/2 top-[38%] -z-10 h-[min(120vw,720px)] w-[min(120vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.18] blur-[120px] will-change-transform"
+      <div
+        className="pointer-events-none absolute left-1/2 top-[38%] -z-10 h-[min(120vw,720px)] w-[min(120vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.14] blur-[90px]"
         aria-hidden
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : {
-                y: [0, -12, 0],
-                opacity: [0.45, 0.62, 0.45],
-              }
-        }
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
       />
-      <motion.div
-        style={{ x: prefersReducedMotion ? 0 : ringParallaxX }}
-        className="pointer-events-none absolute left-1/2 top-[40%] -z-10 h-[min(90vw,520px)] w-[min(90vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/15 bg-emerald-500/[0.05] blur-[1px] will-change-transform"
+      <div
+        className="pointer-events-none absolute left-1/2 top-[40%] -z-10 h-[min(90vw,520px)] w-[min(90vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/15 bg-emerald-500/[0.04]"
         aria-hidden
       />
 
@@ -354,7 +284,7 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
       />
 
       <motion.div
-        style={{ opacity: contentOpacity, y: contentY }}
+        style={reduceMotion ? undefined : { opacity: contentOpacity, y: contentY }}
         className={cn(
           'container-custom relative z-10 hero-shell min-h-[100svh] md:min-h-[100dvh] lg:h-[100svh] lg:min-h-0 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 md:pb-10',
           showAnnouncementBar
@@ -364,7 +294,7 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
       >
         <div className="hero-main">
           <motion.div
-            className="hero-copy text-left will-change-transform"
+            className="hero-copy text-left"
           >
             <motion.div
               variants={container}
@@ -459,7 +389,7 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
                     <Link
                       to="/#contact"
                       className="inline-flex items-center justify-center gap-2"
-                      onClick={(e) => handleHeroCta(e, display.ctaPrimary, primaryHref, 'contact')}
+                      onClick={handlePrimaryCta}
                     >
                       <span>{display.ctaPrimary}</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
@@ -479,17 +409,17 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
                     className={cn(
                       'hero-cta-secondary group h-11 sm:h-12 w-full lg:w-auto min-w-0 lg:min-w-[11.5rem] rounded-lg',
                       'border-white/20 bg-white/[0.06] px-6 sm:px-8 text-[0.9375rem] sm:text-base font-semibold text-white',
-                      'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-md',
-                      'transition-[border-color,background-color,box-shadow,backdrop-filter] duration-300',
-                      'hover:border-emerald-400/45 hover:bg-white/[0.1] hover:shadow-[0_0_24px_rgba(16,185,129,0.18)] hover:backdrop-blur-xl',
+                      'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-sm',
+                      'transition-[border-color,background-color,box-shadow] duration-300',
+                      'hover:border-emerald-400/45 hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]',
                       'focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
                     )}
                     asChild
                   >
                     <Link
-                      to="/#services"
+                      to="/services"
                       className="inline-flex items-center justify-center gap-2"
-                      onClick={(e) => handleHeroCta(e, display.ctaSecondary, secondaryHref, 'services')}
+                      onClick={handleSecondaryCta}
                     >
                       <span>{display.ctaSecondary}</span>
                       <ArrowRight className="h-4 w-4 opacity-80 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />

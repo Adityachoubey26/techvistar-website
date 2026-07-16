@@ -1,5 +1,6 @@
 const SCROLL_DURATION_MS = 820;
 const HIGHLIGHT_MS = 1600;
+const SECTION_WAIT_MS = 5000;
 
 function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -7,8 +8,8 @@ function easeInOutCubic(t: number): number {
 
 /** Sticky navbar + optional announcement bar clearance. */
 export function getStickyNavOffset(): number {
-  const announcement = document.querySelector<HTMLElement>('[data-announcement-bar]');
-  const announcementH = announcement?.offsetHeight ?? 0;
+  const hasAnnouncement = document.documentElement.hasAttribute('data-announcement-bar');
+  const announcementH = hasAnnouncement ? 40 : 0;
   const navH = window.matchMedia('(min-width: 768px)').matches ? 80 : 56;
   return announcementH + navH + 12;
 }
@@ -44,39 +45,45 @@ export function smoothScrollToY(targetY: number, duration = SCROLL_DURATION_MS):
   });
 }
 
-export function extractSectionHash(href: string): 'contact' | 'services' | null {
-  const raw = href.trim().toLowerCase();
-  if (!raw) return null;
-  if (raw.includes('#contact')) return 'contact';
-  if (raw.includes('#services')) return 'services';
-  return null;
-}
+/**
+ * Some homepage bands are lazy-mounted.
+ * Wait until the target node exists, nudging scroll only if needed.
+ */
+async function waitForSectionElement(sectionId: string): Promise<HTMLElement | null> {
+  const existing = document.getElementById(sectionId);
+  if (existing) return existing;
 
-/** Infer section from CTA copy when CMS links are ambiguous. */
-export function inferSectionFromLabel(label: string): 'contact' | 'services' | null {
-  const text = label.trim().toLowerCase();
-  if (!text) return null;
-  if (
-    text.includes('contact') ||
-    text.includes('get in touch') ||
-    text.includes('talk') ||
-    text.includes('expert') ||
-    text.includes('consult')
-  ) {
-    return 'contact';
-  }
-  if (text.includes('service') || text.includes('explore') || text.includes('view')) {
-    return 'services';
-  }
-  return null;
-}
+  const started = performance.now();
+  const savedY = window.scrollY;
 
-export function resolveHeroSection(
-  label: string,
-  href: string,
-  preferred?: 'contact' | 'services',
-): 'contact' | 'services' | null {
-  return preferred ?? extractSectionHash(href) ?? inferSectionFromLabel(label);
+  const step = Math.max(window.innerHeight * 0.85, 480);
+  let probeY = 0;
+  const maxY = Math.max(document.documentElement.scrollHeight, step);
+
+  while (performance.now() - started < SECTION_WAIT_MS) {
+    const found = document.getElementById(sectionId);
+    if (found) {
+      window.scrollTo(0, savedY);
+      return found;
+    }
+
+    probeY = Math.min(probeY + step, maxY);
+    window.scrollTo(0, probeY);
+    await new Promise((resolve) => setTimeout(resolve, 40));
+
+    if (probeY >= maxY) {
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      const late = document.getElementById(sectionId);
+      if (late) {
+        window.scrollTo(0, savedY);
+        return late;
+      }
+      break;
+    }
+  }
+
+  window.scrollTo(0, savedY);
+  return document.getElementById(sectionId);
 }
 
 function focusContactForm(): void {
@@ -106,22 +113,34 @@ function highlightServicesHeading(): void {
   }, HIGHLIGHT_MS);
 }
 
+export async function scrollToContactSection(): Promise<void> {
+  const el = await waitForSectionElement('contact');
+  if (!el) return;
+
+  await new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+  const top = el.getBoundingClientRect().top + window.scrollY - getStickyNavOffset();
+  await smoothScrollToY(Math.max(0, top));
+  window.setTimeout(focusContactForm, 80);
+}
+
+/** @deprecated Prefer scrollToContactSection for CTAs; kept for hash routing. */
 export async function scrollToHomeSection(
   section: 'contact' | 'services',
   options?: { focusForm?: boolean; highlightHeading?: boolean },
 ): Promise<void> {
-  const el = document.getElementById(section);
+  if (section === 'contact') {
+    await scrollToContactSection();
+    return;
+  }
+
+  const el = await waitForSectionElement(section);
   if (!el) return;
 
+  await new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
   const top = el.getBoundingClientRect().top + window.scrollY - getStickyNavOffset();
   await smoothScrollToY(Math.max(0, top));
 
-  if (section === 'contact' && options?.focusForm !== false) {
-    // Wait a beat so scroll settles before focusing.
-    window.setTimeout(focusContactForm, 60);
-  }
-
-  if (section === 'services' && options?.highlightHeading !== false) {
+  if (options?.highlightHeading !== false) {
     highlightServicesHeading();
   }
 }

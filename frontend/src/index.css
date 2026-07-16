@@ -1473,7 +1473,8 @@
   animation: hero-brand-marquee 55s linear infinite;
 }
 
-.hero-brand-marquee-scroller:hover .hero-brand-marquee-track {
+.hero-brand-marquee-scroller:hover .hero-brand-marquee-track,
+.hero-brand-marquee-scroller[data-paused='true'] .hero-brand-marquee-track {
   animation-play-state: paused;
 }
 

@@ -121,7 +121,20 @@ const ScrollToHashElement = () => {
     }
 
     const section = hash.replace("#", "").toLowerCase();
-    if (section !== "contact" && section !== "services") {
+    if (section === "contact") {
+      let cancelled = false;
+      const timer = setTimeout(() => {
+        void import("@/lib/heroScroll").then(({ scrollToContactSection }) => {
+          if (!cancelled) void scrollToContactSection();
+        });
+      }, 120);
+      return () => {
+        cancelled = true;
+        clearTimeout(timer);
+      };
+    }
+
+    if (section !== "services") {
       const element = document.getElementById(section);
       if (element) {
         const timer = setTimeout(() => {
@@ -134,7 +147,6 @@ const ScrollToHashElement = () => {
 
     let cancelled = false;
     const run = async () => {
-      // Wait for lazy homepage sections to mount.
       for (let attempt = 0; attempt < 20 && !cancelled; attempt += 1) {
         if (document.getElementById(section)) break;
         await new Promise((resolve) => setTimeout(resolve, 80));

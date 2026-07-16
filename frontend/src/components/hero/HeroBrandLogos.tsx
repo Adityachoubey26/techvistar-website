@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from 'react';
+import { memo, useEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 type BrandLogo = {
@@ -186,6 +186,20 @@ export const HeroBrandMarquee = memo(function HeroBrandMarquee({
   className,
   label = 'Trusted by industry leaders',
 }: HeroBrandMarqueeProps) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const node = scrollerRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(Boolean(entry?.isIntersecting)),
+      { rootMargin: '80px 0px', threshold: 0.01 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className={cn('hero-brand-marquee w-full min-w-0', className)}>
       {label ? (
@@ -193,10 +207,15 @@ export const HeroBrandMarquee = memo(function HeroBrandMarquee({
           {label}
         </p>
       ) : null}
-      <div className="hero-brand-marquee-scroller relative overflow-hidden" aria-label="Technology partners">
+      <div
+        ref={scrollerRef}
+        className="hero-brand-marquee-scroller relative overflow-hidden"
+        aria-label="Technology partners"
+        data-paused={inView ? 'false' : 'true'}
+      >
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-zinc-950 via-zinc-950/70 to-transparent sm:w-14 md:w-16" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-zinc-950 via-zinc-950/70 to-transparent sm:w-14 md:w-16" />
-        <div className="hero-brand-marquee-track flex w-max items-center gap-8 will-change-transform sm:gap-10 md:gap-12 lg:gap-14">
+        <div className="hero-brand-marquee-track flex w-max items-center gap-8 sm:gap-10 md:gap-12 lg:gap-14">
           <LogoRow rowKey="a" />
           <LogoRow rowKey="b" ariaHidden />
         </div>
