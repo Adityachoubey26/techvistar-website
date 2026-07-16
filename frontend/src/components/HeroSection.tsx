@@ -247,32 +247,13 @@ export const HeroSection = (_props: HeroSectionProps = {}) => {
     >
       <HeroBackgroundMedia hero={hero} />
 
-      {/* Soft static vignette + green wash (no continuous animation — keeps GPU calm) */}
+      {/* Dark vignette only — large green glow circles removed */}
       <div className="pointer-events-none absolute inset-0 -z-[12]" aria-hidden>
-        <div className="absolute left-1/2 top-[42%] h-[min(100vw,640px)] w-[min(100vw,640px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.14)_0%,rgba(16,185,129,0.05)_42%,transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.45)_100%)]" />
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 -z-[11] overflow-hidden"
-        aria-hidden
-      >
-        <div
-          className="absolute left-0 top-0 h-[min(92vmin,680px)] w-[min(92vmin,680px)] rounded-full bg-gradient-to-br from-emerald-400/20 via-primary/15 to-teal-600/10 blur-[min(80px,12vw)] motion-reduce:animate-none"
-        />
-      </div>
-
-      <div
         className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35] [background-image:radial-gradient(rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:32px_32px]"
-        aria-hidden
-      />
-
-      <div
-        className="pointer-events-none absolute left-1/2 top-[38%] -z-10 h-[min(120vw,720px)] w-[min(120vw,720px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.14] blur-[90px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute left-1/2 top-[40%] -z-10 h-[min(90vw,520px)] w-[min(90vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/15 bg-emerald-500/[0.04]"
         aria-hidden
       />
 
