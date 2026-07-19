@@ -586,8 +586,9 @@ const pagesCmsConfigSchema = new Schema<IPagesCmsConfig>(
         default: 'A-75, Sector 4, Noida, Uttar Pradesh 201301, India',
       },
       whatsappNumber: { type: String, trim: true, default: '+91 9573157982' },
-      supportEmail: { type: String, trim: true, default: 'hello@techvistar.com' },
+      supportEmail: { type: String, trim: true, default: 'support@techvistar.com' },
       salesEmail: { type: String, trim: true, default: 'hello@techvistar.com' },
+      careersEmail: { type: String, trim: true, default: 'careers@techvistar.com' },
       googleMapsUrl: {
         type: String,
         trim: true,

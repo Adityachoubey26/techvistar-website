@@ -10,11 +10,15 @@ import { AnimatedStat } from '@/components/ui/AnimatedStat';
 import {
   IndustriesLandingCmsConfig,
   DEFAULT_INDUSTRIES_LANDING_CMS,
+  mergePagesCmsConfig,
 } from '@/types/pagesCms';
 import {
   mergeConsultationBlock,
   mergeSidebarBlock,
 } from '@/types/industriesCms';
+import { useQuery } from '@tanstack/react-query';
+import { getPublicPagesConfig } from '@/services/pages.service';
+import { resolveSupportEmail, siteMailto } from '@/lib/siteContact';
 
 interface IndustrySidebarProps {
   industry: Industry;
@@ -22,6 +26,14 @@ interface IndustrySidebarProps {
 }
 
 export const IndustrySidebar = ({ industry, landingCms }: IndustrySidebarProps) => {
+  const { data: pagesConfig } = useQuery({
+    queryKey: ['pages-config'],
+    queryFn: getPublicPagesConfig,
+    staleTime: 60_000,
+  });
+  const websiteSettings = mergePagesCmsConfig(pagesConfig).websiteSettings;
+  const inquiryEmail = resolveSupportEmail(websiteSettings);
+
   const globals = landingCms || DEFAULT_INDUSTRIES_LANDING_CMS;
   const sidebar = mergeSidebarBlock(globals.sidebarDefaults, industry.sidebar);
   const consultation = mergeConsultationBlock(
@@ -37,12 +49,12 @@ export const IndustrySidebar = ({ industry, landingCms }: IndustrySidebarProps) 
       }))
     : [];
 
-  const mailtoHref = `mailto:${sidebar.contactEmail}?subject=${encodeURIComponent(
-    `Industry Consultation — ${industry.title}`
-  )}`;
-
+  const mailtoHref = siteMailto(
+    inquiryEmail,
+    `Industry Consultation — ${industry.title}`,
+  );
   return (
-    <div className="space-y-6 lg:sticky lg:top-36">
+    <div className="space-y-6 lg:sticky" style={{ top: 'calc(var(--primary-nav-height, 80px) + var(--secondary-nav-height, 48px) + 16px)' }}>
       <Card className="overflow-hidden rounded-3xl border-slate-200/80 bg-white shadow-lg">
         <div className="border-b border-emerald-600/50 bg-gradient-to-r from-emerald-600 to-emerald-500 p-6 text-center text-white">
           <h3 className="mb-1 font-display text-base font-extrabold tracking-tight">
@@ -170,7 +182,7 @@ export const IndustrySidebar = ({ industry, landingCms }: IndustrySidebarProps) 
               href={mailtoHref}
               className="text-xs font-bold text-emerald-400 underline decoration-dotted underline-offset-4 transition-colors hover:text-emerald-300"
             >
-              {sidebar.contactEmail}
+              {inquiryEmail}
             </a>
           </div>
         </div>

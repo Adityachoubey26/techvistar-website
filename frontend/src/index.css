@@ -2038,3 +2038,9 @@ header nav a.relative:hover::after {
   transform: scaleX(1);
   transform-origin: left;
 }
+
+/* 10. Sticky Sub-navigation Scroll Margin Top Adjustment */
+.detail-page-gutter section[id],
+.detail-page-gutter [id] {
+  scroll-margin-top: calc(var(--primary-nav-height, 80px) + var(--secondary-nav-height, 48px) + 16px) !important;
+}

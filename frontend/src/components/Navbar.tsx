@@ -1,16 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, X, ChevronDown, Cpu, Code2, Smartphone, Cloud, Palette, 
-  FolderGit2, Briefcase, Building2, ArrowRight, Brain, Repeat, 
-  Settings, Sparkles, Target, Layers, Shield 
-} from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE } from '@/data';
 import { useQuery } from '@tanstack/react-query';
 import { getPublicPagesConfig } from '@/services/pages.service';
-import { getActiveServices, filterNavServicesByActiveSlugs } from '@/services/services.service';
+import { getActiveServices } from '@/services/services.service';
+import { getActiveSolutions } from '@/services/solutions.service';
+import { buildServiceNavColumns, buildSolutionNavColumns } from '@/lib/navMegaMenu';
 import { mergePagesCmsConfig } from '@/types/pagesCms';
 import { AnnouncementBar } from '@/components/AnnouncementBar';
 import logo from '../assets/logo.webp';
@@ -22,15 +20,27 @@ export const Navbar = () => {
     queryFn: getPublicPagesConfig,
     staleTime: 60_000,
   });
-  const { data: activeServices, isSuccess } = useQuery({
+  const { data: activeServices } = useQuery({
     queryKey: ['activeServices'],
     queryFn: getActiveServices,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
     retry: 2,
   });
-  const activeServiceSlugs = useMemo(
-    () => new Set((activeServices ?? []).map((service) => String(service.slug))),
-    [activeServices]
+  const { data: activeSolutions } = useQuery({
+    queryKey: ['activeSolutions'],
+    queryFn: () => getActiveSolutions(),
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+    retry: 2,
+  });
+  const serviceNavColumns = useMemo(
+    () => buildServiceNavColumns(activeServices),
+    [activeServices],
+  );
+  const solutionNavColumns = useMemo(
+    () => buildSolutionNavColumns(activeSolutions),
+    [activeSolutions],
   );
   const websiteSettings = mergePagesCmsConfig(pagesConfig).websiteSettings;
   const navLogo = websiteSettings.logo?.trim() || logo;
@@ -49,6 +59,32 @@ export const Navbar = () => {
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const navbarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const navbar = navbarRef.current;
+    if (!navbar) return;
+
+    const updateHeight = () => {
+      const height = navbar.offsetHeight;
+      document.documentElement.style.setProperty('--primary-nav-height', `${height}px`);
+      window.dispatchEvent(new CustomEvent('primary-nav-height-change', { detail: height }));
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
+    resizeObserver.observe(navbar);
+
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, [showAnnouncement]);
 
   useEffect(() => {
     let ticking = false;
@@ -117,61 +153,6 @@ export const Navbar = () => {
     return location.pathname.startsWith(path);
   };
 
-  const devServices = [
-    { label: 'Web Development', to: '/services/web-development', icon: Code2, desc: 'Scalable web applications.' },
-    { label: 'Mobile Development', to: '/services/mobile-app-development', icon: Smartphone, desc: 'iOS & Android design.' },
-    { label: 'Custom Software', to: '/services/custom-software-development', icon: Cpu, desc: 'Tailored enterprise code.' },
-    { label: 'SaaS Platforms', to: '/services/saas-platforms', icon: Cloud, desc: 'Multi-tenant applications.' },
-  ];
-
-  const designServices = [
-    { label: 'UI/UX', to: '/services/ui-ux-design', icon: Palette, desc: 'User-centric products.' },
-    { label: 'Branding', to: '/services/branding', icon: Sparkles, desc: 'Unified visual identity.' },
-    { label: 'Product Design', to: '/services/product-design', icon: Target, desc: 'Prototyping & validation.' },
-    { label: 'Creative Design', to: '/services/creative-design', icon: Layers, desc: 'Visual assets & illustrations.' },
-  ];
-
-  const cloudServices = [
-    { label: 'Cloud', to: '/services/cloud', icon: Cloud, desc: 'Secure cloud hosting & migrations.' },
-    { label: 'DevOps', to: '/services/devops', icon: Settings, desc: 'Automation of CI/CD pipelines.' },
-    { label: 'AI', to: '/services/ai', icon: Brain, desc: 'Cognitive models & AI agents.' },
-    { label: 'Automation', to: '/services/automation', icon: Repeat, desc: 'RPA & workflow optimizers.' },
-  ];
-
-  const publishedDevServices = useMemo(
-    () => (isSuccess ? filterNavServicesByActiveSlugs(devServices, activeServiceSlugs) : devServices),
-    [isSuccess, activeServiceSlugs]
-  );
-  const publishedDesignServices = useMemo(
-    () => (isSuccess ? filterNavServicesByActiveSlugs(designServices, activeServiceSlugs) : designServices),
-    [isSuccess, activeServiceSlugs]
-  );
-  const publishedCloudServices = useMemo(
-    () => (isSuccess ? filterNavServicesByActiveSlugs(cloudServices, activeServiceSlugs) : cloudServices),
-    [isSuccess, activeServiceSlugs]
-  );
-
-  const bizSolutions = [
-    { label: 'Enterprise Software', to: '/solutions/enterprise-software', icon: Building2, desc: 'Core business platforms.' },
-    { label: 'CRM Systems', to: '/solutions/crm-systems', icon: Target, desc: 'Customer insights & workflows.' },
-    { label: 'ERP Platforms', to: '/solutions/erp-platforms', icon: Layers, desc: 'Integrated resource databases.' },
-    { label: 'Business Automation', to: '/solutions/business-automation', icon: Repeat, desc: 'Operations orchestrators.' },
-  ];
-
-  const aiSolutions = [
-    { label: 'AI Chatbots', to: '/solutions/ai-chatbots', icon: Brain, desc: 'Conversational support agents.' },
-    { label: 'AI Agents', to: '/solutions/ai-agents', icon: Cpu, desc: 'Autonomous task executors.' },
-    { label: 'Generative AI', to: '/solutions/generative-ai', icon: Sparkles, desc: 'Model fine-tuning services.' },
-    { label: 'Document Intelligence', to: '/solutions/document-intelligence', icon: FolderGit2, desc: 'Automated OCR & extraction.' },
-  ];
-
-  const digSolutions = [
-    { label: 'Cloud Migration', to: '/solutions/cloud-migration', icon: Cloud, desc: 'Infrastructure hosting structures.' },
-    { label: 'API Integration', to: '/solutions/api-integration', icon: Code2, desc: 'Third-party unified API systems.' },
-    { label: 'Data Analytics', to: '/solutions/data-analytics', icon: Settings, desc: 'Visual intelligence dashboards.' },
-    { label: 'Cyber Security', to: '/solutions/cyber-security', icon: Shield, desc: 'Threat detection & lock-downs.' },
-  ];
-
   // Framer Motion variants for stagger entry
   const megamenuVariants = {
     hidden: { opacity: 0, y: 10, scale: 0.99 },
@@ -210,7 +191,7 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
+    <div ref={navbarRef} className="fixed top-0 left-0 right-0 z-50 flex flex-col">
       {showAnnouncement ? (
         <AnnouncementBar
           text={websiteSettings.navbar.announcementText}
@@ -444,92 +425,35 @@ export const Navbar = () => {
               onMouseLeave={handleMouseLeave}
               className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left origin-top"
             >
-              {/* Column 1: Development Services */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Development Services</div>
-                <div className="space-y-0.5">
-                  {publishedDevServices.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
+              {serviceNavColumns.map((column) => (
+                <motion.div key={column.title} variants={columnVariants} className="col-span-3 space-y-4">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">{column.title}</div>
+                  <div className="space-y-0.5">
+                    {column.items.map((srv) => {
+                      const IconComp = srv.icon;
+                      return (
+                        <Link
+                          key={srv.slug}
+                          to={srv.to}
+                          onClick={() => setActiveDropdown(null)}
+                          className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
+                        >
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                            <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
+                          </motion.span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
+                              <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
+                            </div>
+                            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
                           </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              {/* Column 2: Design Services */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Design Services</div>
-                <div className="space-y-0.5">
-                  {publishedDesignServices.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
-                          </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              {/* Column 3: Cloud & AI */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Cloud & AI</div>
-                <div className="space-y-0.5">
-                  {publishedCloudServices.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
-                          </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ))}
 
               {/* Column 4: Featured Service Card */}
               <motion.div 
@@ -582,92 +506,35 @@ export const Navbar = () => {
               onMouseLeave={handleMouseLeave}
               className="absolute left-6 right-6 top-full mt-0 bg-white/95 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/25 p-7 z-50 grid grid-cols-12 gap-6 text-left origin-top"
             >
-              {/* Column 1: Business Solutions */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Business Solutions</div>
-                <div className="space-y-0.5">
-                  {bizSolutions.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
+              {solutionNavColumns.map((column) => (
+                <motion.div key={column.title} variants={columnVariants} className="col-span-3 space-y-4">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">{column.title}</div>
+                  <div className="space-y-0.5">
+                    {column.items.map((srv) => {
+                      const IconComp = srv.icon;
+                      return (
+                        <Link
+                          key={srv.slug}
+                          to={srv.to}
+                          onClick={() => setActiveDropdown(null)}
+                          className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
+                        >
+                          <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
+                            <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
+                          </motion.span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
+                              <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
+                            </div>
+                            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
                           </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              {/* Column 2: AI Solutions */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">AI Solutions</div>
-                <div className="space-y-0.5">
-                  {aiSolutions.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
-                          </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
-
-              {/* Column 3: Digital Solutions */}
-              <motion.div variants={columnVariants} className="col-span-3 space-y-4">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">Digital Solutions</div>
-                <div className="space-y-0.5">
-                  {digSolutions.map((srv) => {
-                    const IconComp = srv.icon;
-                    return (
-                      <Link
-                        key={srv.label}
-                        to={srv.to}
-                        onClick={() => setActiveDropdown(null)}
-                        className="group/item flex items-start gap-3.5 py-3 px-3 rounded-xl hover:bg-emerald-500/[0.03] transition-all duration-200 hover:-translate-y-0.5"
-                      >
-                        <motion.span whileHover={{ scale: 1.08 }} className="p-2 rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-all duration-300 mt-0.5 shrink-0">
-                          <IconComp className="w-4 h-4 group-hover/item:scale-110 transition-transform" />
-                        </motion.span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
-                          </div>
-                          <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </motion.div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ))}
 
               {/* Column 4: Featured Solution Card */}
               <motion.div 
@@ -741,35 +608,17 @@ export const Navbar = () => {
                       >
                         <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} className="block py-1 text-xs font-bold text-emerald-600 uppercase tracking-wider">→ View All Services</Link>
                         
-                        <div className="space-y-2 pt-1">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Development</span>
-                          {publishedDevServices.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-
-                        <div className="space-y-2 pt-2">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-455 block">Design</span>
-                          {publishedDesignServices.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-
-                        <div className="space-y-2 pt-2">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Cloud & AI</span>
-                          {publishedCloudServices.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
+                        {serviceNavColumns.map((column, columnIndex) => (
+                          <div key={column.title} className={cn('space-y-2', columnIndex === 0 ? 'pt-1' : 'pt-2')}>
+                            <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">{column.title.replace(/ Services$/, '')}</span>
+                            {column.items.map((srv) => (
+                              <Link key={srv.slug} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                                <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                                <span>{srv.label}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -794,35 +643,17 @@ export const Navbar = () => {
                       >
                         <Link to="/solutions" onClick={() => setIsMobileMenuOpen(false)} className="block py-1 text-xs font-bold text-emerald-600 uppercase tracking-wider">→ View All Solutions</Link>
                         
-                        <div className="space-y-2 pt-1">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Business</span>
-                          {bizSolutions.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-
-                        <div className="space-y-2 pt-2">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-455 block">AI</span>
-                          {aiSolutions.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
-
-                        <div className="space-y-2 pt-2">
-                          <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">Digital</span>
-                          {digSolutions.map(srv => (
-                            <Link key={srv.label} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
-                              <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
-                              <span>{srv.label}</span>
-                            </Link>
-                          ))}
-                        </div>
+                        {solutionNavColumns.map((column, columnIndex) => (
+                          <div key={column.title} className={cn('space-y-2', columnIndex === 0 ? 'pt-1' : 'pt-2')}>
+                            <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 block">{column.title.replace(/ Solutions$/, '')}</span>
+                            {column.items.map((srv) => (
+                              <Link key={srv.slug} to={srv.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-1 text-sm font-semibold text-slate-700 hover:text-emerald-600">
+                                <srv.icon className="w-3.5 h-3.5 text-emerald-500/70" />
+                                <span>{srv.label}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
