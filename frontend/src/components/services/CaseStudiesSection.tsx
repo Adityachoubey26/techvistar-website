@@ -63,7 +63,7 @@ export const CaseStudiesSection = ({ service }: SectionProps) => {
         </svg>
       </div>
 
-      <h2 className="relative z-10 mb-6 font-display text-xl font-bold text-slate-900">
+      <h2 className="relative z-10 mb-6 font-display text-heading-sm text-slate-900">
         Case Studies &amp; Projects
       </h2>
       

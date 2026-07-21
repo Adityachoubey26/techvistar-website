@@ -53,7 +53,7 @@ export const IndustriesCapabilitiesSection = ({
             )}
             <span className="text-[10px] font-black uppercase tracking-widest">{eyebrow}</span>
           </div>
-          <h2 className="font-display text-2xl font-extrabold tracking-tight text-slate-900 md:text-4xl">
+          <h2 className="font-display text-heading-md text-slate-900 md:text-heading-xl">
             {title}
           </h2>
           <p className="text-sm font-semibold leading-relaxed text-slate-500">{description}</p>

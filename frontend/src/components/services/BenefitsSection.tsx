@@ -19,7 +19,7 @@ export const BenefitsSection = ({ service }: SectionProps) => {
     >
       <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-emerald-500/[0.04] blur-3xl" />
 
-      <h2 className="relative z-10 mb-8 font-display text-xl font-bold text-slate-900">
+      <h2 className="relative z-10 mb-8 font-display text-heading-sm text-slate-900">
         Benefits &amp; Features
       </h2>
 

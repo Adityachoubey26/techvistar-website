@@ -37,7 +37,7 @@ export const SolutionTechStackSection = ({ solution }: SectionProps) => {
     >
       <div className="space-y-6">
         <div>
-          <h2 className="font-display text-2xl font-bold text-slate-900">
+          <h2 className="font-display text-heading-md text-slate-900">
             {solution.sectionCopy?.techStackTitle || 'Core Technology Stack'}
           </h2>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">

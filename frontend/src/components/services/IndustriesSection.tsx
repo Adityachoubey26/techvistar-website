@@ -94,7 +94,7 @@ export const IndustriesSection = ({ service }: SectionProps) => {
         </svg>
       </div>
 
-      <h2 className="relative z-10 mb-4 font-display text-xl font-bold text-slate-900">
+      <h2 className="relative z-10 mb-4 font-display text-heading-sm text-slate-900">
         Industries We Serve
       </h2>
 

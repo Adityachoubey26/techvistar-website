@@ -36,7 +36,7 @@ export const SolutionProcessSection = ({ solution }: SectionProps) => {
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-50/50 blur-3xl" />
 
       <div className="relative z-10 mb-8">
-        <h2 className="font-display text-2xl font-bold text-slate-900">
+        <h2 className="font-display text-heading-md text-slate-900">
           {solution.sectionCopy?.processTitle || 'Implementation Process'}
         </h2>
         <p className="mt-1 text-sm font-medium text-slate-500">

@@ -34,7 +34,7 @@ export const ProcessSection = ({ service }: SectionProps) => {
       <div className="pointer-events-none absolute right-0 top-0 z-0 h-72 w-72 rounded-full bg-emerald-500/[0.02] blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 left-0 z-0 h-72 w-72 rounded-full bg-sky-500/[0.02] blur-3xl" />
 
-      <h2 className="relative z-10 mb-8 font-display text-xl font-bold text-slate-900">
+      <h2 className="relative z-10 mb-8 font-display text-heading-sm text-slate-900">
         Development Process
       </h2>
 

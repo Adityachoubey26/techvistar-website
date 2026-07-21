@@ -113,7 +113,7 @@ export const SolutionsSection = ({ service }: SectionProps) => {
       <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none z-0" />
       <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none z-0" />
 
-      <h2 className="relative z-10 mb-6 font-display text-xl font-bold text-slate-900">Offerings</h2>
+      <h2 className="relative z-10 mb-6 font-display text-heading-sm text-slate-900">Offerings</h2>
 
       {hasDetailedOfferings ? (
         /* Premium redesigned offerings grid */

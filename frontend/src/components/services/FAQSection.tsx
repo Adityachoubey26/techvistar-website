@@ -26,7 +26,7 @@ export const FAQSection = ({ service }: SectionProps) => {
         </svg>
       </div>
 
-      <h2 className="relative z-10 mb-6 font-display text-xl font-bold text-slate-900">
+      <h2 className="relative z-10 mb-6 font-display text-heading-sm text-slate-900">
         Frequently Asked Questions
       </h2>
 

@@ -211,8 +211,12 @@ export const Navbar = () => {
         )}
       >
       <div className="w-full mx-auto flex items-center justify-between px-4 md:px-6 lg:px-12 xl:px-20 relative h-full gap-2" ref={dropdownRef}>
-        {/* Logo Branding */}
-        <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink min-w-0">
+        {/* Logo Branding — always returns to homepage */}
+        <Link
+          to="/"
+          aria-label={`${companyName} — Home`}
+          className="flex items-center gap-2 md:gap-3 group shrink min-w-0 cursor-pointer rounded-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2"
+        >
           <img
             src={navLogo}
             alt={SITE.name}
@@ -225,18 +229,18 @@ export const Navbar = () => {
 
         {/* Centered Navigation */}
         <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 h-full">
-          {/* Home */}
+          {/* About */}
           <Link
-            to="/"
-            onMouseEnter={() => setHoveredItem('Home')}
+            to="/about"
+            onMouseEnter={() => setHoveredItem('About')}
             onMouseLeave={() => setHoveredItem(null)}
             className={cn(
-              'text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide relative',
-              isLinkActive('/') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
+              'text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 relative',
+              isLinkActive('/about') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
             )}
           >
-            <span>Home</span>
-            {hoveredItem === 'Home' && (
+            <span>About</span>
+            {hoveredItem === 'About' && (
               <motion.span
                 layoutId="navbar-underline"
                 className="absolute bottom-0 left-3.5 right-3.5 h-[2px] bg-emerald-600 rounded-full"
@@ -254,7 +258,7 @@ export const Navbar = () => {
             <button
               onClick={() => setActiveDropdown(activeDropdown === 'services' ? null : 'services')}
               className={cn(
-                'flex items-center gap-1.5 text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide h-10 relative',
+                'flex items-center gap-1.5 text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 h-10 relative',
                 activeDropdown === 'services' || isLinkActive('/services') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
@@ -285,7 +289,7 @@ export const Navbar = () => {
             <button
               onClick={() => setActiveDropdown(activeDropdown === 'solutions' ? null : 'solutions')}
               className={cn(
-                'flex items-center gap-1.5 text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide h-10 relative',
+                'flex items-center gap-1.5 text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 h-10 relative',
                 activeDropdown === 'solutions' ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
               )}
             >
@@ -307,33 +311,13 @@ export const Navbar = () => {
             </button>
           </div>
 
-          {/* Industries */}
-          <Link
-            to="/industries"
-            onMouseEnter={() => setHoveredItem('Industries')}
-            onMouseLeave={() => setHoveredItem(null)}
-            className={cn(
-              'text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide relative',
-              isLinkActive('/industries') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
-            )}
-          >
-            <span>Industries</span>
-            {hoveredItem === 'Industries' && (
-              <motion.span
-                layoutId="navbar-underline"
-                className="absolute bottom-0 left-3.5 right-3.5 h-[2px] bg-emerald-600 rounded-full"
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              />
-            )}
-          </Link>
-
           {/* Portfolio */}
           <Link
             to="/work"
             onMouseEnter={() => setHoveredItem('Portfolio')}
             onMouseLeave={() => setHoveredItem(null)}
             className={cn(
-              'text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide relative',
+              'text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 relative',
               isLinkActive('/work') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
             )}
           >
@@ -353,7 +337,7 @@ export const Navbar = () => {
             onMouseEnter={() => setHoveredItem('Careers')}
             onMouseLeave={() => setHoveredItem(null)}
             className={cn(
-              'text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide relative',
+              'text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 relative',
               isLinkActive('/careers') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
             )}
           >
@@ -367,18 +351,18 @@ export const Navbar = () => {
             )}
           </Link>
 
-          {/* About */}
+          {/* Industries */}
           <Link
-            to="/about"
-            onMouseEnter={() => setHoveredItem('About')}
+            to="/industries"
+            onMouseEnter={() => setHoveredItem('Industries')}
             onMouseLeave={() => setHoveredItem(null)}
             className={cn(
-              'text-[15px] font-semibold transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 tracking-wide relative',
-              isLinkActive('/about') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
+              'text-nav transition-all px-3.5 py-2 rounded-lg hover:bg-slate-50 relative',
+              isLinkActive('/industries') ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
             )}
           >
-            <span>About</span>
-            {hoveredItem === 'About' && (
+            <span>Industries</span>
+            {hoveredItem === 'Industries' && (
               <motion.span
                 layoutId="navbar-underline"
                 className="absolute bottom-0 left-3.5 right-3.5 h-[2px] bg-emerald-600 rounded-full"
@@ -388,18 +372,17 @@ export const Navbar = () => {
           </Link>
         </nav>
 
-        {/* Right: Premium Outline Contact CTA (Direct Link to Contact Page) */}
+        {/* Right: Premium Contact CTA */}
         <div className="hidden lg:flex items-center gap-4 shrink-0">
           <Link to={ctaLink}>
             <motion.button
-              whileHover={{ scale: 1.04, boxShadow: '0 10px 25px -5px rgba(16,185,129,0.3)' }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-3.5 pl-6 pr-2 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full transition-all font-bold text-sm tracking-wide shadow-md shadow-emerald-500/10 group"
+              whileHover={{ y: -1 }}
+              whileTap={{ y: 0, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2 h-10 pl-4 pr-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-colors duration-200 text-sm font-semibold tracking-tight shadow-[0_1px_2px_rgba(16,185,129,0.2),0_4px_12px_-2px_rgba(16,185,129,0.35)] hover:shadow-[0_2px_4px_rgba(16,185,129,0.25),0_8px_20px_-4px_rgba(16,185,129,0.4)] group"
             >
               <span>{ctaText}</span>
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white group-hover:bg-white group-hover:text-emerald-700 transition-colors">
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </span>
+              <ArrowRight className="w-3.5 h-3.5 opacity-90 group-hover:translate-x-0.5 transition-transform duration-200" />
             </motion.button>
           </Link>
         </div>
@@ -427,7 +410,7 @@ export const Navbar = () => {
             >
               {serviceNavColumns.map((column) => (
                 <motion.div key={column.title} variants={columnVariants} className="col-span-3 space-y-4">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">{column.title}</div>
+                  <div className="mb-1 px-3 text-label font-extrabold uppercase text-slate-400">{column.title}</div>
                   <div className="space-y-0.5">
                     {column.items.map((srv) => {
                       const IconComp = srv.icon;
@@ -443,10 +426,10 @@ export const Navbar = () => {
                           </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
+                              <span className="text-mega text-slate-800 group-hover/item:text-emerald-700 transition-colors">{srv.label}</span>
                               <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
                             </div>
-                            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
+                            <p className="mt-1 text-mega-desc text-slate-400">{srv.desc}</p>
                           </div>
                         </Link>
                       );
@@ -464,7 +447,7 @@ export const Navbar = () => {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                 
                 <div className="space-y-3.5 relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Featured Service</span>
+                  <span className="text-label uppercase text-emerald-400">Featured Service</span>
                   
                   {/* Illustration Container */}
                   <div className="w-full h-24 rounded-lg bg-emerald-950/40 border border-emerald-900/30 flex items-center justify-center overflow-hidden relative">
@@ -476,7 +459,7 @@ export const Navbar = () => {
                   </div>
                   
                   <div className="text-sm font-extrabold font-display">Enterprise AI Integration</div>
-                  <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
+                  <p className="text-mega-desc font-semibold text-slate-400">
                     Automate business intelligence processes and integrate responsive LLM agents into your workflow.
                   </p>
                 </div>
@@ -508,7 +491,7 @@ export const Navbar = () => {
             >
               {solutionNavColumns.map((column) => (
                 <motion.div key={column.title} variants={columnVariants} className="col-span-3 space-y-4">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 px-3">{column.title}</div>
+                  <div className="mb-1 px-3 text-label font-extrabold uppercase text-slate-400">{column.title}</div>
                   <div className="space-y-0.5">
                     {column.items.map((srv) => {
                       const IconComp = srv.icon;
@@ -524,10 +507,10 @@ export const Navbar = () => {
                           </motion.span>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-bold text-slate-800 group-hover/item:text-emerald-700 transition-colors leading-none">{srv.label}</span>
+                              <span className="text-mega text-slate-800 group-hover/item:text-emerald-700 transition-colors">{srv.label}</span>
                               <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-1 transition-all" />
                             </div>
-                            <p className="text-[11px] text-slate-400 font-medium mt-1 leading-normal">{srv.desc}</p>
+                            <p className="mt-1 text-mega-desc text-slate-400">{srv.desc}</p>
                           </div>
                         </Link>
                       );
@@ -545,7 +528,7 @@ export const Navbar = () => {
                 <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                 
                 <div className="space-y-3.5 relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Featured Solution</span>
+                  <span className="text-label uppercase text-emerald-400">Featured Solution</span>
                   
                   {/* Illustration Container */}
                   <div className="w-full h-24 rounded-lg bg-emerald-950/40 border border-emerald-900/30 flex items-center justify-center overflow-hidden relative">
@@ -557,7 +540,7 @@ export const Navbar = () => {
                   </div>
                   
                   <div className="text-sm font-extrabold font-display">Intelligent Workflows</div>
-                  <p className="text-[11px] text-slate-400 font-semibold leading-relaxed">
+                  <p className="text-mega-desc font-semibold text-slate-400">
                     Deploy autonomous digital agents to automate recurring business reporting and customer requests.
                   </p>
                 </div>
@@ -587,13 +570,13 @@ export const Navbar = () => {
           >
             <div className="container-custom py-4 md:py-6 px-4 md:px-5 space-y-4 md:space-y-6">
               <div className="space-y-1 md:space-y-2">
-                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-3 md:py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Home</Link>
-                
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block border-b border-slate-100 py-2.5 text-nav font-bold text-slate-800">About</Link>
+
                 {/* Services Accordion */}
                 <div>
                   <button
                     onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-                    className="flex items-center justify-between w-full py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100 text-left"
+                    className="flex w-full items-center justify-between border-b border-slate-100 py-2.5 text-left text-nav font-bold text-slate-800"
                   >
                     <span>Services</span>
                     <ChevronDown className={cn("w-4 h-4 text-slate-500 transition-transform duration-205", isMobileServicesOpen && "rotate-180")} />
@@ -628,7 +611,7 @@ export const Navbar = () => {
                 <div>
                   <button
                     onClick={() => setIsMobileSolutionsOpen(!isMobileSolutionsOpen)}
-                    className="flex items-center justify-between w-full py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100 text-left"
+                    className="flex w-full items-center justify-between border-b border-slate-100 py-2.5 text-left text-nav font-bold text-slate-800"
                   >
                     <span>Solutions</span>
                     <ChevronDown className={cn("w-4 h-4 text-slate-500 transition-transform duration-205", isMobileSolutionsOpen && "rotate-180")} />
@@ -659,19 +642,16 @@ export const Navbar = () => {
                   </AnimatePresence>
                 </div>
 
-                <Link to="/industries" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Industries</Link>
-                <Link to="/work" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Portfolio</Link>
-                <Link to="/careers" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">Careers</Link>
-                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block py-2.5 text-[15px] font-bold text-slate-800 border-b border-slate-100">About</Link>
+                <Link to="/work" onClick={() => setIsMobileMenuOpen(false)} className="block border-b border-slate-100 py-2.5 text-nav font-bold text-slate-800">Portfolio</Link>
+                <Link to="/careers" onClick={() => setIsMobileMenuOpen(false)} className="block border-b border-slate-100 py-2.5 text-nav font-bold text-slate-800">Careers</Link>
+                <Link to="/industries" onClick={() => setIsMobileMenuOpen(false)} className="block border-b border-slate-100 py-2.5 text-nav font-bold text-slate-800">Industries</Link>
               </div>
 
               <div className="pt-4">
                 <Link to={ctaLink} onClick={() => setIsMobileMenuOpen(false)}>
-                  <button className="flex items-center justify-between w-full pl-6 pr-2 py-2 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full font-bold text-sm tracking-wide shadow-md">
+                  <button className="inline-flex items-center justify-center gap-2 w-full h-11 px-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold tracking-tight shadow-[0_1px_2px_rgba(16,185,129,0.2),0_4px_12px_-2px_rgba(16,185,129,0.35)] transition-colors duration-200">
                     <span>{ctaText}</span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white">
-                      <ArrowRight className="w-4 h-4" />
-                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 opacity-90" />
                   </button>
                 </Link>
               </div>

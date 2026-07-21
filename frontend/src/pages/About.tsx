@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Building2,
   Check,
   Eye,
-  Sparkles,
+  MapPin,
+  ShieldCheck,
   Target,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -385,7 +385,7 @@ const About = () => {
                   className="flex gap-4 rounded-2xl border-2 border-emerald-500/20 bg-white/80 p-5 shadow-sm backdrop-blur-sm"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_4px_12px_-2px_rgba(16,185,129,0.2)]">
-                    <Building2 className="h-6 w-6 animate-pulse" strokeWidth={1.75} aria-hidden />
+                    <MapPin className="h-6 w-6" strokeWidth={1.75} aria-hidden />
                   </div>
                   <div className="min-w-0 flex-1">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-emerald-800 ring-1 ring-emerald-800/10">
@@ -404,7 +404,7 @@ const About = () => {
                   className="flex gap-4 rounded-2xl border-2 border-teal-500/20 bg-white/80 p-5 shadow-sm backdrop-blur-sm"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-[0_4px_12px_-2px_rgba(20,184,166,0.2)]">
-                    <Sparkles className="h-6 w-6 animate-pulse" strokeWidth={1.75} aria-hidden />
+                    <ShieldCheck className="h-6 w-6" strokeWidth={1.75} aria-hidden />
                   </div>
                   <div className="min-w-0 flex-1">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-100/80 px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-teal-800 ring-1 ring-teal-800/10">

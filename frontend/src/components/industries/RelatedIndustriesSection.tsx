@@ -34,7 +34,7 @@ export const RelatedIndustriesSection = ({ industry }: RelatedIndustriesSectionP
 
   return (
     <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm md:p-8">
-      <h2 className="mb-8 font-display text-xl font-bold text-slate-900">Related Industries</h2>
+      <h2 className="mb-8 font-display text-heading-sm text-slate-900">Related Industries</h2>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {related.map((item, index) => {
